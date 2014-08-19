@@ -11,9 +11,38 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 0) do
+ActiveRecord::Schema.define(version: 20140819145521) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "shipping_methods", force: true do |t|
+    t.integer "shop_id",                  null: false
+    t.string  "name",                     null: false
+    t.string  "description", default: "", null: false
+  end
+
+  add_index "shipping_methods", ["shop_id"], name: "index_shipping_methods_on_shop_id", using: :btree
+
+  create_table "shops", force: true do |t|
+    t.string "name",             null: false
+    t.string "token", limit: 32, null: false
+  end
+
+  add_index "shops", ["name"], name: "index_shops_on_name", unique: true, using: :btree
+  add_index "shops", ["token"], name: "index_shops_on_token", unique: true, using: :btree
+
+  create_table "zip_rules", force: true do |t|
+    t.integer   "shipping_method_id",                          null: false
+    t.int4range "range",                                       null: false
+    t.decimal   "price",              precision: 10, scale: 2
+    t.integer   "deadline",                                    null: false
+  end
+
+  add_index "zip_rules", ["shipping_method_id"], name: "index_zip_rules_on_shipping_method_id", using: :btree
+
+  add_foreign_key "shipping_methods", "shops", name: "shipping_methods_shop_id_fk"
+
+  add_foreign_key "zip_rules", "shipping_methods", name: "zip_rules_shipping_method_id_fk"
 
 end
