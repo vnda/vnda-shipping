@@ -10,7 +10,7 @@ class ZipRule < ActiveRecord::Base
   def validate_no_overlap
     return if shipping_method.blank? || range.blank?
     overlap = shipping_method.zip_rules
-      .where('range && int4range(?, ?)', range.begin, range.end)
+      .where("range && '[?,?]'::int4range", range.begin, range.end.succ)
     errors.add(:range) if overlap.exists?
   end
 end
