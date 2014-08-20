@@ -5,4 +5,6 @@ Rails.application.routes.draw do
   resources :shops, only: [:index, :new, :create, :edit, :update, :destroy] do
     resources :shipping_methods, only: [:index, :new, :create, :edit, :update, :destroy]
   end
+
+  post '/quote', to: 'api#quote', format: :json
 end

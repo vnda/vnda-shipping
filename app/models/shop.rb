@@ -10,6 +10,6 @@ class Shop < ActiveRecord::Base
       .joins(:zip_rules)
       .merge(ZipRule.for_zip(zip))
       .pluck(:name, :price, :deadline)
-      .map { |n, p, d| Quotation.new(name: n, price: p, deadline: d) }
+      .map { |n, p, d| Quotation.new(name: n, price: p.to_f, deadline: d) }
   end
 end

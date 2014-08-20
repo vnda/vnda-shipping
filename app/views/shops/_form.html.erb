@@ -7,6 +7,11 @@
   </div>
 
   <div class="form-group">
+    <%= f.label :axado_token %>
+    <%= f.text_field :axado_token, class: 'form-control' %>
+  </div>
+
+  <div class="form-group">
     <%= f.submit 'Salvar', class: 'btn btn-primary' %>
     <%= link_to 'Cancelar', shops_path, class: 'btn btn-default' %>
   </div>

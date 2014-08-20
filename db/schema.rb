@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140819145521) do
+ActiveRecord::Schema.define(version: 20140820135730) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,8 +25,9 @@ ActiveRecord::Schema.define(version: 20140819145521) do
   add_index "shipping_methods", ["shop_id"], name: "index_shipping_methods_on_shop_id", using: :btree
 
   create_table "shops", force: true do |t|
-    t.string "name",             null: false
-    t.string "token", limit: 32, null: false
+    t.string "name",                   null: false
+    t.string "token",       limit: 32, null: false
+    t.string "axado_token", limit: 32
   end
 
   add_index "shops", ["name"], name: "index_shops_on_name", unique: true, using: :btree
