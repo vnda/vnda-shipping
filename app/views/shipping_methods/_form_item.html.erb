@@ -1,0 +1,18 @@
+<tr>
+  <td><%= f.text_field :min, data: { mask_zip: true }, class: 'form-control' %></td>
+  <td><%= f.text_field :max, data: { mask_zip: true }, class: 'form-control' %></td>
+  <td style="width: 140px;">
+    <div class="input-group">
+      <span class="input-group-addon">R$</span>
+      <%= f.text_field :price, data: { mask_money: true }, class: 'text-right form-control' %>
+    </div>
+  </td>
+  <td><%= f.text_field :deadline, class: 'form-control' %></td>
+  <td style="width: 40px;">
+    <%= f.hidden_field :_destroy %>
+    <%= link_to 'javascript:void(0)', class: 'btn btn-default',
+        data: { remove_parent: 'tr' } do %>
+      <span class="glyphicon glyphicon-remove"></span>
+    <% end %>
+  </td>
+</tr>

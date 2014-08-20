@@ -1,15 +1,47 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>VndaShipping</title>
-  <%# stylesheet_link_tag 'application', media: 'all' %>
-  <%= javascript_include_tag '//code.jquery.com/jquery-2.1.1.min.js',
-                             'jquery_ujs' %>
-  <%= csrf_meta_tags %>
-</head>
-<body>
+  <head>
+    <title>VndaShipping</title>
+    <%= stylesheet_link_tag '//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css' %>
+    <%= javascript_include_tag '//code.jquery.com/jquery-2.1.1.min.js',
+                               '//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js',
+                               'jquery.mask.min.js',
+                               'jquery_ujs.js' %>
+    <style>
+      .table.table-form th,
+      .table.table-form td {
+        padding: 6px;
+      }
+      .table.table-form th:first-child,
+      .table.table-form td:first-child {
+        padding-left: 0;
+      }
+      .table.table-form th:last-child,
+      .table.table-form td:last-child {
+        padding-right: 0;
+      }
+      header.page-header {
+        margin-top: 0;
+      }
+      header.page-header h3 {
+        margin-top: 0;
+      }
+    </style>
+    <%= csrf_meta_tags %>
+  </head>
+  <body>
+    <%= render 'layouts/navbar' %>
 
-<%= yield %>
+    <div class="container">
+      <header class="page-header clearfix">
+        <h3 class="pull-left"><%= content_for :title %></h3>
+        <% if content_for? :actions %>
+          <div class="pull-right"><%= content_for :actions %></div>
+        <% end %>
+      </header>
 
-</body>
+      <%= render 'shared/flash_messages' %>
+      <%= yield %>
+    </div>
+  </body>
 </html>

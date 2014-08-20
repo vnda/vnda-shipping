@@ -1,0 +1,12 @@
+<% if resource.errors.any? %>
+  <div class="alert alert-danger">
+    <h4><%= t :header, scope: [:errors, :template],
+              count: resource.errors.count, model: resource.class.model_name.human %></h4>
+    <p><%= t :body, scope: [:errors, :template] %></p>
+    <ul>
+      <% resource.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>

@@ -1,0 +1,71 @@
+<%= form_for [@shop, @method] do |f| %>
+  <%= render 'shared/error_messages', resource: @method %>
+
+  <div class="form-group">
+    <%= f.label :name %>
+    <%= f.text_field :name, class: 'form-control' %>
+  </div>
+  <div class="form-group">
+    <%= f.label :description %>
+    <%= f.text_field :description, class: 'form-control' %>
+  </div>
+
+  <table class="table table-form">
+    <thead>
+      <tr>
+        <th>CEP Início</th>
+        <th>CEP Fim</th>
+        <th>Preço</th>
+        <th>Prazo</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="zip_rule_fields">
+      <% 3.times { @method.zip_rules.build } if @method.zip_rules.none? %>
+      <%= f.fields_for :zip_rules do |builder| %>
+        <%= render 'form_item', f: builder %>
+      <% end %>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="5">
+          <%= link_to 'javascript:void(0)', class: 'btn btn-default btn-block',
+              data: { add_item: new_form_item(f, :zip_rules, 'form_item'), add_target: '#zip_rule_fields' } do %>
+            <span class="glyphicon glyphicon-plus"></span>
+          <% end %>
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <%= f.submit 'Salvar', class: 'btn btn-primary' %>
+  <%= link_to 'Cancelar', shop_shipping_methods_path(@shop), class: 'btn btn-default' %>
+<% end %>
+
+<script>
+  (function () {
+    var maskInputs = function (ctx) {
+      $('[data-mask-money]', ctx).mask("#.##0,00", { reverse: true, maxlength: false })
+      $('[data-mask-zip]', ctx).mask("00000-000");
+    };
+
+    $('[data-add-item]').click(function (e) {
+      e.preventDefault();
+      var $this = $(this);
+      var $target = $($this.data('addTarget'));
+      var item = $this.data('addItem').replace(/\[\$\]/g, '[' + new Date().getTime() + ']');
+      $target.append(item);
+      maskInputs($target);
+    });
+
+    $(document.body).on('click', '[data-remove-parent]', function (e) {
+      e.preventDefault();
+      $this = $(e.currentTarget);
+      $target = $this.parents($this.data('removeParent'));
+      $target.hide();
+      $target.find('[name$="[_destroy]"]').val('1');
+    });
+
+    maskInputs(document.body);
+  }());
+</script>

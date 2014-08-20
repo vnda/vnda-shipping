@@ -1,0 +1,26 @@
+<% content_for :title, 'Formas de Entrega' %>
+
+<% content_for :actions do %>
+  <%= link_to 'Nova Forma de Entrega', new_shop_shipping_method_path(@shop),
+      class: 'btn btn-success' %>
+<% end %>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Nome</th>
+      <th>Descrição</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% if @methods.empty? %>
+      <tr><td colspan="3" class="text-center text-muted">Nenhuma Forma de Entrega cadastrada</td></tr>
+    <% end %>
+    <%= content_tag_for :tr, @methods do |method| %>
+      <td><%= link_to method.name, edit_shop_shipping_method_path(@shop, method) %></td>
+      <td><%= method.description %></td>
+      <td class="text-right"><%= link_to_destroy shop_shipping_method_path(@shop, method) %></td>
+    <% end %>
+  </tbody>
+</table>

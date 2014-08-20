@@ -6,4 +6,13 @@ class ApplicationController < ActionController::Base
   def status
     render text: 'OK'
   end
+
+  private
+
+  def success_redirect(*args)
+    opts = args.extract_options!
+    key = "#{params[:controller]}.#{params[:action]}"
+    notice = I18n.t(key, scope: [:notices])
+    redirect_to(*args, opts.reverse_merge(notice: notice))
+  end
 end

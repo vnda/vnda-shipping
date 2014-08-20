@@ -3,6 +3,8 @@ class Shop < ActiveRecord::Base
 
   before_create { self.token = SecureRandom.hex }
 
+  validates :name, presence: true
+
   def quote_zip(zip)
     methods
       .joins(:zip_rules)

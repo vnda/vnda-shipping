@@ -1,0 +1,41 @@
+<nav class="navbar navbar-static-top navbar-inverse">
+  <div class="container-fluid">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <div class="navbar-header">
+      <%= link_to 'vnda-shipping', root_path, class: 'navbar-brand' %>
+    </div>
+    <div class="collapse navbar-collapse" id="navbar-collapse">
+
+      <% if @shop && @shop.persisted? %>
+        <ul class="nav navbar-nav">
+          <%= content_tag :li, class: ('active' if params[:controller] == 'shipping_methods') do %>
+            <%= link_to 'Formas de Entrega', shop_shipping_methods_path(@shop) %>
+          <% end %>
+        </ul>
+        <% other = Shop.all.where.not(id: @shop.id) %>
+        <ul class="nav navbar-nav navbar-right">
+          <% if other.empty? %>
+            <p class="navbar-text"><%= @shop.name %></p>
+          <% else %>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <%= @shop.name %> <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu">
+                <% other.each do |shop| %>
+                  <li><%= link_to shop.name, shop_shipping_methods_path(shop) %></li>
+                <% end %>
+              </ul>
+            </li>
+          <% end %>
+        </ul>
+      <% end %>
+
+    </div>
+  </div>
+</nav>
