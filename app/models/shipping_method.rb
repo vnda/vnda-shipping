@@ -5,4 +5,14 @@ class ShippingMethod < ActiveRecord::Base
 
   validates :name, presence: true
   validates_associated :zip_rules
+
+  before_save :generate_slug, if: :name_changed?
+
+  def generate_slug
+    self.slug = name.try(:parameterize)
+  end
+
+  def to_param
+    slug
+  end
 end

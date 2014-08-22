@@ -19,11 +19,11 @@ class ShippingMethodsController < ApplicationController
   end
 
   def edit
-    @method = @shop.methods.find(params[:id])
+    @method = @shop.methods.find_by!(slug: params[:id])
   end
 
   def update
-    @method = @shop.methods.find(params[:id])
+    @method = @shop.methods.find_by!(slug: params[:id])
     if @method.update(method_params)
       success_redirect edit_shop_shipping_method_path(@shop, @method)
     else
@@ -32,7 +32,7 @@ class ShippingMethodsController < ApplicationController
   end
 
   def destroy
-    @shop.methods.find(params[:id]).destroy!
+    @shop.methods.find_by!(slug: params[:id]).destroy!
     success_redirect shop_shipping_methods_path(@shop)
   end
 
@@ -40,7 +40,7 @@ class ShippingMethodsController < ApplicationController
 
   def method_params
     params.require(:shipping_method).permit(
-      :name, :description,
+      :name, :description, :express,
       zip_rules_attributes: [:id, :min, :max, :price, :deadline, :_destroy]
     )
   end
