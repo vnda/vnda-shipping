@@ -13,9 +13,11 @@ class QueryTest < ActionDispatch::IntegrationTest
       { range: 11..15, price: 25.0, deadline: 3 }
     ])
 
-    assert_equal [Quotation.new(name: 'Motoboy', price: 15.0, deadline: 2)], @shop.quote_zip(5)
+    assert_equal [Quotation.new(name: 'Motoboy', price: 15.0, deadline: 2, express: false, slug: 'motoboy')],
+                 @shop.quote_zip(5)
     assert_equal [], @shop.quote_zip(6)
-    assert_equal [Quotation.new(name: 'Motoboy', price: 25.0, deadline: 3)], @shop.quote_zip(11)
+    assert_equal [Quotation.new(name: 'Motoboy', price: 25.0, deadline: 3, express: false, slug: 'motoboy')],
+                 @shop.quote_zip(11)
   end
 
   test "validate ranges" do

@@ -14,12 +14,18 @@ module Axado
       Quotation.new(
         name: o['servico_nome'],
         price: o['cotacao_preco'].gsub(/[.,]/, '.' => '', ',' => '.').to_f,
-        deadline: o['cotacao_prazo']
+        deadline: o['cotacao_prazo'],
+        express: express_service?(o['servico_metaname']),
+        slug: o['servico_metaname'],
       )
     end
   end
 
   private
+
+  def express_service?(metaname)
+    !!(metaname =~ /sedex|expresso/)
+  end
 
   def build_request(r)
     {
