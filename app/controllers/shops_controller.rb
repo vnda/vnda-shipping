@@ -8,7 +8,7 @@ class ShopsController < ApplicationController
   end
 
   def create
-    @shop = Shop.new()
+    @shop = Shop.new(shop_params)
     if @shop.save
       success_redirect shop_shipping_methods_path(@shop)
     else
