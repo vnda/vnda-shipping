@@ -1,5 +1,6 @@
 module Axado
   extend self
+  class InvalidZip < StandardError; end
 
   def quote(api_token, request)
     response = Excon.post(
@@ -18,6 +19,13 @@ module Axado
         express: express_service?(o['servico_metaname']),
         slug: o['servico_metaname'].gsub(?-, ?_),
       )
+    end
+  rescue Excon::Errors::BadRequest => e
+    json = JSON.parse(e.response.body)
+    if json['erro_id'] == 102
+      raise InvalidZip
+    else
+      raise e
     end
   end
 

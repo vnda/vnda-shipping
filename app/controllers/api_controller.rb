@@ -10,10 +10,16 @@ class ApiController < ActionController::Base
 
     quotations = shop.quote_zip(request_params[:shipping_zip].gsub(/\D+/, '').to_i)
     if quotations.empty?
-      quotations = Axado.quote(shop.axado_token, request_params)
+      quotations = begin
+        Axado.quote(shop.axado_token, request_params)
+      rescue Axado::InvalidZip
+        return head :bad_request
+      end
     end
     render json: quotations
   end
+
+  private
 
   def request_params
     params.permit(
