@@ -16,7 +16,7 @@ module Axado
         price: o['cotacao_preco'].gsub(/[.,]/, '.' => '', ',' => '.').to_f,
         deadline: o['cotacao_prazo'],
         express: express_service?(o['servico_metaname']),
-        slug: o['servico_metaname'],
+        slug: o['servico_metaname'].gsub(?-, ?_),
       )
     end
   end
