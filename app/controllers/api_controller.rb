@@ -1,6 +1,4 @@
 class ApiController < ActionController::Base
-  protect_from_forgery with: :null_session
-
   def quote
     shop = begin
       Shop.find_by!(token: params[:token])
