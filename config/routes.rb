@@ -6,5 +6,5 @@ Rails.application.routes.draw do
     resources :shipping_methods, only: [:index, :new, :create, :edit, :update, :destroy]
   end
 
-  post '/quote', to: 'api#quote', format: :json
+  match '/quote', to: 'api#quote', via: [:get, :post], format: :json
 end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140822180155) do
+ActiveRecord::Schema.define(version: 20140903130538) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -28,9 +28,10 @@ ActiveRecord::Schema.define(version: 20140822180155) do
   add_index "shipping_methods", ["slug"], name: "index_shipping_methods_on_slug", unique: true, using: :btree
 
   create_table "shops", force: true do |t|
-    t.string "name",                   null: false
-    t.string "token",       limit: 32, null: false
-    t.string "axado_token", limit: 32
+    t.string  "name",                                       null: false
+    t.string  "token",            limit: 32,                null: false
+    t.string  "axado_token",      limit: 32
+    t.boolean "forward_to_axado",            default: true, null: false
   end
 
   add_index "shops", ["name"], name: "index_shops_on_name", unique: true, using: :btree

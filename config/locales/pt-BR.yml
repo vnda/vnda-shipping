@@ -203,6 +203,14 @@ pt-BR:
       long: ! '%d de %B de %Y, %H:%M'
       short: ! '%d de %B, %H:%M'
     pm: ''
+  activerecord:
+    models:
+      shop: 'Loja'
+    attributes:
+      shop:
+        name: 'Nome'
+        axado_token: 'Token do Axado'
+        forward_to_axado: 'Encaminhar consulta ao Axado'
   notices:
     shipping_methods:
       create: 'Forma de entrega criada com sucesso'

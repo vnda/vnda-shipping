@@ -7,7 +7,7 @@ class ApiController < ActionController::Base
     end
 
     quotations = shop.quote_zip(request_params[:shipping_zip].gsub(/\D+/, '').to_i)
-    if quotations.empty?
+    if quotations.empty? && shop.forward_to_axado?
       quotations = begin
         Axado.quote(shop.axado_token, request_params)
       rescue Axado::InvalidZip

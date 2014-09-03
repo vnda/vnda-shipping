@@ -37,6 +37,6 @@ class ShopsController < ApplicationController
   private
 
   def shop_params
-    params.require(:shop).permit(:name, :axado_token)
+    params.require(:shop).permit(:name, :axado_token, :forward_to_axado)
   end
 end
