@@ -41,12 +41,13 @@ module Correios
       end
     end
 
+    services = collapse_services(services)
     services.map do |s|
       number = s[:codigo].to_i
       name = SERVICES[number]
       Quotation.new(
         name: name,
-        price: s[:valor].gsub(/[.,]/, '.' => '', ',' => '.').to_f,
+        price: parse_price(s[:valor]),
         deadline: s[:prazo_entrega].to_i,
         express: EXPRESS.include?(number),
         slug: name.parameterize,
@@ -55,6 +56,13 @@ module Correios
   end
 
   private
+
+  def collapse_services(services)
+    groups = services.partition { |s| EXPRESS.include?(s[:codigo].to_i) }
+    groups.flat_map do |group|
+      group.min { |s1, s2| parse_price(s1[:valor]) <=> parse_price(s2[:valor]) }
+    end
+  end
 
   def send_message(method_id, message)
     client = Savon.client(wsdl: URL, convert_request_keys_to: :none)
@@ -69,5 +77,9 @@ module Correios
     dims = items.map { |i| i.values_at(:width, :height, :length) }
     dims.reject! { |ds| ds.any?(&:blank?) }
     BinPack.min_bounding_box(dims.map { |ds| BinPack::Box.new(*ds) })
+  end
+
+  def parse_price(str)
+    str.gsub(/[.,]/, '.' => '', ',' => '.').to_f
   end
 end
