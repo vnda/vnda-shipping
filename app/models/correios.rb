@@ -13,9 +13,8 @@ module Correios
   EXPRESS = [40010, 40045, 40215, 40290]
 
   def quote(code, password, services, request)
-    client = Savon.client(wsdl: URL, convert_request_keys_to: :none)
     box = package_dimensions(request[:products])
-    response = client.call(:calc_preco_prazo, message: {
+    response = send_message(:calc_preco_prazo,
       'nCdEmpresa' => code,
       'sDsSenha' => password,
       'nCdServico' => services.join(?,),
@@ -30,9 +29,18 @@ module Correios
       'sCdMaoPropria' => 'N',
       'nVlValorDeclarado' => request[:order_total_price],
       'sCdAvisoRecebimento' => 'N',
-    })
+    )
 
     services = response.body[:calc_preco_prazo_response][:calc_preco_prazo_result][:servicos][:c_servico]
+
+    if error = services.find { |s| s[:erro] != '0' }
+      if error[:erro] == '-3'
+        raise InvalidZip
+      else
+        raise "#{error[:erro]}: #{error[:msg_erro]}"
+      end
+    end
+
     services.map do |s|
       number = s[:codigo].to_i
       name = SERVICES[number]
@@ -44,6 +52,17 @@ module Correios
         slug: name.parameterize,
       )
     end
+  end
+
+  private
+
+  def send_message(method_id, message)
+    client = Savon.client(wsdl: URL, convert_request_keys_to: :none)
+    request_xml = client.operation(method_id).build(message: message).to_s
+    Rails.logger.info("Request: #{request_xml}")
+    response = client.call(method_id, message: message)
+    Rails.logger.info("Response: #{response.to_xml}")
+    response
   end
 
   def package_dimensions(items)

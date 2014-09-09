@@ -1,0 +1,1 @@
+class InvalidZip < StandardError; end

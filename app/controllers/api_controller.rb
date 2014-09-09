@@ -1,5 +1,5 @@
 class ApiController < ActionController::Base
-  rescue_from Axado::InvalidZip do
+  rescue_from InvalidZip do
     head :bad_request
   end
 
