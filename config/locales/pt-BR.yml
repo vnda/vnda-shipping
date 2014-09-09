@@ -210,8 +210,12 @@ pt-BR:
     attributes:
       shop:
         name: 'Nome'
-        axado_token: 'Token do Axado'
         forward_to_axado: 'Encaminhar consulta ao Axado'
+        axado_token: 'Token do Axado'
+        forward_to_correios: 'Encaminhar consulta ao Correios'
+        correios_code: 'Código da Empresa no Correios'
+        correios_password: 'Senha no Correios'
+        correios_services: 'Serviços Habilitados'
       shipping_method:
         name: 'Nome'
         description: 'Descrição'
