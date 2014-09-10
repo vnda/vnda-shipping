@@ -21,8 +21,7 @@ class ApiController < ActionController::Base
     if @shop.forward_to_axado?
       Axado.quote(@shop.axado_token, request_params)
     elsif @shop.forward_to_correios?
-      Correios.quote(@shop.correios_code, @shop.correios_password,
-                     @shop.correios_services, request_params)
+      Correios.new(@shop).quote(request_params)
     end
   end
 

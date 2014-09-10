@@ -216,6 +216,8 @@ pt-BR:
         correios_code: 'Código da Empresa no Correios'
         correios_password: 'Senha no Correios'
         correios_services: 'Serviços Habilitados'
+        express_shipping_name: 'Nome para entrega expressa'
+        normal_shipping_name: 'Nome para entrega normal'
       shipping_method:
         name: 'Nome'
         description: 'Descrição'
