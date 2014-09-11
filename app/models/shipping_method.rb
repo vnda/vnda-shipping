@@ -15,4 +15,17 @@ class ShippingMethod < ActiveRecord::Base
   def to_param
     slug
   end
+
+  def duplicate
+    self.class.new do |r|
+      r.enabled     = false
+      r.shop_id     = shop_id
+      r.name        = "#{name} #{I18n.t('helpers.duplicate')}"
+      r.description = description
+      r.express     = express
+      r.zip_rules.build(
+        zip_rules.map { |rule| rule.slice(:min, :max, :price, :deadline) }
+      )
+    end
+  end
 end

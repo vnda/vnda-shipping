@@ -26,7 +26,12 @@
       </td>
       <td><%= link_to method.name, edit_shop_shipping_method_path(@shop, method) %></td>
       <td><%= method.description %></td>
-      <td class="text-right"><%= link_to_destroy shop_shipping_method_path(@shop, method) %></td>
+      <td class="text-right">
+        <%= link_to duplicate_shop_shipping_method_path(@shop, method) do %>
+          <span class="glyphicon glyphicon-retweet"></span>
+        <% end %>
+        <%= link_to_destroy shop_shipping_method_path(@shop, method) %>
+      </td>
     <% end %>
   </tbody>
 </table>

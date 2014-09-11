@@ -1,4 +1,4 @@
-<tr>
+<tr data-index="<%= f.index %>">
   <td><%= f.text_field :min, data: { mask_zip: true }, class: 'form-control' %></td>
   <td><%= f.text_field :max, data: { mask_zip: true }, class: 'form-control' %></td>
   <td style="width: 140px;">
@@ -8,7 +8,11 @@
     </div>
   </td>
   <td><%= f.text_field :deadline, class: 'form-control' %></td>
-  <td style="width: 40px;">
+  <td style="width: 90px;">
+    <%= link_to 'javascript:void(0)', class: 'btn btn-default',
+        data: { clone_rule: true } do %>
+      <span class="glyphicon glyphicon-retweet"></span>
+    <% end %>
     <%= f.hidden_field :_destroy %>
     <%= link_to 'javascript:void(0)', class: 'btn btn-default',
         data: { remove_parent: 'tr' } do %>

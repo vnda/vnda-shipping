@@ -59,21 +59,43 @@
       $('[data-mask-zip]', ctx).mask("00000-000");
     };
 
+    var $addItem = $('[data-add-item]');
+    var $addItemTarget = $($addItem.data('addTarget'));
+    var itemTemplate = $addItem.data('addItem');
+
+    var addItem = function (append) {
+      var index = new Date().getTime();
+      var item = itemTemplate.replace(/\[\$\]/g, '[' + index + ']');
+      var $item = $(item);
+      $item.attr('data-index', index);
+      append($item);
+      maskInputs($addItemTarget);
+    }
+
     $('[data-add-item]').click(function (e) {
       e.preventDefault();
-      var $this = $(this);
-      var $target = $($this.data('addTarget'));
-      var item = $this.data('addItem').replace(/\[\$\]/g, '[' + new Date().getTime() + ']');
-      $target.append(item);
-      maskInputs($target);
+      addItem(function ($i) { $addItemTarget.append($i); });
     });
 
     $(document.body).on('click', '[data-remove-parent]', function (e) {
       e.preventDefault();
-      $this = $(e.currentTarget);
-      $target = $this.parents($this.data('removeParent'));
+      var $this = $(e.currentTarget);
+      var $target = $this.parents($this.data('removeParent'));
       $target.hide();
       $target.find('[name$="[_destroy]"]').val('1');
+    });
+
+    $(document.body).on('click', '[data-clone-rule]', function (e) {
+      var $target = $(this).parents('tr');
+      var inputNames = ['min', 'max', 'price', 'deadline'];
+      addItem(function ($i) {
+        $target.after($i);
+        $.each(inputNames, function (i, name) {
+          $i.find('[name$="[' + name + ']"]').val(
+            $target.find('[name$="[' + name + ']"]').val()
+          );
+        });
+      });
     });
 
     maskInputs(document.body);

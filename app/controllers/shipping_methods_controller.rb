@@ -1,7 +1,7 @@
 class ShippingMethodsController < ApplicationController
   before_filter { @shop = Shop.find(params[:shop_id]) }
 
-  before_filter only: [:edit, :update, :toggle] do
+  before_filter only: [:edit, :update, :toggle, :duplicate] do
     @method = @shop.methods.find_by!(slug: params[:id])
   end
 
@@ -41,6 +41,11 @@ class ShippingMethodsController < ApplicationController
   def destroy
     @shop.methods.find_by!(slug: params[:id]).destroy!
     success_redirect shop_shipping_methods_path(@shop)
+  end
+
+  def duplicate
+    @method = @method.duplicate
+    render :new
   end
 
   private
