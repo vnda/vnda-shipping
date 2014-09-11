@@ -8,6 +8,16 @@ class ShippingMethod < ActiveRecord::Base
 
   before_save :generate_slug, if: :name_changed?
 
+  scope :for_weigth, -> weigth { where('shipping_methods.weigth_range @> ?', weigth) }
+
+  attr_writer :min_weigth, :max_weigth
+  def min_weigth; @min_weigth ||= weigth_range.try(:min_weigth) end
+  def max_weigth; @max_weigth ||= weigth_range.try(:max_weigth) end
+
+  before_validation do
+    self.weigth_range = Range.new(*[min_weigth.presence, max_weigth.presence].map(&:to_f))
+  end
+
   def generate_slug
     self.slug = name.try(:parameterize)
   end
@@ -23,6 +33,8 @@ class ShippingMethod < ActiveRecord::Base
       r.name        = "#{name} #{I18n.t('helpers.duplicate')}"
       r.description = description
       r.express     = express
+      r.min_weigth  = min_weigth
+      r.max_weigth  = max_weigth
       r.zip_rules.build(
         zip_rules.map { |rule| rule.slice(:min, :max, :price, :deadline) }
       )

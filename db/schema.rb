@@ -11,18 +11,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140910212048) do
+ActiveRecord::Schema.define(version: 20140911163142) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "shipping_methods", force: true do |t|
-    t.integer "shop_id",                     null: false
-    t.string  "name",                        null: false
-    t.string  "description", default: "",    null: false
-    t.string  "slug",                        null: false
-    t.boolean "express",     default: false, null: false
-    t.boolean "enabled",     default: false, null: false
+    t.integer  "shop_id",                                                                               null: false
+    t.string   "name",                                                                                  null: false
+    t.string   "description",  default: "",                                                             null: false
+    t.string   "slug",                                                                                  null: false
+    t.boolean  "express",      default: false,                                                          null: false
+    t.boolean  "enabled",      default: false,                                                          null: false
+    t.numrange "weigth_range", default: BigDecimal(-::Float::INFINITY)...BigDecimal(::Float::INFINITY), null: false
   end
 
   add_index "shipping_methods", ["shop_id"], name: "index_shipping_methods_on_shop_id", using: :btree

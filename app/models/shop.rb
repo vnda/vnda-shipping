@@ -5,8 +5,13 @@ class Shop < ActiveRecord::Base
 
   validates :name, presence: true
 
-  def quote_zip(zip)
+  def quote(params)
+    zip = params[:shipping_zip].gsub(/\D+/, '').to_i
+    weigth = params[:products].sum { |i| i[:weight].to_f }
+
     methods
+      .where(enabled: true)
+      .for_weigth(weigth)
       .joins(:zip_rules)
       .merge(ZipRule.for_zip(zip))
       .pluck(:name, :price, :deadline, :express, :slug)

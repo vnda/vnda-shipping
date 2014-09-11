@@ -224,6 +224,8 @@ pt-BR:
         description: 'Descrição'
         express: 'Entrega expressa?'
         enabled: 'Habilitar'
+        min_weigth: 'Peso Mínimo'
+        max_weigth: 'Peso Máximo'
   notices:
     shipping_methods:
       create: 'Forma de entrega criada com sucesso'

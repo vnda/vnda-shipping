@@ -10,7 +10,7 @@ class ApiController < ActionController::Base
       return head :unauthorized
     end
 
-    quotations = @shop.quote_zip(request_params[:shipping_zip].gsub(/\D+/, '').to_i)
+    quotations = @shop.quote(request_params)
     quotations = forward_quote if quotations.empty?
     render json: quotations
   end
