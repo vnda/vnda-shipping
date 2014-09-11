@@ -3,7 +3,9 @@ Rails.application.routes.draw do
 
   root to: 'shops#index'
   resources :shops, only: [:index, :new, :create, :edit, :update, :destroy] do
-    resources :shipping_methods, only: [:index, :new, :create, :edit, :update, :destroy]
+    resources :shipping_methods, only: [:index, :new, :create, :edit, :update, :destroy] do
+      patch :toggle, on: :member
+    end
   end
 
   match '/quote', to: 'api#quote', via: [:get, :post], format: :json

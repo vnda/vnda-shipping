@@ -1,4 +1,8 @@
-<%= form_for [@shop, @method] do |f| %>
+<%= form_for [@shop, @method], html: { id: 'shipping_method_form' } do |f| %>
+  <% content_for :actions do %>
+    <%= f.check_box :enabled, class: 'switch', form: 'shipping_method_form' %>
+  <% end %>
+
   <%= render 'shared/error_messages', resource: @method %>
 
   <div class="form-group">
@@ -11,7 +15,8 @@
   </div>
   <div class="checkbox">
     <label>
-      <%= f.check_box :express %> Entrega Expressa
+      <%= f.check_box :express %>
+      <%= ShippingMethod.human_attribute_name(:express) %>
     </label>
   </div>
 
