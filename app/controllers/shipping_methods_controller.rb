@@ -52,7 +52,7 @@ class ShippingMethodsController < ApplicationController
 
   def method_params
     params.require(:shipping_method).permit(
-      :name, :description, :express, :enabled,
+      :name, :description, :express, :enabled, :min_weigth, :max_weigth,
       zip_rules_attributes: [:id, :min, :max, :price, :deadline, :_destroy]
     )
   end

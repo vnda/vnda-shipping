@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140911163142) do
+ActiveRecord::Schema.define(version: 20140911171136) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -26,8 +26,8 @@ ActiveRecord::Schema.define(version: 20140911163142) do
     t.numrange "weigth_range", default: BigDecimal(-::Float::INFINITY)...BigDecimal(::Float::INFINITY), null: false
   end
 
+  add_index "shipping_methods", ["shop_id", "slug"], name: "index_shipping_methods_on_shop_id_and_slug", unique: true, using: :btree
   add_index "shipping_methods", ["shop_id"], name: "index_shipping_methods_on_shop_id", using: :btree
-  add_index "shipping_methods", ["slug"], name: "index_shipping_methods_on_slug", unique: true, using: :btree
 
   create_table "shops", force: true do |t|
     t.string  "name",                                             null: false

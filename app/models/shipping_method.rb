@@ -4,18 +4,24 @@ class ShippingMethod < ActiveRecord::Base
   accepts_nested_attributes_for :zip_rules, allow_destroy: true, reject_if: :all_blank
 
   validates :name, presence: true
-  validates_associated :zip_rules
 
   before_save :generate_slug, if: :name_changed?
 
   scope :for_weigth, -> weigth { where('shipping_methods.weigth_range @> ?', weigth) }
 
   attr_writer :min_weigth, :max_weigth
-  def min_weigth; @min_weigth ||= weigth_range.try(:min_weigth) end
-  def max_weigth; @max_weigth ||= weigth_range.try(:max_weigth) end
+  def min_weigth
+    @min_weigth ||= weigth_range.try { |r| r.begin.infinite? ? nil : r.begin }
+  end
+  def max_weigth
+    @max_weigth ||= weigth_range.try { |r| r.end.infinite? ? nil : r.end }
+  end
 
   before_validation do
-    self.weigth_range = Range.new(*[min_weigth.presence, max_weigth.presence].map(&:to_f))
+    self.weigth_range = Range.new(
+      BigDecimal(min_weigth.blank? ? '-Infinity' : min_weigth),
+      BigDecimal(max_weigth.blank? ? '+Infinity' : max_weigth)
+    )
   end
 
   def generate_slug

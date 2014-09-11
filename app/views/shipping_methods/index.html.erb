@@ -11,6 +11,8 @@
       <th style="width: 70px"></th>
       <th>Nome</th>
       <th>Descrição</th>
+      <th>Peso Mínimo</th>
+      <th>Peso Máximo</th>
       <th></th>
     </tr>
   </thead>
@@ -26,6 +28,8 @@
       </td>
       <td><%= link_to method.name, edit_shop_shipping_method_path(@shop, method) %></td>
       <td><%= method.description %></td>
+      <td><%= method.min_weigth %></td>
+      <td><%= method.max_weigth %></td>
       <td class="text-right">
         <%= link_to duplicate_shop_shipping_method_path(@shop, method) do %>
           <span class="glyphicon glyphicon-retweet"></span>

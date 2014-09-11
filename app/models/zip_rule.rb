@@ -12,19 +12,8 @@ class ZipRule < ActiveRecord::Base
   end
 
   validates :price, :deadline, presence: true
-  validate :validate_no_overlap
 
   def price=(v)
     super(v.is_a?(String) ? v.gsub(?., '').gsub(?,, ?.) : v)
-  end
-
-  private
-
-  def validate_no_overlap
-    return if shipping_method.blank? || range.blank?
-    overlap = shipping_method.zip_rules
-      .where.not(id: id)
-      .where("range && '[?,?]'::int4range", range.min, range.max)
-    errors.add(:min, :overlaps) if overlap.exists?
   end
 end
