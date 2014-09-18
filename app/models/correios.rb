@@ -36,15 +36,17 @@ class Correios
 
     services = response.body[:calc_preco_prazo_response][:calc_preco_prazo_result][:servicos][:c_servico]
 
-    if error = services.find { |s| s[:erro] != '0' }
-      if error[:erro] == '-3'
+    success, error = services.partition { |s| s[:erro] == '0' }
+
+    error.each do |e|
+      if e[:erro] == '-3'
         raise InvalidZip
       else
-        raise "#{error[:erro]}: #{error[:msg_erro]}"
+        Rails.logger.error("#{e[:erro]}: #{e[:msg_erro]}")
       end
     end
 
-    groups = services.partition { |s| EXPRESS.include?(s[:codigo].to_i) }
+    groups = success.partition { |s| EXPRESS.include?(s[:codigo].to_i) }
     express, normal = groups.flat_map do |group|
       group.min { |s1, s2| parse_price(s1[:valor]) <=> parse_price(s2[:valor]) }
     end
