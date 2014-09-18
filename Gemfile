@@ -9,3 +9,4 @@ gem 'excon'
 gem 'savon'
 gem 'dotenv-rails'
 gem 'rails_12factor', group: :production
+gem 'rollbar', '~> 1.0.0'
