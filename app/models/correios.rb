@@ -34,7 +34,8 @@ class Correios
       'sCdAvisoRecebimento' => 'N',
     )
 
-    services = Array(response.body[:calc_preco_prazo_response][:calc_preco_prazo_result][:servicos][:c_servico])
+    services = response.body[:calc_preco_prazo_response][:calc_preco_prazo_result][:servicos][:c_servico]
+    services = [services] unless services.is_a?(Array)
 
     success, error = services.partition { |s| s[:erro] == '0' }
 
@@ -50,22 +51,27 @@ class Correios
     express, normal = groups.flat_map do |group|
       group.min { |s1, s2| parse_price(s1[:valor]) <=> parse_price(s2[:valor]) }
     end
-    [
-      Quotation.new(
+
+    result = []
+    if express.present?
+      result << Quotation.new(
         name: @shop.express_shipping_name.presence || SERVICES[express[:codigo].to_i],
         price: parse_price(express[:valor]),
         deadline: express[:prazo_entrega].to_i,
         express: true,
         slug: SERVICES[express[:codigo].to_i].parameterize
-      ),
-      Quotation.new(
+      )
+    end
+    if normal.present?
+      result << Quotation.new(
         name: @shop.normal_shipping_name.presence || SERVICES[normal[:codigo].to_i],
         price: parse_price(normal[:valor]),
         deadline: normal[:prazo_entrega].to_i,
         express: false,
         slug: SERVICES[normal[:codigo].to_i].parameterize
       )
-    ]
+    end
+    result
   end
 
   private
