@@ -34,7 +34,7 @@ class Correios
       'sCdAvisoRecebimento' => 'N',
     )
 
-    services = response.body[:calc_preco_prazo_response][:calc_preco_prazo_result][:servicos][:c_servico]
+    services = Array(response.body[:calc_preco_prazo_response][:calc_preco_prazo_result][:servicos][:c_servico])
 
     success, error = services.partition { |s| s[:erro] == '0' }
 
