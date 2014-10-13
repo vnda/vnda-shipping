@@ -12,7 +12,7 @@ class ApiController < ActionController::Base
 
     quotations = @shop.quote(request_params)
     quotations = forward_quote if quotations.empty?
-    render json: quotations
+    render json: quotations || {}
   end
 
   private
