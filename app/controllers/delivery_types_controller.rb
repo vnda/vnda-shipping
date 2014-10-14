@@ -1,7 +1,7 @@
 class DeliveryTypesController < ApplicationController
   before_filter { @shop = Shop.find(params[:shop_id]) }
   before_filter only: [:edit, :update, :toggle, :duplicate] do
-    @delivery_type = @shop.delivery_types.find_by!(slug: params[:id])
+    @delivery_type = @shop.delivery_types.find_by!(id: params[:id])
   end
 
   def index

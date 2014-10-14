@@ -1,0 +1,33 @@
+<%= form_for [@shop, @delivery_type], html: { id: 'delivery_type_form' } do |f| %>
+  <% content_for :actions do %>
+    <%= f.check_box :enabled, class: 'switch', form: 'delivery_type_form' %>
+  <% end %>
+
+  <%= render 'shared/error_messages', resource: @delivery_type %>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-group">
+        <%= f.label :name %>
+        <%= f.text_field :name, class: 'form-control' %>
+      </div>
+    <div class="col-md-6">
+      <div class="form-group">
+        <div class="checkbox">
+            <label>
+              <%= f.check_box :enabled %>
+              <%= DeliveryType.human_attribute_name(:enabled) %>
+            </label>
+          </div>
+      </div>
+      </div>
+      </div>
+    </div>
+  </div>
+
+  </div>
+
+  <%= f.submit 'Salvar', class: 'btn btn-primary' %>
+  <%= link_to 'Cancelar', shop_delivery_types_path(@shop), class: 'btn btn-default' %>
+<% end %>
+

@@ -7,6 +7,7 @@
 #  enabled    :boolean
 #  created_at :datetime
 #  updated_at :datetime
+#  shop_id    :integer
 #
 
 require 'test_helper'
