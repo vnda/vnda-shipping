@@ -15,4 +15,6 @@ class DeliveryType < ActiveRecord::Base
   has_many :shipping_methods
 
   validates :name, presence: true, uniqueness: true
+
+  scope :enableds, -> { where(enabled: true) }
 end

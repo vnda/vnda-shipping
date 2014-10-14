@@ -1,9 +1,9 @@
 class ShippingMethodsController < ApplicationController
   before_filter { @shop = Shop.find(params[:shop_id]) }
-
   before_filter only: [:edit, :update, :toggle, :duplicate] do
     @method = @shop.methods.find_by!(slug: params[:id])
   end
+  before_filter :set_delivery_types, only: [:edit, :new]
 
   def index
     @methods = @shop.methods.order(:id)
@@ -49,6 +49,10 @@ class ShippingMethodsController < ApplicationController
   end
 
   private
+
+  def set_delivery_types
+    @delivery_types = @shop.delivery_types.enableds
+  end
 
   def method_params
     params.require(:shipping_method).permit(
