@@ -3,7 +3,7 @@ class Shop < ActiveRecord::Base
 
   before_create { self.token = SecureRandom.hex }
 
-  validates :name, presence: true
+  validates :name, presence: true, uniqueness: true
 
   def quote(params)
     zip = params[:shipping_zip].gsub(/\D+/, '').to_i

@@ -1,0 +1,12 @@
+development: &DEVELOPMENT
+  adapter: postgresql
+  host: localhost
+  encoding: unicode
+  database: vnda_shipping_development
+  pool: 5
+  username: vagrant
+  password: vnda
+
+test:
+  <<: *DEVELOPMENT
+  database: site_test
