@@ -34,12 +34,14 @@
     </div>
   </div>
 
-  <div class="checkbox">
+  <div class="selectbox">
     <label>
-      <%= f.check_box :express %>
-      <%= ShippingMethod.human_attribute_name(:express) %>
+      <!-- <%= f.check_box :express %> -->
+      <%= f.label :delivery_type_id %>
+      <%= f.collection_select :delivery_type_id, @delivery_types, :id, :name, {prompt: "Selecione o tipo de entrega"}, {class: "form-control"} %>
     </label>
   </div>
+
 
   <table class="table table-form">
     <thead>
