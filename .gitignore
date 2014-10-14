@@ -16,3 +16,5 @@
 /tmp
 
 /db/schema.rb
+
+.env

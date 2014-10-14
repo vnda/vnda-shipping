@@ -2,7 +2,7 @@ development: &DEVELOPMENT
   adapter: postgresql
   host: localhost
   encoding: unicode
-  database: vnda_shipping_development
+  database: shipping_development
   pool: 5
   username: vagrant
   password: vnda
