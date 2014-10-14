@@ -23,8 +23,10 @@
                         class: 'switch enable-delivery-type',
                         data: { size: 'mini', ajax_path: toggle_shop_delivery_type_path(@shop, delivery_type) } %>
     </td>
-      <td><%= link_to delivery_type.name, edit_shop_delivery_type_path(@shop, delivery_type) %></td>
-
+     <td><%= link_to delivery_type.name, edit_shop_delivery_type_path(@shop, delivery_type) %></td>
+     <td class="text-right">
+        <%= link_to_destroy shop_delivery_type_path(@shop, delivery_type) %>
+      </td>
     <% end %>
   </tbody>
 </table>

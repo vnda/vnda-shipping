@@ -15,7 +15,7 @@ class DeliveryTypesController < ApplicationController
   def create
     @delivery_type = @shop.delivery_types.new(delivery_type_params)
     if @delivery_type.save
-      success_redirect edit_shop_delivery_type_path(@shop, @delivery_type)
+      success_redirect shop_delivery_types_path(@shop)
     else
       render :new
     end
@@ -38,13 +38,8 @@ class DeliveryTypesController < ApplicationController
   end
 
   def destroy
-    @shop.delivery_types.find_by!(slug: params[:id]).destroy!
+    @shop.delivery_types.find_by!(id: params[:id]).destroy!
     success_redirect shop_delivery_types_path(@shop)
-  end
-
-  def duplicate
-    @delivery_type = @delivery_type.duplicate
-    render :new
   end
 
   private

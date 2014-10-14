@@ -14,4 +14,5 @@ class DeliveryType < ActiveRecord::Base
   belongs_to :shop
   has_many :shipping_methods
 
+  validates :name, presence: true, uniqueness: true
 end
