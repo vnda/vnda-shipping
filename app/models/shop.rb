@@ -4,6 +4,8 @@ class Shop < ActiveRecord::Base
   before_create { self.token = SecureRandom.hex }
 
   validates :name, presence: true, uniqueness: true
+  validates  :axado_token, presence: true, if: 'forward_to_axado.present?'
+  validates  :correios_code, :correios_password, presence: true, if: 'forward_to_correios.present?'
 
   def quote(params)
     zip = params[:shipping_zip].gsub(/\D+/, '').to_i
