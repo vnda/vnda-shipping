@@ -3,7 +3,7 @@ class ShippingMethodsController < ApplicationController
   before_filter only: [:edit, :update, :toggle, :duplicate] do
     @method = @shop.methods.find_by!(slug: params[:id])
   end
-  before_filter :set_delivery_types, only: [:edit, :new]
+  before_filter :set_delivery_types, only: [:edit, :new, :create, :update]
 
   def index
     @methods = @shop.methods.order(:id)
