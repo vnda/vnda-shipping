@@ -2,18 +2,20 @@
 #
 # Table name: shipping_methods
 #
-#  id           :integer          not null, primary key
-#  shop_id      :integer          not null
-#  name         :string(255)      not null
-#  description  :string(255)      default(""), not null
-#  slug         :string(255)      not null
-#  express      :boolean          default(FALSE), not null
-#  enabled      :boolean          default(FALSE), not null
-#  weigth_range :numrange         default(BigDecimal(-Infinity)...BigDecimal(Infinity)), not null
+#  id               :integer          not null, primary key
+#  shop_id          :integer          not null
+#  name             :string(255)      not null
+#  description      :string(255)      default(""), not null
+#  slug             :string(255)      not null
+#  express          :boolean          default(FALSE), not null
+#  enabled          :boolean          default(FALSE), not null
+#  weigth_range     :numrange         default(BigDecimal(-Infinity)...BigDecimal(Infinity)), not null
+#  delivery_type_id :integer
 #
 
 class ShippingMethod < ActiveRecord::Base
   belongs_to :shop
+  belongs_to :delivery_type
   has_many :zip_rules, dependent: :destroy
   accepts_nested_attributes_for :zip_rules, allow_destroy: true, reject_if: :all_blank
 

@@ -16,6 +16,7 @@
           <%= content_tag :li, class: ('active' if params[:controller] == 'shipping_methods') do %>
             <li><%= link_to 'Lojas', shops_path(@shop) %>
             <li><%= link_to 'Formas de Entrega', shop_shipping_methods_path(@shop) %>
+              <li><%= link_to 'Tipos de Entrega', shop_delivery_types_path(@shop) %>
           <% end %>
         </ul>
         <% other = Shop.all.where.not(id: @shop.id) %>

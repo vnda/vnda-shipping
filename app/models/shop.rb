@@ -16,7 +16,8 @@
 #
 
 class Shop < ActiveRecord::Base
-  has_many :methods, class_name: 'ShippingMethod'
+  has_many :methods, class_name: 'ShippingMethod', dependent: :destroy
+  has_many :delivery_types, dependent: :destroy
 
   before_create { self.token = SecureRandom.hex }
 

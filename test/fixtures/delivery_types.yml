@@ -1,0 +1,20 @@
+# == Schema Information
+#
+# Table name: delivery_types
+#
+#  id         :integer          not null, primary key
+#  name       :string(255)
+#  enabled    :boolean
+#  created_at :datetime
+#  updated_at :datetime
+#
+
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  enabled: false
+
+two:
+  name: MyString
+  enabled: false
