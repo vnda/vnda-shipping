@@ -26,7 +26,7 @@ class DeliveryTypesController < ApplicationController
 
   def update
     if @delivery_type.update(delivery_type_params)
-      success_redirect edit_shop_delivery_type_path(@shop, @delivery_type)
+      success_redirect shop_delivery_types_path(@shop)
     else
       render :edit
     end
@@ -51,6 +51,7 @@ class DeliveryTypesController < ApplicationController
 
   def delivery_type_params
     params.require(:delivery_type).permit(
+      :name, :enabled
       )
   end
 end

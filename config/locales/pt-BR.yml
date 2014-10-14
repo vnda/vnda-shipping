@@ -231,6 +231,10 @@ pt-BR:
       create: 'Forma de entrega criada com sucesso'
       update: 'Forma de entrega atualizada com sucesso'
       destroy: 'Forma de entrega removida com sucesso'
+    delivery_types:
+      create: 'Tipo de entrega criado com sucesso'
+      update: 'Tipo de entrega atualizado com sucesso'
+      destroy: 'Tipo de entrega removido com sucesso'
     shops:
       create: 'Loja criada com sucesso'
       update: 'Loja atualizada com sucesso'

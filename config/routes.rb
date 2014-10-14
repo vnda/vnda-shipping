@@ -7,7 +7,9 @@ Rails.application.routes.draw do
       patch :toggle, on: :member
       get :duplicate, on: :member
     end
-    resources :delivery_types
+    resources :delivery_types do
+      patch :toggle, on: :member
+    end
   end
 
   match '/quote', to: 'api#quote', via: [:get, :post], format: :json
