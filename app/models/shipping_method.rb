@@ -1,3 +1,17 @@
+# == Schema Information
+#
+# Table name: shipping_methods
+#
+#  id           :integer          not null, primary key
+#  shop_id      :integer          not null
+#  name         :string(255)      not null
+#  description  :string(255)      default(""), not null
+#  slug         :string(255)      not null
+#  express      :boolean          default(FALSE), not null
+#  enabled      :boolean          default(FALSE), not null
+#  weigth_range :numrange         default(BigDecimal(-Infinity)...BigDecimal(Infinity)), not null
+#
+
 class ShippingMethod < ActiveRecord::Base
   belongs_to :shop
   has_many :zip_rules, dependent: :destroy

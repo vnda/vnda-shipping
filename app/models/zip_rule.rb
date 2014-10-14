@@ -1,3 +1,14 @@
+# == Schema Information
+#
+# Table name: zip_rules
+#
+#  id                 :integer          not null, primary key
+#  shipping_method_id :integer          not null
+#  range              :int4range        not null
+#  price              :decimal(10, 2)
+#  deadline           :integer          not null
+#
+
 class ZipRule < ActiveRecord::Base
   belongs_to :shipping_method
 
