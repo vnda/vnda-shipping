@@ -31,7 +31,7 @@ class Shop < ActiveRecord::Base
     weigth = params[:products].sum { |i| i[:weight].to_f }
 
     methods
-      .where(enabled: true)
+      .where(enabled: true).joins(:delivery_type).where(delivery_types: { enabled: true })
       .for_weigth(weigth)
       .joins(:zip_rules)
       .merge(ZipRule.for_zip(zip))
