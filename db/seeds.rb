@@ -5,3 +5,5 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
+DeliveryType.find_or_create_by!(name: "Normal", enabled: true)
+DeliveryType.find_or_create_by!(name: "Expressa", enabled: true)
