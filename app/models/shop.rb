@@ -20,6 +20,7 @@ class Shop < ActiveRecord::Base
   has_many :delivery_types, dependent: :destroy
 
   before_create { self.token = SecureRandom.hex }
+  after_create :create_delivery_types
 
   validates :name, presence: true, uniqueness: true
   validates  :axado_token, presence: true, if: 'forward_to_axado.present?'
@@ -39,4 +40,10 @@ class Shop < ActiveRecord::Base
         Quotation.new(name: n, price: p.to_f, deadline: d, express: e, slug: s)
       end
   end
+
+  private
+    def create_delivery_types
+      self.delivery_types << DeliveryType.find_by(name: 'Normal')
+      self.delivery_types << DeliveryType.find_by(name: 'Expressa')
+    end
 end
