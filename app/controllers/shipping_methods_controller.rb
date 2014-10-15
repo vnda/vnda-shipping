@@ -51,7 +51,7 @@ class ShippingMethodsController < ApplicationController
   private
 
   def set_delivery_types
-    @delivery_types = @shop.delivery_types.enableds
+    @delivery_types = @shop.delivery_types
   end
 
   def method_params
