@@ -37,7 +37,7 @@ class Correios
     services = response.body[:calc_preco_prazo_response][:calc_preco_prazo_result][:servicos][:c_servico]
     services = [services] unless services.is_a?(Array)
 
-    success, error = services.partition { |s| s[:erro] == '0' }
+    success, error = services.partition { |s| s[:erro] == '0' || s[:erro] == "010"}
 
     error.each do |e|
       if e[:erro] == '-3'
@@ -71,6 +71,8 @@ class Correios
         slug: SERVICES[normal[:codigo].to_i].parameterize
       )
     end
+    puts result
+    puts "HERE ->"
     result
   end
 
