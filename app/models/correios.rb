@@ -54,25 +54,27 @@ class Correios
 
     result = []
     if express.present?
+      deadline = express[:erro] == '010'? express[:prazo_entrega].to_i + 7 : express[:prazo_entrega].to_i
+
       result << Quotation.new(
         name: @shop.express_shipping_name.presence || SERVICES[express[:codigo].to_i],
         price: parse_price(express[:valor]),
-        deadline: express[:prazo_entrega].to_i,
+        deadline: deadline,
         express: true,
         slug: SERVICES[express[:codigo].to_i].parameterize
       )
     end
     if normal.present?
+      deadline = normal[:erro] == '010'? normal[:prazo_entrega].to_i + 7 : normal[:prazo_entrega].to_i
+
       result << Quotation.new(
         name: @shop.normal_shipping_name.presence || SERVICES[normal[:codigo].to_i],
         price: parse_price(normal[:valor]),
-        deadline: normal[:prazo_entrega].to_i,
+        deadline: deadline,
         express: false,
         slug: SERVICES[normal[:codigo].to_i].parameterize
       )
     end
-    puts result
-    puts "HERE ->"
     result
   end
 
