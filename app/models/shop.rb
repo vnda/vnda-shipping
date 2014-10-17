@@ -44,6 +44,7 @@ class Shop < ActiveRecord::Base
   def create_delivery_types
     self.delivery_types << DeliveryType.find_by(name: 'Normal')
     self.delivery_types << DeliveryType.find_by(name: 'Expressa')
+    self.save(:validate => false)
   end
 
 end
