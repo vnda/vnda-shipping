@@ -11,7 +11,7 @@ class ApiController < ActionController::Base
     end
 
     quotations = @shop.quote(request_params)
-    quotations += forward_quote
+    quotations += forward_quote if forward_quote
 
     render json: quotations || {}
   end
