@@ -11,7 +11,7 @@ class ApiController < ActionController::Base
     end
 
     quotations = @shop.quote(request_params)
-    quotations += forward_quote if forward_quote
+    quotations += forward_quote || []
 
     render json: quotations || {}
   end
@@ -23,6 +23,8 @@ class ApiController < ActionController::Base
       Axado.quote(@shop.axado_token, request_params)
     elsif @shop.forward_to_correios?
       Correios.new(@shop).quote(request_params)
+    else
+
     end
   end
 
