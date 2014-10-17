@@ -42,8 +42,8 @@ class Shop < ActiveRecord::Base
   end
 
   def create_delivery_types
-    self.delivery_types.find_or_create_by!(name: 'Normal', enabled: false)
-    self.delivery_types.find_or_create_by!(name: 'Expressa', enabled: false)
+    self.delivery_types.where(name: "Normal").first_or_create(enabled: true)
+    self.delivery_types.where(name: "Expressa").first_or_create(enabled: true)
   end
 
 end
