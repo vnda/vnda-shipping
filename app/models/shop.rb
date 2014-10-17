@@ -41,9 +41,9 @@ class Shop < ActiveRecord::Base
       end
   end
 
-  private
-    def create_delivery_types
-      self.delivery_types << DeliveryType.find_by(name: 'Normal')
-      self.delivery_types << DeliveryType.find_by(name: 'Expressa')
-    end
+  def create_delivery_types
+    self.delivery_types << DeliveryType.find_by(name: 'Normal')
+    self.delivery_types << DeliveryType.find_by(name: 'Expressa')
+  end
+
 end
