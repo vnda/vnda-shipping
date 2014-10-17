@@ -14,7 +14,7 @@ class DeliveryType < ActiveRecord::Base
   belongs_to :shop
   has_many :shipping_methods
 
-  validates :name, presence: true, uniqueness: true
+  validates :name, presence: true
 
   scope :enableds, -> { where(enabled: true) }
 end

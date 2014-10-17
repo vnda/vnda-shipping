@@ -42,9 +42,8 @@ class Shop < ActiveRecord::Base
   end
 
   def create_delivery_types
-    self.delivery_types << DeliveryType.find_by(name: 'Normal')
-    self.delivery_types << DeliveryType.find_by(name: 'Expressa')
-    self.save(:validate => false)
+    self.delivery_types.find_or_create_by!(name: 'Normal', enabled: false)
+    self.delivery_types.find_or_create_by!(name: 'Expressa', enabled: false)
   end
 
 end
