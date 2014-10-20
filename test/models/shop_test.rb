@@ -27,7 +27,7 @@ describe Shop do
     shop.must_be :valid?
   end
 
-  it "is invalid if correios is checked and correios_token is empty" do
+  it "is invalid if correios is checked and correios_code or correios_password is empty" do
     shop_params.merge!( {forward_to_correios: true})
 
     shop.wont_be :valid?

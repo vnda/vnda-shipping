@@ -18,8 +18,10 @@ class ApplicationController < ActionController::Base
   end
 
   def require_authentication
-    authenticate_or_request_with_http_basic do |name, password|
-      name == ENV['HTTP_USER'] && password == ENV['HTTP_PASSWORD']
+    if Rails.env == "production"
+      authenticate_or_request_with_http_basic do |name, password|
+        name == ENV['HTTP_USER'] && password == ENV['HTTP_PASSWORD']
+      end
     end
   end
 end
