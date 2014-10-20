@@ -1,20 +1,38 @@
-# class ShopTest < ActiveSupport::TestCase
 describe Shop do
 
   let(:shop_params) { { name: "Loja 1" } }
   let(:shop) { Shop.new shop_params }
 
   it "is valid with valid params" do
-    shop.must_be :valid? # Must create with valid params
-
+    shop.must_be :valid?
   end
 
   it "is invalid without a name" do
     shop_params.delete :name
 
-    shop.wont_be :valid? #Must not be valid without email
-    shop.errors[:name].must_be :present? # Must have error for missing email
-
+    shop.wont_be :valid?
+    shop.errors[:name].must_be :present?
   end
 
-end
+  it "is invalid if axado is checked and axado_token is empty" do
+    shop_params.merge!( {forward_to_axado: true})
+
+    shop.wont_be :valid?
+    shop.errors[:axado_token].must_be :present?
+  end
+
+  it "is valid if axado is checked and axado_token is present" do
+    shop_params.merge!( {forward_to_axado: true, axado_token: "12345678"})
+
+    shop.must_be :valid?
+  end
+
+  it "is invalid if correios is checked and correios_token is empty" do
+    skip("TBD")
+  end
+
+  it "is valid if correios is checked and correios_token is present" do
+    skip("TBD")
+  end
+
+ end
