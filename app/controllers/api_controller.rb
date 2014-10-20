@@ -11,9 +11,19 @@ class ApiController < ActionController::Base
     end
 
     quotations = @shop.quote(request_params)
-    quotations += forward_quote || []
+    quotations += forward_quote || [] unless check_express(quotations)
 
     render json: quotations || {}
+  end
+
+  def check_express(quotations)
+    express = false
+    quotations.each do |q|
+      if method = @shop.methods.find_by(name: q.name)
+        express = true if method.delivery_type.name == 'Expressa'
+      end
+    end
+    return express
   end
 
   private
