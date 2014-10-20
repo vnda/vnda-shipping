@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141014141952) do
+ActiveRecord::Schema.define(version: 20141020200327) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -43,7 +43,7 @@ ActiveRecord::Schema.define(version: 20141014141952) do
     t.string  "name",                                             null: false
     t.string  "token",                 limit: 32,                 null: false
     t.string  "axado_token",           limit: 32
-    t.boolean "forward_to_axado",                 default: true,  null: false
+    t.boolean "forward_to_axado",                 default: false, null: false
     t.string  "correios_code"
     t.string  "correios_password"
     t.boolean "forward_to_correios",              default: false, null: false
