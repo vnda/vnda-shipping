@@ -28,11 +28,17 @@ describe Shop do
   end
 
   it "is invalid if correios is checked and correios_token is empty" do
-    skip("TBD")
+    shop_params.merge!( {forward_to_correios: true})
+
+    shop.wont_be :valid?
+    shop.errors[:correios_password].must_be :present?
+    shop.errors[:correios_code].must_be :present?
   end
 
   it "is valid if correios is checked and correios_token is present" do
-    skip("TBD")
+    shop_params.merge!( {forward_to_correios: true, correios_code: "12345678", correios_password: "abcdef"})
+
+    shop.must_be :valid?
   end
 
  end
