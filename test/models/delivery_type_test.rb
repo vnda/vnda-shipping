@@ -13,7 +13,9 @@
 require 'test_helper'
 
 class DeliveryTypeTest < ActiveSupport::TestCase
-  # test "the truth" do
-  #   assert true
-  # end
+  let(:delivery_type_x)   { DeliveryType.create! :name => 'Normal' }
+  it 'creates' do
+    delivery_type_x.must_be_instance_of DeliveryType
+  end
 end
+

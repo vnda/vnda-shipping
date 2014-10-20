@@ -15,3 +15,7 @@ gem 'puma'
 group :development, :staging, :production do
   gem "newrelic_rpm"
 end
+
+group :test do
+  gem 'minitest-spec-rails'
+end
