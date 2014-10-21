@@ -1,3 +1,4 @@
+# require 'test_helper'
 # describe ShopsController do
 #   setup do
 #     @shop = shops(:one)

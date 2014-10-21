@@ -12,6 +12,7 @@
 #  weigth_range     :numrange         default(BigDecimal(-Infinity)...BigDecimal(Infinity)), not null
 #  delivery_type_id :integer
 #
+require 'test_helper'
 
 describe ShippingMethod do
   setup do

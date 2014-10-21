@@ -14,6 +14,7 @@
 #  normal_shipping_name  :string(255)
 #  express_shipping_name :string(255)
 #
+require 'test_helper'
 
 describe Shop do
 

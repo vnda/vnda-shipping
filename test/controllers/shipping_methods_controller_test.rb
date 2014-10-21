@@ -1,3 +1,5 @@
+require 'test_helper'
+
 describe ShippingMethodsController do
   setup do
     @shop = shops(:one)
