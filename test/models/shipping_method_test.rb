@@ -19,7 +19,7 @@ describe ShippingMethod do
   end
 
   describe "when validating" do
-    it "set with_range" do
+    it "set weigth_range" do
       shipping_method.weigth_range.must_equal (-BigDecimal::INFINITY...BigDecimal::INFINITY)
       shipping_method.min_weigth = 10
       shipping_method.max_weigth = 100

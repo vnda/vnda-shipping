@@ -41,4 +41,12 @@ describe Shop do
     shop.must_be :valid?
   end
 
+  describe "before creating" do
+      it "generates a token" do
+        shop.token.must_be :nil?
+        shop.save!
+        shop.token.wont_be :nil?
+      end
+    end
+
  end
