@@ -2,6 +2,8 @@ ENV["RAILS_ENV"] ||= "test"
 require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
 require "minitest/spec"
+require 'simplecov'
+SimpleCov.start 'rails' # feel free to pass block
 
 class ActiveSupport::TestCase
   ActiveRecord::Migration.check_pending!

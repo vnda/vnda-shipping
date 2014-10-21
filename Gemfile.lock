@@ -32,6 +32,7 @@ GEM
       nokogiri
     arel (5.0.1.20140414130214)
     builder (3.2.2)
+    docile (1.1.5)
     dotenv (0.11.1)
       dotenv-deployment (~> 0.0.2)
     dotenv-deployment (0.0.2)
@@ -103,6 +104,11 @@ GEM
       nori (~> 2.4.0)
       uuid (~> 2.3.7)
       wasabi (~> 3.3.0)
+    simplecov (0.9.1)
+      docile (~> 1.1.0)
+      multi_json (~> 1.0)
+      simplecov-html (~> 0.8.0)
+    simplecov-html (0.8.0)
     sprockets (2.12.1)
       hike (~> 1.2)
       multi_json (~> 1.0)
@@ -143,3 +149,4 @@ DEPENDENCIES
   rails_12factor
   rollbar (~> 1.0.0)
   savon
+  simplecov
