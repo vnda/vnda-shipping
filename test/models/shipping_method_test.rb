@@ -1,3 +1,18 @@
+# == Schema Information
+#
+# Table name: shipping_methods
+#
+#  id               :integer          not null, primary key
+#  shop_id          :integer          not null
+#  name             :string(255)      not null
+#  description      :string(255)      default(""), not null
+#  slug             :string(255)      not null
+#  express          :boolean          default(FALSE), not null
+#  enabled          :boolean          default(FALSE), not null
+#  weigth_range     :numrange         default(BigDecimal(-Infinity)...BigDecimal(Infinity)), not null
+#  delivery_type_id :integer
+#
+
 describe ShippingMethod do
   setup do
     @shop = shops(:one)
@@ -24,7 +39,7 @@ describe ShippingMethod do
       shipping_method.min_weigth = 10
       shipping_method.max_weigth = 100
 
-      shipping_method.valid?.must_equal true
+      shipping_method.must_be :valid?
       shipping_method.save!
 
       shipping_method.weigth_range.must_equal (10..100)

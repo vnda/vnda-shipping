@@ -1,3 +1,20 @@
+# == Schema Information
+#
+# Table name: shops
+#
+#  id                    :integer          not null, primary key
+#  name                  :string(255)      not null
+#  token                 :string(32)       not null
+#  axado_token           :string(32)
+#  forward_to_axado      :boolean          default(FALSE), not null
+#  correios_code         :string(255)
+#  correios_password     :string(255)
+#  forward_to_correios   :boolean          default(FALSE), not null
+#  correios_services     :integer          default([]), not null, is an Array
+#  normal_shipping_name  :string(255)
+#  express_shipping_name :string(255)
+#
+
 describe Shop do
 
   let(:shop_params) { { id: 1, name: "Loja Teste"} }
