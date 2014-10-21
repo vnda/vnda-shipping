@@ -32,7 +32,7 @@ describe ShopsController do
   end
 
   test "should destroy shop" do
-    assert_difference('shop.count', -1) do
+    assert_difference('Shop.count', -1) do
       delete :destroy, id: @shop
     end
 

@@ -1,6 +1,6 @@
 describe Shop do
 
-  let(:shop_params) { { name: "Loja 1" } }
+  let(:shop_params) { { id: 1, name: "Loja Teste"} }
   let(:shop) { Shop.new shop_params }
 
   it "is valid with valid params" do
@@ -21,13 +21,13 @@ describe Shop do
     shop.errors[:axado_token].must_be :present?
   end
 
-  it "is valid if axado is checked and axado_token is present" do
+  it "is valid if forward_to_axado is checked and axado_token is present" do
     shop_params.merge!( {forward_to_axado: true, axado_token: "12345678"})
 
     shop.must_be :valid?
   end
 
-  it "is invalid if correios is checked and correios_code or correios_password is empty" do
+  it "is invalid if forward_to_correios is checked and correios_code or correios_password is empty" do
     shop_params.merge!( {forward_to_correios: true})
 
     shop.wont_be :valid?
