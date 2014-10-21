@@ -1,42 +1,36 @@
-# require 'test_helper'
-# describe ShopsController do
-#   setup do
-#     @shop = shops(:one)
-#   end
+require 'test_helper'
 
-#   test "should get index" do
-#     get :index
-#     assert_response :success
-#   end
+describe DeliveryTypesController do
+  setup do
+    @shop = shops(:one)
+    @delivery_type = delivery_types(:one)
+  end
 
-#   test "should get new" do
-#     get :new
-#     assert_response :success
-#   end
+  let(:shop_params) { { name: "Loja Teste"} }
+  let(:shop) { Shop.create shop_params }
 
-#   test "should create shop" do
-#     assert_difference('Shop.count') do
-#       post :create, shop: { name: 'Loja 2'}
-#     end
+  let(:delivery_type_params) { { name: "Tipo de envio 1", shop_id: shop.id, enabled: false} }
+  let(:delivery_type) { DeliveryType.create delivery_type_params }
 
-#     assert_redirected_to shop_shipping_methods_path(Shop.last)
-#   end
+  test "should get index" do
+    get :index, shop_id: @shop
+    assert_response :success
+  end
 
-#   test "should get edit" do
-#     get :edit, id: @shop
-#     assert_response :success
-#   end
+  test "should get new" do
+    get :new, shop_id: @shop
+    assert_response :success
+  end
 
-#   test "should update shop" do
-#     patch :update, id: @shop, shop: { name: 'Loja 3' }
-#     assert_redirected_to shops_path
-#   end
+  test "should create delivery_type" do
+    assert_difference('DeliveryType.count') do
+      post :create, delivery_type: { name: 'Tipo de envio 2', shop: @shop}, shop_id: @shop
+    end
+    assert_redirected_to shop_delivery_types_path(@shop)
+  end
 
-#   test "should destroy shop" do
-#     assert_difference('Shop.count', -1) do
-#       delete :destroy, id: @shop
-#     end
-
-#     assert_redirected_to shops_path
-#   end
-# end
+  test "should get edit" do
+    get :edit, shop_id: shop, id: delivery_type
+    assert_response :success
+  end
+end
