@@ -30,6 +30,19 @@ class ApiSpec < ActionDispatch::IntegrationTest
 
   end
 
+  describe "axado quote" do
 
+    it "returns axado quotation" do
+      skip
+    end
+  end
+
+  describe "correios quote" do
+
+    it "returns correios quotation" do
+      skip
+    end
+
+  end
 
 end
