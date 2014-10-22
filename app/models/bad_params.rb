@@ -1,0 +1,1 @@
+class BadParams < StandardError; end

@@ -1,5 +1,5 @@
 class ApiController < ActionController::Base
-  rescue_from InvalidZip do
+  rescue_from InvalidZip && BadParams do
     head :bad_request
   end
 
@@ -12,7 +12,8 @@ class ApiController < ActionController::Base
     quotations = @shop.quote(request_params)
     quotations += forward_quote || [] unless check_express(quotations)
 
-    render json: quotations || {}
+    render json: quotations, status: 200
+
   end
 
   def check_express(quotations)

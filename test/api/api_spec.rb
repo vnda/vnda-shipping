@@ -20,6 +20,14 @@ class ApiSpec < ActionDispatch::IntegrationTest
       response.body.must_equal '[{"name":"Metodo 1","price":15.0,"deadline":2,"express":true,"slug":"metodo-1"}]'
 
     end
+
+    it "returns nothing when params is not ok" do
+      params = JSON.parse('{"origin_zip":"12946636"}')
+      post "/quote?token=#{@shop.token}", params
+
+      response.status.must_equal 400
+    end
+
   end
 
 

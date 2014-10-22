@@ -27,6 +27,8 @@ class Shop < ActiveRecord::Base
   validates  :correios_code, :correios_password, presence: true, if: 'forward_to_correios.present?'
 
   def quote(params)
+    raise BadParams unless params[:shipping_zip] && params[:products]
+
     zip = params[:shipping_zip].gsub(/\D+/, '').to_i
     weigth = params[:products].sum { |i| i[:weight].to_f }
 
