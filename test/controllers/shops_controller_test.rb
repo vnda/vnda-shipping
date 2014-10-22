@@ -6,13 +6,16 @@ describe ShopsController do
   end
 
   test "should get index" do
+    assigns(:shops).must_be :nil?
     get :index
     assert_response :success
+    assigns(:shops).wont_be :nil?
   end
 
   test "should get new" do
     get :new
     assert_response :success
+    assigns(:shop).class.name.must_equal 'Shop'
   end
 
   test "should create shop" do
