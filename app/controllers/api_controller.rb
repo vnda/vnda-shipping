@@ -9,7 +9,6 @@ class ApiController < ActionController::Base
     rescue ActiveRecord::RecordNotFound
       return head :unauthorized
     end
-
     quotations = @shop.quote(request_params)
     quotations += forward_quote || [] unless check_express(quotations)
 

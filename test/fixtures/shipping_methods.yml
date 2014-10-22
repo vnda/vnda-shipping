@@ -17,4 +17,7 @@ one:
   name: Metodo 1
   slug: metodo-1
   shop: one
+  express: true
+  enabled: true
 
+  delivery_type: one

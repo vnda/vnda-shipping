@@ -18,3 +18,5 @@
 /db/schema.rb
 
 .env
+
+/coverage

@@ -1,4 +1,17 @@
+# == Schema Information
+#
+# Table name: delivery_types
+#
+#  id         :integer          not null, primary key
+#  name       :string(255)
+#  enabled    :boolean
+#  created_at :datetime
+#  updated_at :datetime
+#  shop_id    :integer
+#
+
 one:
   name: Tipo de envio 1
   shop: one
+  enabled: true
 
