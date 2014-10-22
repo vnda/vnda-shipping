@@ -59,6 +59,12 @@ describe Shop do
     shop.must_be :valid?
   end
 
+  it "creates default delivery types" do
+    shop.delivery_types.count.must_equal 0
+    shop.create_delivery_types
+    shop.delivery_types.count.must_equal 2
+  end
+
   describe "before creating" do
       it "generates a token" do
         shop.token.must_be :nil?
