@@ -3,6 +3,9 @@ require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
 require "minitest/spec"
 require 'simplecov'
+require 'mocha/mini_test'
+require 'webmock/minitest'
+
 SimpleCov.start 'rails' # feel free to pass block
 
 class ActiveSupport::TestCase

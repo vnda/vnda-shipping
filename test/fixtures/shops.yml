@@ -18,3 +18,14 @@
 one:
   name: Loja 1
   token: bf8ee8a9bf71dbdad2310414eb915991
+axado:
+  name: Teste axado
+  forward_to_axado: true
+  token: bf8ee8a9bf71dbdad2310414eb915992
+  axado_token: faketoken
+correios:
+  name: Teste correios
+  token: bf8ee8a9bf71dbdad2310414eb915993
+  forward_to_correios: true
+  correios_code: fakecode
+  correios_password: fakepassword
