@@ -13,4 +13,5 @@ Rails.application.routes.draw do
   end
 
   match '/quote', to: 'api#quote', via: [:get, :post], format: :json
+  match '/delivery_date', to: 'api#delivery_date', via: [:get, :post], format: :json
 end

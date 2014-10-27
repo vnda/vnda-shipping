@@ -1,14 +1,16 @@
 class ApiController < ActionController::Base
+  before_action :set_shop, only: [:quote, :delivery_date]
   rescue_from InvalidZip && BadParams do
     head :bad_request
   end
 
+  def delivery_date
+    delivery_dates = ['Manha', 'Tarde']
+    render json: delivery_dates, status: 200
+
+  end
+
   def quote
-    @shop = begin
-      Shop.find_by!(token: params[:token])
-    rescue ActiveRecord::RecordNotFound
-      return head :unauthorized
-    end
     quotations = @shop.quote(request_params)
     quotations += forward_quote || [] unless check_express(quotations)
 
@@ -27,6 +29,14 @@ class ApiController < ActionController::Base
   end
 
   private
+
+  def set_shop
+    @shop = begin
+      Shop.find_by!(token: params[:token])
+    rescue ActiveRecord::RecordNotFound
+      return head :unauthorized
+    end
+  end
 
   def forward_quote
     if @shop.forward_to_axado?
