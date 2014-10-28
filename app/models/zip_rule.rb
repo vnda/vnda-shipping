@@ -11,6 +11,7 @@
 
 class ZipRule < ActiveRecord::Base
   belongs_to :shipping_method
+  has_and_belongs_to_many :periods
 
   scope :for_zip, -> zip { where('zip_rules.range @> ?', zip) }
 
