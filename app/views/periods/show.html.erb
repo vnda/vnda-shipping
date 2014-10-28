@@ -7,12 +7,14 @@
 
 <p>
   <strong>Limit time:</strong>
-  <%= @period.limit_time %>
+  <%= l @period.limit_time %>
 </p>
 
 <p>
   <strong>Days off:</strong>
-  <%= @period.days_off %>
+  <% @period.days_off.each do |p| %>
+    <%= p %>
+    <% end %>
 </p>
 
 <%= link_to 'Edit', edit_shop_period_path(@shop, @period) %> |
