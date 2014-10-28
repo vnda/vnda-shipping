@@ -21,9 +21,17 @@
   </div>
   <div class="field">
     <%= f.label :days_off %><br>
-    <%= f.text_area :days_off %>
+    <!-- <%= f.text_area :days_off %> -->
+    <%= f.select :days_off, options_for_select(Period::DAYS), {}, {:multiple => true, :class => "multiselect"} %>
   </div>
   <div class="actions">
     <%= f.submit %>
   </div>
 <% end %>
+
+<script>
+$(".multiselect").multiselect({
+   selectedList: 3,
+   header: false
+});
+</script>
