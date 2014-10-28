@@ -1,0 +1,29 @@
+<h1>Listing periods</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Limit time</th>
+      <th>Days off</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @periods.each do |period| %>
+      <tr>
+        <td><%= period.name %></td>
+        <td><%= period.limit_time %></td>
+        <td><%= period.days_off %></td>
+        <td><%= link_to 'Show', shop_period_path(@shop, period) %></td>
+        <td><%= link_to 'Edit', edit_shop_period_path(@shop, period) %></td>
+        <td><%= link_to 'Destroy', shop_period_path(@shop, period), method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Period', new_shop_period_path %>

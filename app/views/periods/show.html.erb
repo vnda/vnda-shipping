@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @period.name %>
+</p>
+
+<p>
+  <strong>Limit time:</strong>
+  <%= @period.limit_time %>
+</p>
+
+<p>
+  <strong>Days off:</strong>
+  <%= @period.days_off %>
+</p>
+
+<%= link_to 'Edit', edit_shop_period_path(@shop, @period) %> |
+<%= link_to 'Back', shop_periods_path(@shop) %>

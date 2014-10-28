@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+
   get :status, to: 'application#status'
 
   root to: 'shops#index'
@@ -10,6 +11,8 @@ Rails.application.routes.draw do
     resources :delivery_types do
       patch :toggle, on: :member
     end
+    resources :periods
+
   end
 
   match '/quote', to: 'api#quote', via: [:get, :post], format: :json
