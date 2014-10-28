@@ -3,6 +3,7 @@ class Period < ActiveRecord::Base
 
   validates :name, :limit_time, presence: true
 
-  DAYS = ['Domingo', 'Segunda']
+  DAYS = ['Sábado', 'Domingo', 'Segunda-Feira', 'Terça-Feira',
+               'Quarta-Feira', 'Quinta-Feira', 'Sexta-Feira']
 
 end
