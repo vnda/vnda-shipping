@@ -7,7 +7,15 @@
       <%= f.text_field :price, data: { mask_money: true }, class: 'text-right form-control' %>
     </div>
   </td>
-  <td><%= f.text_field :deadline, class: 'form-control' %></td>
+  <td style="width: 140px;"><%= f.text_field :deadline, class: 'form-control' %></td>
+
+  <% unless @shop.periods.empty?  %>
+    <td style="width: 250px;">
+      <div class="multiselect">
+          <%= f.select :periods, options_for_select(@shop.periods.collect { |p| [p.name, p.id] }), {:include_blank => false}, {:multiple => true} %>
+      </div>
+    </td>
+    <% end %>
   <td style="width: 90px;">
     <%= link_to 'javascript:void(0)', class: 'btn btn-default',
         data: { clone_rule: true } do %>
@@ -20,3 +28,11 @@
     <% end %>
   </td>
 </tr>
+
+<script>
+$(".multiselect").multiselect({
+   noneSelectedText: "Selecione...",
+   selectedList: 3,
+   header: false
+});
+</script>

@@ -62,6 +62,9 @@
         <th>CEP Fim</th>
         <th>Preço</th>
         <th>Prazo</th>
+        <% unless @shop.periods.empty?  %>
+          <th>Período</th>
+        <% end %>
         <th></th>
       </tr>
     </thead>
