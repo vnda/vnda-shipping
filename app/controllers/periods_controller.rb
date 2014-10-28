@@ -28,7 +28,7 @@ class PeriodsController < ApplicationController
 
   def update
     if @period.update(period_params)
-      redirect_to @period, notice: 'Period was successfully updated.'
+      redirect_to shop_period_path(@shop, @period), notice: 'Period was successfully updated.'
     else
       render :edit
     end
