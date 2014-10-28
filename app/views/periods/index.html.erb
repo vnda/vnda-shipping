@@ -14,8 +14,14 @@
     <% @periods.each do |period| %>
       <tr>
         <td><%= period.name %></td>
-        <td><%= period.limit_time %></td>
-        <td><%= period.days_off %></td>
+        <td><%= period.limit_time.strftime("%H:%M ") %></td>
+        <td>
+          <% if period.days_off.present? %>
+            <% period.days_off.each do |p| %>
+              <%= p %>
+            <% end %>
+          <% end %>
+        </td>
         <td><%= link_to 'Show', shop_period_path(@shop, period) %></td>
         <td><%= link_to 'Edit', edit_shop_period_path(@shop, period) %></td>
         <td><%= link_to 'Destroy', shop_period_path(@shop, period), method: :delete, data: { confirm: 'Are you sure?' } %></td>
