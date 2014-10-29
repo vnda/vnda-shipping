@@ -19,6 +19,7 @@ class Shop < ActiveRecord::Base
   has_many :methods, class_name: 'ShippingMethod', dependent: :destroy
   has_many :delivery_types, dependent: :destroy
   has_many :periods, dependent: :destroy
+  has_many :zip_rules, through: :methods
 
   before_create { self.token = SecureRandom.hex }
   after_create :create_delivery_types
