@@ -20,7 +20,7 @@ class PeriodsController < ApplicationController
     @period = @shop.periods.new(period_params)
 
     if @period.save
-      redirect_to shop_period_path(@shop, @period), notice: 'Period was successfully created.'
+      redirect_to shop_period_path(@shop, @period), notice: 'Periodo de Entrega Criado com Sucesso.'
     else
       render :new
     end
@@ -28,7 +28,7 @@ class PeriodsController < ApplicationController
 
   def update
     if @period.update(period_params)
-      redirect_to shop_period_path(@shop, @period), notice: 'Period was successfully updated.'
+      redirect_to edit_shop_period_path(@shop, @period), notice: 'Periodo de Entrega Atualizado com Sucesso.'
     else
       render :edit
     end
@@ -36,7 +36,7 @@ class PeriodsController < ApplicationController
 
   def destroy
     @period.destroy
-    redirect_to shop_periods_path(@shop), notice: 'Period was successfully destroyed.'
+    redirect_to shop_periods_path(@shop), notice: 'Periodo de Entrega foi Apagado.'
   end
 
   private
