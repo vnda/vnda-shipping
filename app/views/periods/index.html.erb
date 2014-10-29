@@ -1,11 +1,17 @@
-<h1>Listing periods</h1>
+<% content_for :title, 'Períodos de Entrega' %>
 
-<table>
+<% content_for :actions do %>
+  <%= link_to 'Novo Período de Entrega', new_shop_period_path(@shop),
+      class: 'btn btn-success' %>
+<% end %>
+
+<table class="table">
   <thead>
     <tr>
-      <th>Name</th>
-      <th>Limit time</th>
-      <th>Days off</th>
+      <th style="width: 70px" \>
+      <th>Nome</th>
+      <th>Hora de corte</th>
+      <th>Dias inativos</th>
       <th colspan="3"></th>
     </tr>
   </thead>
@@ -13,7 +19,8 @@
   <tbody>
     <% @periods.each do |period| %>
       <tr>
-        <td><%= period.name %></td>
+        <td \>
+        <td><%= link_to period.name, edit_shop_period_path(@shop, period) %></td>
         <td><%= period.limit_time.strftime("%H:%M ") %></td>
         <td>
           <% if period.days_off.present? %>
@@ -22,9 +29,7 @@
             <% end %>
           <% end %>
         </td>
-        <td><%= link_to 'Show', shop_period_path(@shop, period) %></td>
-        <td><%= link_to 'Edit', edit_shop_period_path(@shop, period) %></td>
-        <td><%= link_to 'Destroy', shop_period_path(@shop, period), method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to_destroy shop_period_path(@shop, period) %></td>
       </tr>
     <% end %>
   </tbody>
@@ -32,4 +37,3 @@
 
 <br>
 
-<%= link_to 'New Period', new_shop_period_path %>
