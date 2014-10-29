@@ -12,7 +12,8 @@
   <% unless @shop.periods.empty?  %>
     <td style="width: 250px;">
       <div class="multiselect">
-          <%= f.select :period_ids, options_for_select(@shop.periods.collect { |p| [p.name, p.id] }), {:include_blank => false}, {:multiple => true} %>
+          <%= f.select :period_ids, options_for_select(@shop.periods.collect { |p| [p.name, p.id] }, selected: f.object.periods.pluck(:id)), {:include_blank => false}, {:multiple => true} %>
+          <%= f.object.periods.pluck(:name) %>
       </div>
     </td>
     <% end %>
