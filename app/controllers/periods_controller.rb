@@ -20,7 +20,7 @@ class PeriodsController < ApplicationController
     @period = @shop.periods.new(period_params)
 
     if @period.save
-      redirect_to shop_period_path(@shop, @period), notice: 'Periodo de Entrega Criado com Sucesso.'
+      redirect_to edit_shop_period_path(@shop, @period), notice: 'Periodo de Entrega Criado com Sucesso.'
     else
       render :new
     end
