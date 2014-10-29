@@ -26,3 +26,9 @@ Things you may want to cover:
 
 Please feel free to use a different markup language if you do not plan to run
 <tt>rake doc:app</tt>.
+
+Exemplos para consulta de periodo:
+
+curl "http://localhost:3000/delivery_date?token=0ac942be475898c7555a2f399f6fd172&zip=12946636&period=Tarde"
+
+curl "http://dev-vnda-shipping.herokuapp.com/delivery_date?token=0bb043bea6fc84eb78921972103049b7&zip=12946636&period=Tarde"
