@@ -7,10 +7,7 @@ class ApiController < ActionController::Base
   def delivery_date
     zip = params[:zip].to_i
     if @shop && zip
-      delivery_dates = []
-      @shop.zip_rules.for_zip(zip).each do |z|
-      delivery_dates += z.periods.pluck(:name) unless z.periods.empty?
-      end
+      delivery_dates = @shop.available_periods(zip)
     end
 
     render json: delivery_dates || [], status: 200

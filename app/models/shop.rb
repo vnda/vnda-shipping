@@ -50,4 +50,14 @@ class Shop < ActiveRecord::Base
     self.delivery_types.where(name: "Expressa").first_or_create(enabled: true)
   end
 
+  def available_periods(zip)
+    available_periods = []
+    unless self.zip_rules.empty?
+      self.zip_rules.for_zip(zip).each do |z|
+        available_periods += z.periods.pluck(:name) unless z.periods.empty?
+      end
+    end
+    return available_periods
+  end
+
 end
