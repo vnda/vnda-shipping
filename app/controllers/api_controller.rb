@@ -15,9 +15,9 @@ class ApiController < ActionController::Base
         if period && cut = period.limit_time.strftime('%T')
           now = Time.now
           if now.strftime('%T') >= cut
-            next_day = period.next_day(now)
+            next_day = period.next_day(now + 1.day)
             delivery_dates = {day: next_day.day, year: next_day.year, month: next_day.month}
-          elsif
+          else
             delivery_dates = {day: now.day, year: now.year, month: now.month}
           end
         end
