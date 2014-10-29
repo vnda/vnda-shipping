@@ -5,9 +5,23 @@ class ApiController < ActionController::Base
   end
 
   def delivery_date
+    period = params[:period]
     zip = params[:zip].to_i
     if @shop && zip
-      delivery_dates = @shop.available_periods(zip)
+      unless period
+        delivery_dates = @shop.available_periods(zip)
+      else
+        period = @shop.periods.find_by(name: period)
+        if period && cut = period.limit_time.strftime('%T')
+          now = Time.now
+          if now.strftime('%T') >= cut
+            next_day = period.next_day(now)
+            delivery_dates = {day: next_day.day, year: next_day.year, month: next_day.month}
+          elsif
+            delivery_dates = {day: now.day, year: now.year, month: now.month}
+          end
+        end
+      end
     end
 
     render json: delivery_dates || [], status: 200

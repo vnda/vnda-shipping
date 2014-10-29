@@ -21,5 +21,53 @@ class Period < ActiveRecord::Base
   DAYS = ['Sábado', 'Domingo', 'Segunda-Feira', 'Terça-Feira',
                'Quarta-Feira', 'Quinta-Feira', 'Sexta-Feira']
 
+  def next_day(day)
+    week_day = day.strftime("%A")
+    case week_day
+    when 'Sunday'
+      if self.days_off.grep('Domingo').present?
+        self.next_day(day + 1.day)
+      else
+        day
+      end
+    when 'Monday'
+      if self.days_off.grep('Segunda-Feira').present?
+        self.next_day(day + 1.day)
+      else
+        day
+      end
+    when 'Tuesday'
+      if self.days_off.grep('Terça-Feira').present?
+        self.next_day(day + 1.day)
+      else
+        day
+      end
+    when 'Wednesday'
+      if self.days_off.grep('Quarta-Feira').present?
+        self.next_day(day + 1.day)
+      else
+        day
+      end
+    when 'Thursday'
+      if self.days_off.grep('Quinta-Feira').present?
+        self.next_day(day + 1.day)
+      else
+        day
+      end
+    when 'Friday'
+      if self.days_off.grep('Sexta-Feira').present?
+        self.next_day(day + 1.day)
+      else
+        day
+      end
+    when 'Saturday'
+      if self.days_off.grep('Sábado').present?
+        self.next_day(day + 1.day)
+      else
+        day
+      end
+    end
+
+  end
 
 end
