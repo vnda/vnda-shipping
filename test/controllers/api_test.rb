@@ -7,9 +7,12 @@ class ApiSpec < ActionDispatch::IntegrationTest
    @axado_shop = shops(:axado)
    @correios_shop = shops(:correios)
    @shipping_method = shipping_methods(:one)
-   @shipping_method.zip_rules.create!([
+   @zip_rule = @shipping_method.zip_rules.create!([
          { range: 0..99999999, price: 15.0, deadline: 2 }
        ])
+   @period = periods(:one)
+   ZipRule.first.periods << @period
+
   end
 
   describe "api quote" do
@@ -57,9 +60,14 @@ class ApiSpec < ActionDispatch::IntegrationTest
 
   describe "delivery_dates" do
 
-    it "returns available zip periods "
+    it "returns available zip periods " do
+
+      post "/delivery_date?token=#{@shop.token}&zip=12946636"
+
+      response.status.must_equal 200
+      response.body.must_equal "[\"Manha\"]"
+    end
 
   end
 
-  end
 end

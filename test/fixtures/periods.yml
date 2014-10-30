@@ -17,8 +17,10 @@ one:
   name: Manha
   limit_time: 2014-10-28 11:12:33
   days_off: ['Domingo']
+  shop: one
 
 two:
   name: Tarde
   limit_time: 2014-10-28 11:12:33
   days_off: ['Segunda']
+  shop: one
