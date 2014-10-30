@@ -25,49 +25,20 @@ class Period < ActiveRecord::Base
     week_day = day.strftime("%A")
     case week_day
     when 'Sunday'
-      if self.days_off.grep('Domingo').present?
-        self.next_day(day + 1.day)
-      else
-        day
-      end
+      self.days_off.grep('Domingo').present? ? self.next_day(day + 1.day) : day
     when 'Monday'
-      if self.days_off.grep('Segunda-Feira').present?
-        self.next_day(day + 1.day)
-      else
-        day
-      end
+      self.days_off.grep('Segunda-Feira').present? ? self.next_day(day + 1.day) : day
     when 'Tuesday'
-      if self.days_off.grep('Terça-Feira').present?
-        self.next_day(day + 1.day)
-      else
-        day
-      end
+      self.days_off.grep('Terça-Feira').present? ? self.next_day(day + 1.day) : day
     when 'Wednesday'
-      if self.days_off.grep('Quarta-Feira').present?
-        self.next_day(day + 1.day)
-      else
-        day
-      end
+      self.days_off.grep('Quarta-Feira').present? ? self.next_day(day + 1.day) : day
     when 'Thursday'
-      if self.days_off.grep('Quinta-Feira').present?
-        self.next_day(day + 1.day)
-      else
-        day
-      end
+      self.days_off.grep('Quinta-Feira').present? ? self.next_day(day + 1.day) : day
     when 'Friday'
-      if self.days_off.grep('Sexta-Feira').present?
-        self.next_day(day + 1.day)
-      else
-        day
-      end
+      self.days_off.grep('Sexta-Feira').present? ? self.next_day(day + 1.day) : day
     when 'Saturday'
-      if self.days_off.grep('Sábado').present?
-        self.next_day(day + 1.day)
-      else
-        day
-      end
+      self.days_off.grep('Sábado').present? ? self.next_day(day + 1.day) : day
     end
-
   end
 
 end
