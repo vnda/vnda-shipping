@@ -68,7 +68,7 @@ class Shop < ActiveRecord::Base
         delivery_date = period.next_day(now + 1.day)
         delivery_dates = {day: delivery_date.day, year: delivery_date.year, month: delivery_date.month}
       else
-        delivery_dates = {day: now.day, year: now.year, month: now.month}
+        delivery_date = period.next_day(now)
       end
     end
   end

@@ -53,4 +53,13 @@ class ApiSpec < ActionDispatch::IntegrationTest
       @correios_shop.quote(body: body).must_equal '[{"name":"Pac","price":15.0,"deadline":6,"express":false,"slug":"pac"}]'
     end
   end
+
+
+  describe "delivery_dates" do
+
+    it "returns available zip periods "
+
+  end
+
+  end
 end
