@@ -30,21 +30,21 @@ describe PeriodsController do
     assert_response :success
   end
 
-  # test "should get edit" do
-  #   get :edit, id: @period
-  #   assert_response :success
-  # end
+  test "should get edit" do
+    get :edit, shop_id: @shop.id, id: @period
+    assert_response :success
+  end
 
-  # test "should update period" do
-  #   patch :update, id: @period, period: { days_off: @period.days_off, limit_time: @period.limit_time, name: @period.name }
-  #   assert_redirected_to period_path(assigns(:period))
-  # end
+  test "should update period" do
+    patch :update, id: @period, period: { days_off: @period.days_off, limit_time: @period.limit_time, name: @period.name }, shop_id: @shop.id
+    assert_redirected_to edit_shop_period_path(@shop, assigns(:period))
+  end
 
-  # test "should destroy period" do
-  #   assert_difference('Period.count', -1) do
-  #     delete :destroy, id: @period
-  #   end
+  test "should destroy period" do
+    assert_difference('Period.count', -1) do
+      delete :destroy, shop_id: @shop.id, id: @period
+    end
 
-  #   assert_redirected_to periods_path
-  # end
+    assert_redirected_to shop_periods_path(@shop)
+  end
 end
