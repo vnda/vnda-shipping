@@ -1,9 +1,0 @@
-# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
-one:
-  period_id: 1
-  zip_rule_id: 1
-
-two:
-  period_id: 1
-  zip_rule_id: 1
