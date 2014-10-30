@@ -60,4 +60,17 @@ class Shop < ActiveRecord::Base
     return available_periods
   end
 
+  def check_period_rules(period)
+    period = self.periods.find_by(name: period)
+    if period && limit_time = period.limit_time.strftime('%T')
+      now = Time.now
+      if now.strftime('%T') >= limit_time
+        delivery_date = period.next_day(now + 1.day)
+        delivery_dates = {day: delivery_date.day, year: delivery_date.year, month: delivery_date.month}
+      else
+        delivery_dates = {day: now.day, year: now.year, month: now.month}
+      end
+    end
+  end
+
 end
