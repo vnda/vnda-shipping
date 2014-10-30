@@ -20,7 +20,7 @@ describe Shop do
 
   let(:shop_params) { { id: 1, name: "Loja Teste"} }
   let(:shop) { Shop.new shop_params }
-  let(:period) { {periods: :one}}
+  let(:period) { {periods :one}}
 
   it "is valid with valid params" do
     shop.must_be :valid?
