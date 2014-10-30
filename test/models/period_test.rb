@@ -13,8 +13,19 @@
 
 require 'test_helper'
 
-class PeriodTest < ActiveSupport::TestCase
-  # test "the truth" do
-  #   assert true
-  # end
+describe Period do
+  let(:period_params) { periods(:one).attributes }
+  let(:period) { Period.new period_params }
+
+  it "is valid with valid params" do
+    period.must_be :valid?
+  end
+
+  it "is invalid without a name" do
+    period_params['name'] = nil
+
+    period.wont_be :valid?
+    period.errors[:name].must_be :present?
+  end
+
 end
