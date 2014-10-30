@@ -208,6 +208,7 @@ pt-BR:
     models:
       shop: 'Loja'
       shipping_method: 'Forma de Entrega'
+      period: 'Período de Entrega'
     attributes:
       shop:
         name: 'Nome'
@@ -227,6 +228,10 @@ pt-BR:
         enabled: 'Habilitar'
         min_weigth: 'Peso Mínimo'
         max_weigth: 'Peso Máximo'
+      period:
+        name: 'Nome'
+        limit_time: 'Horário Limite'
+        days_off: 'Dias sem entrega'
   notices:
     shipping_methods:
       create: 'Forma de entrega criada com sucesso'
