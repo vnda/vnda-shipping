@@ -60,12 +60,27 @@ class ApiSpec < ActionDispatch::IntegrationTest
 
   describe "delivery_dates" do
 
-    it "returns available zip periods " do
+    it "unauthorized if token is missing" do
+      post "/delivery_date?"
 
+      response.status.must_equal 401
+    end
+
+    it "returns available zip periods " do
       post "/delivery_date?token=#{@shop.token}&zip=12946636"
 
       response.status.must_equal 200
       response.body.must_equal "[\"Manha\"]"
+    end
+
+    it "returns next delivery date" do
+      post "/delivery_date?token=#{@shop.token}&zip=12946636&period=Manha"
+
+      day = @shop.check_period_rules("Manha")
+      parsed_date = {'day' => day[:day], 'year' => day[:year], 'month' => day[:month]}
+
+      response.status.must_equal 200
+      ActiveSupport::JSON.decode(response.body).must_equal parsed_date
     end
 
   end

@@ -22,5 +22,5 @@ one:
 two:
   name: Tarde
   limit_time: 2014-10-28 11:12:33
-  days_off: ['Segunda']
+  days_off: ['Segunda-Feira']
   shop: one
