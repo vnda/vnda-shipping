@@ -66,10 +66,10 @@ class Shop < ActiveRecord::Base
       now = Time.now
       if now.strftime('%T') >= limit_time
         delivery_date = period.next_day(now + 1.day)
-        delivery_dates = {day: delivery_date.day, year: delivery_date.year, month: delivery_date.month}
+        parsed_date = {day: delivery_date.day, year: delivery_date.year, month: delivery_date.month}
       else
         delivery_date = period.next_day(now)
-        delivery_dates = {day: delivery_date.day, year: delivery_date.year, month: delivery_date.month}
+        parsed_date = {day: delivery_date.day, year: delivery_date.year, month: delivery_date.month}
       end
     end
   end
