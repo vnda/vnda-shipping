@@ -1,7 +1,13 @@
 class ApiController < ActionController::Base
-  before_action :set_shop, only: [:quote, :delivery_date]
+  before_action :set_shop, only: [:quote, :delivery_date, :delivery_types]
   rescue_from InvalidZip && BadParams do
     head :bad_request
+  end
+
+  def delivery_types
+    delivery_types = @shop.delivery_types.pluck(:name) || []
+
+    render json: delivery_types || [], status: 200
   end
 
   def delivery_date
