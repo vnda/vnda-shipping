@@ -85,4 +85,14 @@ class ApiSpec < ActionDispatch::IntegrationTest
 
   end
 
+  describe "delivery_types" do
+    it "returns available delivery types" do
+      post "/delivery_types?token=#{@shop.token}"
+
+      response.status.must_equal 200
+      response.body.must_equal "[\"Tipo de envio 1\"]"
+    end
+
+  end
+
 end
