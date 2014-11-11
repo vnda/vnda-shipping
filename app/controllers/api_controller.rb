@@ -27,8 +27,6 @@ class ApiController < ActionController::Base
 
   def quote
     quotations = @shop.quote(request_params)
-    puts quotations
-    puts "HERE"
     quotations += forward_quote || [] unless check_express(quotations)
 
     render json: quotations, status: 200
