@@ -21,6 +21,7 @@ module VndaShipping
          'Access-Control-Allow-Origin' => 'https://www.floriculturaideal.com.br',
          'Access-Control-Allow-Origin' => 'http://floriculturaideal.vnda.com.br',
          'Access-Control-Allow-Origin' => 'https://floriculturaideal.vnda.com.br',
+         'Access-Control-Allow-Origin' => 'http://retex.lvh.me',
          'Access-Control-Request-Method' => '*'
        })
     # Settings in config/environments/* take precedence over those specified here.

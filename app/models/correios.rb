@@ -13,6 +13,7 @@ class Correios
 
   def initialize(shop)
     @shop = shop
+    default_delivery_types
   end
 
   def quote(request)
@@ -61,7 +62,8 @@ class Correios
         price: parse_price(express[:valor]),
         deadline: deadline,
         express: true,
-        slug: SERVICES[express[:codigo].to_i].parameterize
+        slug: SERVICES[express[:codigo].to_i].parameterize,
+        delivery_type: @express
       )
     end
     if normal.present?
@@ -72,13 +74,19 @@ class Correios
         price: parse_price(normal[:valor]),
         deadline: deadline,
         express: false,
-        slug: SERVICES[normal[:codigo].to_i].parameterize
+        slug: SERVICES[normal[:codigo].to_i].parameterize,
+        delivery_type: @normal
       )
     end
     result
   end
 
   private
+
+  def default_delivery_types
+    @express = @shop.delivery_types.find_by(name: "Expressa") || ''
+    @normal = @shop.delivery_types.find_by(name: "Normal") || ''
+  end
 
   def send_message(method_id, message)
     client = Savon.client(wsdl: URL, convert_request_keys_to: :none)
