@@ -5,6 +5,6 @@ Quotation = Struct.new(:name, :price, :deadline, :express, :slug, :delivery_type
     self.deadline = deadline
     self.express = express
     self.slug = slug
-    self.delivery_type = DeliveryType.find_by(id: delivery_type).name || ''
+    self.delivery_type = delivery_type || ''
   end
 end
