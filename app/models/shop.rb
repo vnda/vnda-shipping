@@ -46,7 +46,7 @@ class Shop < ActiveRecord::Base
   end
 
   def set_delivery_type(id)
-    self.delivery_types.find(id).name
+    self.delivery_types.find(id).name || ''
   end
   def create_delivery_types
     self.delivery_types.where(name: "Normal").first_or_create(enabled: true)

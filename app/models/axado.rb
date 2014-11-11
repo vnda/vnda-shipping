@@ -36,10 +36,6 @@ module Axado
     !!(metaname =~ /sedex|expresso/)
   end
 
-  def delivery_type?(name)
-    !!(metaname =~ /sedex|expresso/)
-  end
-
   def build_request(r)
     {
       cep_origem:       r[:origin_zip],
