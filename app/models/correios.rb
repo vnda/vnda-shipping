@@ -60,7 +60,6 @@ class Correios
         name: @shop.express_shipping_name.presence || SERVICES[express[:codigo].to_i],
         price: parse_price(express[:valor]),
         deadline: deadline,
-        express: true,
         slug: SERVICES[express[:codigo].to_i].parameterize,
         delivery_type: "Expressa"
       )
@@ -72,7 +71,6 @@ class Correios
         name: @shop.normal_shipping_name.presence || SERVICES[normal[:codigo].to_i],
         price: parse_price(normal[:valor]),
         deadline: deadline,
-        express: false,
         slug: SERVICES[normal[:codigo].to_i].parameterize,
         delivery_type: "Normal"
       )

@@ -39,9 +39,9 @@ class Shop < ActiveRecord::Base
       .for_weigth(weigth)
       .joins(:zip_rules)
       .merge(ZipRule.for_zip(zip))
-      .pluck(:name, :price, :deadline, :express, :slug, :delivery_type_id)
-      .map do |n, p, d, e, s, dt|
-        Quotation.new(name: n, price: p.to_f, deadline: d, express: e, slug: s, delivery_type: set_delivery_type(dt))
+      .pluck(:name, :price, :deadline, :slug, :delivery_type_id)
+      .map do |n, p, d, s, dt|
+        Quotation.new(name: n, price: p.to_f, deadline: d, slug: s, delivery_type: set_delivery_type(dt))
       end
   end
 
