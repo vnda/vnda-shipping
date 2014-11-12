@@ -22,7 +22,7 @@ class ApiSpec < ActionDispatch::IntegrationTest
       post "/quote?token=#{@shop.token}", params
 
       response.status.must_equal 200
-      response.body.must_equal '[{"name":"Metodo 1","price":15.0,"deadline":2,"slug":"metodo-1","delivery_type":"Tipo de envio 1"}]'
+      response.body.must_equal '[{"name":"Metodo 1","price":15.0,"deadline":2,"slug":"metodo-1","delivery_type":"Tipo de envio 1","delivery_type_slug":"tipo-de-envio-1"}]'
     end
 
     it "returns nothing when params is not ok" do
