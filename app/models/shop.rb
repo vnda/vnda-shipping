@@ -32,11 +32,12 @@ class Shop < ActiveRecord::Base
     raise BadParams unless params[:shipping_zip] && params[:products]
 
     zip = params[:shipping_zip].gsub(/\D+/, '').to_i
-    weigth = params[:products].sum { |i| i[:weight].to_f }
+
+    weight = greater_weight(params[:products])
 
     methods
       .where(enabled: true).joins(:delivery_type).where(delivery_types: { enabled: true })
-      .for_weigth(weigth)
+      .for_weigth(weight)
       .joins(:zip_rules)
       .merge(ZipRule.for_zip(zip))
       .pluck(:name, :price, :deadline, :slug, :delivery_type_id)
@@ -76,6 +77,18 @@ class Shop < ActiveRecord::Base
         parsed_date = {day: delivery_date.day, year: delivery_date.year, month: delivery_date.month}
       end
     end
+  end
+
+  def package_dimensions(items)
+    dims = items.map { |i| i.values_at(:width, :height, :length) }
+    dims.reject! { |ds| ds.any?(&:blank?) }
+    BinPack.min_bounding_box(dims.map { |ds| BinPack::Box.new(*ds) })
+  end
+
+  def greater_weight(products)
+    cubic_capacity = package_dimensions(products).vol / 6000
+    total_weight = products.sum { |i| i[:weight].to_f }
+    return cubic_capacity > total_weight ? cubic_capacity : total_weight
   end
 
 end
