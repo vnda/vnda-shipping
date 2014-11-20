@@ -6,7 +6,6 @@ class ApiController < ActionController::Base
 
   def delivery_types
     delivery_types = @shop.delivery_types.pluck(:name) || []
-
     render json: delivery_types || [], status: 200
   end
 
@@ -22,7 +21,6 @@ class ApiController < ActionController::Base
     end
 
     render json: delivery_dates || [], status: 200
-
   end
 
   def quote

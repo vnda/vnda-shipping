@@ -59,10 +59,9 @@ class Shop < ActiveRecord::Base
     unless self.zip_rules.empty?
       self.zip_rules.for_zip(zip).each do |z|
         available_periods += z.periods.pluck(:name) unless z.periods.empty?
-
       end
     end
-    return available_periods
+    return available_periods.uniq
   end
 
   def check_period_rules(period)
