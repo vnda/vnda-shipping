@@ -44,8 +44,9 @@ class ApiController < ActionController::Base
   private
 
   def set_shop
+    logger.debug "Shop: #{env['HTTP_X_STORE']}"
     @shop = begin
-      params[:token].present? ? Shop.find_by!(token: params[:token]) : Shop.find_by!(name: request.host)
+      params[:token].present? ? Shop.find_by!(token: params[:token]) : Shop.find_by(name: (env['HTTP_X_STORE'] || "unknown-host").split(':').first)
     rescue ActiveRecord::RecordNotFound
       return head :unauthorized
     end
