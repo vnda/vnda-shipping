@@ -45,7 +45,7 @@ class ApiController < ActionController::Base
 
   def set_shop
     @shop = begin
-      Shop.find_by!(token: params[:token])
+      params[:token].present? ? Shop.find_by!(token: params[:token]) : Shop.find_by!(name: request.host)
     rescue ActiveRecord::RecordNotFound
       return head :unauthorized
     end
