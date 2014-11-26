@@ -25,10 +25,20 @@ class ApiController < ActionController::Base
 
   def quote
     quotations = @shop.quote(request_params)
+    quotations = lower_prices(quotations) unless quotations.empty?
     quotations += forward_quote || [] unless check_express(quotations)
 
     render json: quotations, status: 200
+  end
 
+  def lower_prices(quotations)
+    quotations_group = quotations.group_by { |quote| quote[:delivery_type_slug] }
+    lower = []
+    quotations_group.each do |delivery_type|
+      delivery_types = quotations_group[delivery_type[0]]
+      lower << delivery_types.sort_by{|v| v.price}.first
+    end
+    return lower || []
   end
 
   def check_express(quotations)
