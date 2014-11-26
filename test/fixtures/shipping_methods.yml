@@ -21,3 +21,30 @@ one:
   enabled: true
 
   delivery_type: one
+
+two:
+  name: Metodo 2
+  slug: metodo-2
+  shop: one
+  express: true
+  enabled: true
+
+  delivery_type: one
+
+normal_one:
+  name: Metodo 3
+  slug: metodo-3
+  shop: one
+  express: false
+  enabled: true
+
+  delivery_type: two
+
+normal_two:
+  name: Metodo 4
+  slug: metodo-4
+  shop: one
+  express: false
+  enabled: true
+
+  delivery_type: two

@@ -14,4 +14,7 @@ one:
   name: Tipo de envio 1
   shop: one
   enabled: true
-
+two:
+  name: Normal
+  shop: one
+  enabled: true

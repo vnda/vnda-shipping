@@ -32,6 +32,19 @@ class ApiSpec < ActionDispatch::IntegrationTest
       response.status.must_equal 400
     end
 
+    it "get the lowers prices" do
+      shipping_method_two = shipping_methods(:two)
+      zip_rule = shipping_method_two.zip_rules.create!([
+            { range: 0..99999999, price: 10.0, deadline: 2 }
+          ])
+
+      params = JSON.parse('{"origin_zip":"12946636","shipping_zip":"92200290","order_total_price":10.0,"aditional_deadline":null,"aditional_price":null,"products":[{"sku":"CSMT-1","price":10.0,"height":2,"length":16,"width":11,"weight":10}]}')
+      post "/quote?token=#{@shop.token}", params
+
+      response.status.must_equal 200
+      response.body.must_equal '[{"name":"Metodo 2","price":10.0,"deadline":2,"slug":"metodo-2","delivery_type":"Tipo de envio 1","delivery_type_slug":"tipo-de-envio-1"}]'
+    end
+
   end
 
   describe "axado quote" do
@@ -60,10 +73,10 @@ class ApiSpec < ActionDispatch::IntegrationTest
 
   describe "delivery_dates" do
 
-    it "unauthorized if token is missing" do
+    it "find shop by host if token is missing" do
       post "/delivery_date?"
 
-      response.status.must_equal 401
+      response.status.must_equal 200
     end
 
     it "returns available zip periods " do
@@ -90,7 +103,7 @@ class ApiSpec < ActionDispatch::IntegrationTest
       post "/delivery_types?token=#{@shop.token}"
 
       response.status.must_equal 200
-      response.body.must_equal "[\"Tipo de envio 1\"]"
+      response.body.must_equal "[\"Tipo de envio 1\",\"Normal\"]"
     end
 
   end
