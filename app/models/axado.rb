@@ -2,14 +2,19 @@ module Axado
   extend self
   class InvalidZip < StandardError; end
 
-  def quote(api_token, request)
+  def quote(api_token, request, shop = nil)
     response = Excon.post(
       'http://api.axado.com.br/v2/consulta/',
       query: { token: api_token },
       headers: { 'Content-Type' => 'application/json' },
       body: build_request(request).to_json,
-      expects: [200]
+      expects: [200, 503]
     )
+
+    if response.status == 503
+      return activate_backup_method(request, shop)
+    end
+
     data = JSON.parse(response.body)
     data['cotacoes'].map do |o|
       Quotation.new(
@@ -22,6 +27,7 @@ module Axado
     end
   rescue Excon::Errors::BadRequest => e
     json = JSON.parse(e.response.body)
+
     if json['erro_id'] == 102
       raise InvalidZip
     else
@@ -54,4 +60,10 @@ module Axado
       end
     }
   end
+
+  def activate_backup_method(request, shop)
+    Rails.logger.info("Backup mode activated for: #{shop.name}")
+    return shop.quote(request, true)
+  end
+
 end

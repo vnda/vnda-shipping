@@ -104,6 +104,7 @@ class Correios
   end
 
   def activate_backup_method(request)
+    Rails.logger.info("Backup mode activated for: #{@shop.name}")
     return @shop.quote(request, true)
   end
 
