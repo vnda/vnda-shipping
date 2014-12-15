@@ -1,6 +1,6 @@
 class ShippingMethodsController < ApplicationController
   before_filter { @shop = Shop.find(params[:shop_id]) }
-  before_filter only: [:edit, :update, :toggle, :duplicate] do
+  before_filter only: [:edit, :update, :toggle, :duplicate, :copy_to_all_shops] do
     @method = @shop.methods.find_by!(slug: params[:id])
   end
   before_filter :set_delivery_types, only: [:edit, :new, :create, :update, :duplicate]
@@ -48,6 +48,10 @@ class ShippingMethodsController < ApplicationController
     render :new
   end
 
+  def copy_to_all_shops
+    @method.copy_to_all_shops
+    success_redirect shop_shipping_methods_path(@shop)
+  end
   private
 
   def set_delivery_types

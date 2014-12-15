@@ -238,6 +238,7 @@ pt-BR:
       create: 'Forma de entrega criada com sucesso'
       update: 'Forma de entrega atualizada com sucesso'
       destroy: 'Forma de entrega removida com sucesso'
+      copy_to_all_shops: "Forma de entrega copiada para todas as lojas com sucesso"
     delivery_types:
       create: 'Tipo de entrega criado com sucesso'
       update: 'Tipo de entrega atualizado com sucesso'

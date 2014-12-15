@@ -48,7 +48,7 @@ class ShippingMethod < ActiveRecord::Base
     slug
   end
 
-  def duplicate
+  def duplicate(shop_id = self.shop.id)
     self.class.new do |r|
       r.enabled     = false
       r.shop_id     = shop_id
@@ -62,4 +62,12 @@ class ShippingMethod < ActiveRecord::Base
       )
     end
   end
+
+  def copy_to_all_shops
+    Shop.all.each do |shop|
+      copy = duplicate(shop.id)
+      copy.save! unless shop.methods.find_by(name: copy.name)
+    end
+  end
+
 end
