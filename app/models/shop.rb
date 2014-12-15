@@ -35,8 +35,7 @@ class Shop < ActiveRecord::Base
 
     weight = greater_weight(params[:products])
 
-    available_methods = methods.where(enabled: true).joins(:delivery_type).where(delivery_types: { enabled: true }) unless backup
-    available_methods = methods.where(id: backup_method_id) if backup
+    available_methods = backup ? methods.where(id: backup_method_id) : methods.where(enabled: true).joins(:delivery_type).where(delivery_types: { enabled: true })
     available_methods
       .for_weigth(weight)
       .joins(:zip_rules)

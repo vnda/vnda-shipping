@@ -104,7 +104,7 @@ class Correios
   end
 
   def activate_backup_method(request)
-    @shop.quote(request, true)
+    return @shop.quote(request, true)
   end
 
 end
