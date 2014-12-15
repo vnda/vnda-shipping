@@ -220,6 +220,7 @@ pt-BR:
         correios_services: 'Serviços Habilitados'
         express_shipping_name: 'Nome para entrega expressa'
         normal_shipping_name: 'Nome para entrega normal'
+        backup_method_id: Forma de entrega de backup
       shipping_method:
         name: 'Nome'
         description: 'Descrição'

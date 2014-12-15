@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141028165611) do
+ActiveRecord::Schema.define(version: 20141215162409) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -66,6 +66,7 @@ ActiveRecord::Schema.define(version: 20141028165611) do
     t.integer "correios_services",                default: [],    null: false, array: true
     t.string  "normal_shipping_name"
     t.string  "express_shipping_name"
+    t.integer "backup_method_id"
   end
 
   add_index "shops", ["name"], name: "index_shops_on_name", unique: true, using: :btree
