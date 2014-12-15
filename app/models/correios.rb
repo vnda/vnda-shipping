@@ -34,6 +34,10 @@ class Correios
       'sCdAvisoRecebimento' => 'N',
     )
 
+    if response.http.code == 503
+      return activate_backup_method(request)
+    end
+
     services = response.body[:calc_preco_prazo_response][:calc_preco_prazo_result][:servicos][:c_servico]
     services = [services] unless services.is_a?(Array)
 
@@ -98,4 +102,9 @@ class Correios
   def parse_price(str)
     str.gsub(/[.,]/, '.' => '', ',' => '.').to_f
   end
+
+  def activate_backup_method(request)
+    @shop.quote(request, true)
+  end
+
 end

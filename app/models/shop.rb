@@ -28,15 +28,16 @@ class Shop < ActiveRecord::Base
   validates  :axado_token, presence: true, if: 'forward_to_axado.present?'
   validates  :correios_code, :correios_password, presence: true, if: 'forward_to_correios.present?'
 
-  def quote(params)
+  def quote(params, backup=false)
     raise BadParams unless params[:shipping_zip] && params[:products]
 
     zip = params[:shipping_zip].gsub(/\D+/, '').to_i
 
     weight = greater_weight(params[:products])
 
-    methods
-      .where(enabled: true).joins(:delivery_type).where(delivery_types: { enabled: true })
+    available_methods = methods.where(enabled: true).joins(:delivery_type).where(delivery_types: { enabled: true }) unless backup
+    available_methods = methods.where(id: backup_method_id) if backup
+    available_methods
       .for_weigth(weight)
       .joins(:zip_rules)
       .merge(ZipRule.for_zip(zip))
