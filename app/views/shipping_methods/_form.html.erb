@@ -80,7 +80,7 @@
 
   <%= f.submit 'Salvar', class: 'btn btn-primary' %>
   <%= link_to 'Cancelar', shop_shipping_methods_path(@shop), class: 'btn btn-default' %>
-  <%= link_to 'Copiar para todas as lojas', copy_to_all_shops_shop_shipping_method_path(@shop, @method), class: 'btn-sm btn-danger' if @method.persisted? %>
+  <%= link_to 'Copiar para todas as lojas', copy_to_all_shops_shop_shipping_method_path(@shop, @method), data: { confirm: "Tem certeza que deseja copiar o método: '#{@method.name}' para todas as lojas?" }, class: 'btn-sm btn-danger' if @method.persisted? %>
 <% end %>
 
 <script>
