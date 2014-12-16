@@ -12,12 +12,10 @@ class ApiController < ActionController::Base
   def delivery_date
     period = params[:period]
     zip = params[:zip].to_i
+    date = Date.parse(params[:date]) if params[:date]
+
     if @shop && zip
-      unless period
-        delivery_dates = @shop.available_periods(zip)
-      else
-        delivery_dates = @shop.check_period_rules(period)
-      end
+      delivery_dates = period.present? ? @shop.check_period_rules(period) : @shop.available_periods(zip, date)
     end
 
     render json: delivery_dates || [], status: 200

@@ -41,4 +41,23 @@ class Period < ActiveRecord::Base
     end
   end
 
+  def available_on?(date)
+    case week_day = date.strftime("%A")
+    when 'Sunday'
+      self.days_off.grep('Domingo').present? ? false : true
+    when 'Monday'
+      self.days_off.grep('Segunda-Feira').present? ? false : true
+    when 'Tuesday'
+      self.days_off.grep('Terça-Feira').present? ? false : true
+    when 'Wednesday'
+      self.days_off.grep('Quarta-Feira').present? ? false : true
+    when 'Thursday'
+      self.days_off.grep('Quinta-Feira').present? ? false : true
+    when 'Friday'
+      self.days_off.grep('Sexta-Feira').present? ? false : true
+    when 'Saturday'
+      self.days_off.grep('Sábado').present? ? false : true
+    end
+  end
+
 end
