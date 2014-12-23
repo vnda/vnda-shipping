@@ -17,24 +17,24 @@ class Correios
 
   def quote(request)
     box = package_dimensions(request[:products])
-    response = send_message(:calc_preco_prazo,
-      'nCdEmpresa' => @shop.correios_code,
-      'sDsSenha' => @shop.correios_password,
-      'nCdServico' => @shop.correios_services.join(?,),
-      'sCepOrigem' => request[:origin_zip],
-      'sCepDestino' => request[:shipping_zip],
-      'nVlPeso' => request[:products].sum { |i| i[:weight].to_f },
-      'nCdFormato' => 1,
-      'nVlComprimento' => box.l,
-      'nVlAltura' => box.h,
-      'nVlLargura' => box.w,
-      'nVlDiametro' => 0,
-      'sCdMaoPropria' => 'N',
-      'nVlValorDeclarado' => request[:order_total_price],
-      'sCdAvisoRecebimento' => 'N',
-    )
-
-    if response.http.code == 503
+    begin
+      response = send_message(:calc_preco_prazo,
+        'nCdEmpresa' => @shop.correios_code,
+        'sDsSenha' => @shop.correios_password,
+        'nCdServico' => @shop.correios_services.join(?,),
+        'sCepOrigem' => request[:origin_zip],
+        'sCepDestino' => request[:shipping_zip],
+        'nVlPeso' => request[:products].sum { |i| i[:weight].to_f },
+        'nCdFormato' => 1,
+        'nVlComprimento' => box.l,
+        'nVlAltura' => box.h,
+        'nVlLargura' => box.w,
+        'nVlDiametro' => 0,
+        'sCdMaoPropria' => 'N',
+        'nVlValorDeclarado' => request[:order_total_price],
+        'sCdAvisoRecebimento' => 'N',
+      )
+    rescue Wasabi::Resolver::HTTPError
       return activate_backup_method(request)
     end
 
