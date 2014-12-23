@@ -67,7 +67,7 @@
       <div class="form-group">
         <%= f.label :backup_method_id %>
         (No caso de API offilne)
-        <%= f.select :backup_method_id, @shop.methods.map { |m| [m.name, m.id] },{}, class: 'form-control' %>
+        <%= f.select :backup_method_id, @shop.methods.map { |m| [m.name, m.id] },{include_blank: true}, class: 'form-control' %>
       </div>
     </div>
 
