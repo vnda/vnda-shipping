@@ -1,6 +1,6 @@
 <tr data-index="<%= f.index %>">
-  <td><%= f.text_field :min, data: { mask_zip: true }, class: 'form-control' %></td>
-  <td><%= f.text_field :max, data: { mask_zip: true }, class: 'form-control' %></td>
+  <td><%= f.text_field :min, value: zero_filed_zip(f.object.min), data: { mask_zip: true }, class: 'form-control' %></td>
+  <td><%= f.text_field :max, value: zero_filed_zip(f.object.max), data: { mask_zip: true }, class: 'form-control' %></td>
   <td style="width: 140px;">
     <div class="input-group">
       <span class="input-group-addon">R$</span>

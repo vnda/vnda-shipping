@@ -8,4 +8,8 @@ module ApplicationHelper
     icon = content_tag(:span, nil, class: 'glyphicon glyphicon-remove')
     link_to icon, path, method: :delete, data: { confirm: 'Tem certeza?' }
   end
+
+  def zero_filed_zip(zip)
+     zip.present? ? sprintf('%08d', zip.to_s.gsub(/\D/, '').to_i) : ""
+  end
 end
