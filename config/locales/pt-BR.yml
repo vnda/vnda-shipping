@@ -213,7 +213,9 @@ pt-BR:
       shop:
         name: 'Nome'
         forward_to_axado: 'Encaminhar consulta ao Axado'
+        forward_to_intelipost: 'Encaminhar consulta ao Intelipost'
         axado_token: 'Token do Axado'
+        intelipost_token: 'Token do Intepost'
         forward_to_correios: 'Encaminhar consulta ao Correios'
         correios_code: 'Código da Empresa no Correios'
         correios_password: 'Senha no Correios'
