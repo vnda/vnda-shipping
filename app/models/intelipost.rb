@@ -15,13 +15,13 @@ module Intelipost
       return activate_backup_method(request, shop)
     end
 
-    data = JSON.parse(response.body)
+    data = JSON.parse(Zlib::GzipReader.new(StringIO.new(response[:body])).read)
     data['content']['delivery_options'].map do |o|
       Quotation.new(
         name: o['delivery_method_name'],
-        price: o['final_shipping_cost'].gsub(/[.,]/, '.' => '', ',' => '.').to_f,
+        price: o['final_shipping_cost'],
         deadline: o['delivery_estimate_business_days'],
-        slug: o['delivery_method_name'].parametrize,
+        slug: o['delivery_method_name'].parameterize,
         delivery_type: express_service?(o['delivery_method_type']) ? 'Expressa' : 'Normal'
       )
     end
