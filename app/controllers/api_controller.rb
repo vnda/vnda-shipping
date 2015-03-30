@@ -63,6 +63,8 @@ class ApiController < ActionController::Base
   def forward_quote
     if @shop.forward_to_axado?
       Axado.quote(@shop.axado_token, request_params, @shop)
+    elsif @shop.forward_to_intelipost?
+      Intelipost.quote(@shop.intelipost_token, request_params, @shop)
     elsif @shop.forward_to_correios?
       Correios.new(@shop).quote(request_params)
     else
