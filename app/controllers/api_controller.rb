@@ -85,7 +85,8 @@ class ApiController < ActionController::Base
         :height,
         :length,
         :width,
-        :weight
+        :weight,
+        :quantity
       ]
     )
   end
