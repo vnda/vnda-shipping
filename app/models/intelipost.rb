@@ -22,6 +22,7 @@ module Intelipost
         price: o['final_shipping_cost'],
         deadline: o['delivery_estimate_business_days'],
         slug: o['delivery_method_name'].parameterize,
+        deliver_company: o['logistic_provider_name'],
         delivery_type: express_service?(o['delivery_method_type']) ? 'Expressa' : 'Normal'
       )
     end
