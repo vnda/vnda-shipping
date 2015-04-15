@@ -65,7 +65,8 @@ class Correios
         price: parse_price(express[:valor]),
         deadline: deadline,
         slug: SERVICES[express[:codigo].to_i].parameterize,
-        delivery_type: "Expressa"
+        delivery_type: "Expressa",
+        deliver_company: "Correios"
       )
     end
     if normal.present?
@@ -76,7 +77,8 @@ class Correios
         price: parse_price(normal[:valor]),
         deadline: deadline,
         slug: SERVICES[normal[:codigo].to_i].parameterize,
-        delivery_type: "Normal"
+        delivery_type: "Normal",
+        deliver_company: "Correios"
       )
     end
     result

@@ -22,7 +22,8 @@ module Axado
         price: o['cotacao_preco'].gsub(/[.,]/, '.' => '', ',' => '.').to_f,
         deadline: o['cotacao_prazo'],
         slug: o['servico_metaname'].gsub(?-, ?_),
-        delivery_type: express_service?(o['servico_metaname']) ? 'Expressa' : 'Normal'
+        delivery_type: express_service?(o['servico_metaname']) ? 'Expressa' : 'Normal',
+        deliver_company: ""
       )
     end
   rescue Excon::Errors::BadRequest => e
