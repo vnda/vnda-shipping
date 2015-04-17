@@ -42,13 +42,14 @@ class Shop < ActiveRecord::Base
       .merge(ZipRule.for_zip(zip))
       .pluck(:name, :price, :deadline, :slug, :delivery_type_id)
       .map do |n, p, d, s, dt|
-        Quotation.new(name: n, price: p.to_f, deadline: d, slug: s, delivery_type: set_delivery_type(dt), delivery_company: "")
+        Quotation.new(name: n, price: p.to_f, deadline: d, slug: s, delivery_type: set_delivery_type(dt), deliver_company: "")
       end
   end
 
   def set_delivery_type(id)
     self.delivery_types.find(id).name || ''
   end
+
   def create_delivery_types
     self.delivery_types.where(name: "Normal").first_or_create(enabled: true)
     self.delivery_types.where(name: "Expressa").first_or_create(enabled: true)
