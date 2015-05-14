@@ -1,5 +1,5 @@
 class ApiController < ActionController::Base
-  before_action :set_shop, only: [:quote, :delivery_date, :delivery_types]
+  before_action :set_shop, only: [:quote, :delivery_date, :delivery_types, :delivery_periods]
   rescue_from InvalidZip && BadParams do
     head :bad_request
   end
@@ -19,6 +19,43 @@ class ApiController < ActionController::Base
     end
 
     render json: delivery_dates || [], status: 200
+  end
+
+  def delivery_periods
+    zip = params[:zip].gsub(/[^\d]/, '').to_i
+    num_days = (params[:num_days] || 7).to_i
+    start_date = Date.parse(params[:start_date]) if params[:start_date]
+    start_date = Date.current unless start_date
+
+    if @shop && zip
+      periods = []
+      @shop.available_periods(zip).each do |period_name|
+        period = {name: period_name, delivery: []}
+        date = start_date
+        num_days.times do |index|
+          period[:delivery] << if (date > Date.current)
+            (@shop.available_periods(zip, date).include?(period_name) ? "yes" : "close")
+          elsif (date == Date.current)
+            puts " "
+            p = @shop.zip_rules.for_zip(zip).order_by_limit.map do |zip_rule|
+              zip_rule.periods.where(name: period_name).valid_on(Time.zone.now.strftime("%T")).any?
+            end.uniq.select{|v| v }
+            p.any? ? "yes" : "close"
+          else
+            "close"
+          end
+          date += 1.day
+        end
+        periods << period
+      end
+# expected return
+#[
+#  {name: "Manhã", delivery: ["no", "close", "close", "close", "close", "yes", "yes"]},
+#  {name: "Tarde", delivery: ["no", "close", "close", "close", "yes", "yes", "no"]}
+#]
+    end
+
+    render json: periods || [], status: 200
   end
 
   def quote

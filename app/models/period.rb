@@ -21,6 +21,8 @@ class Period < ActiveRecord::Base
   DAYS = ['Sábado', 'Domingo', 'Segunda-Feira', 'Terça-Feira',
                'Quarta-Feira', 'Quinta-Feira', 'Sexta-Feira']
 
+  scope :valid_on, -> (time) { where("limit_time > ?", time) }
+
   def next_day(day)
     week_day = day.strftime("%A")
     case week_day
