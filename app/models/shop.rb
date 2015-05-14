@@ -65,8 +65,8 @@ class Shop < ActiveRecord::Base
           end
         end
       else
-        self.zip_rules.for_zip(zip).each do |z|
-          available_periods += z.periods.pluck(:name) unless z.periods.empty?
+        self.zip_rules.for_zip(zip).order_by_limit.each do |z|
+          available_periods += z.periods.order(:limit_time).pluck(:name) unless z.periods.empty?
         end
       end
     end
