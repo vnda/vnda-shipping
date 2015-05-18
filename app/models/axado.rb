@@ -23,7 +23,8 @@ module Axado
         deadline: o['cotacao_prazo'],
         slug: o['servico_metaname'].gsub(?-, ?_),
         delivery_type: express_service?(o['servico_metaname']) ? 'Expressa' : 'Normal',
-        deliver_company: ""
+        deliver_company: "",
+        cotation_id: ""
       )
     end
   rescue Excon::Errors::BadRequest => e
