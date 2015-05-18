@@ -42,7 +42,7 @@ class Shop < ActiveRecord::Base
       .merge(ZipRule.for_zip(zip))
       .pluck(:name, :price, :deadline, :slug, :delivery_type_id)
       .map do |n, p, d, s, dt|
-        Quotation.new(name: n, price: p.to_f, deadline: d, slug: s, delivery_type: set_delivery_type(dt), deliver_company: "")
+        Quotation.new(name: n, price: p.to_f, deadline: d, slug: s, delivery_type: set_delivery_type(dt), deliver_company: "", cotation_id: "")
       end
   end
 

@@ -16,8 +16,10 @@ module Intelipost
     end
 
     data = JSON.parse(Zlib::GzipReader.new(StringIO.new(response[:body])).read)
+    cotation_id = data['content']['id']
     data['content']['delivery_options'].map do |o|
       Quotation.new(
+        quotation_id: cotation_id,
         name: o['delivery_method_name'],
         price: o['final_shipping_cost'],
         deadline: o['delivery_estimate_business_days'],

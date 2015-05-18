@@ -66,7 +66,8 @@ class Correios
         deadline: deadline,
         slug: SERVICES[express[:codigo].to_i].parameterize,
         delivery_type: "Expressa",
-        deliver_company: "Correios"
+        deliver_company: "Correios",
+        cotation_id: ''
       )
     end
     if normal.present?
@@ -78,7 +79,8 @@ class Correios
         deadline: deadline,
         slug: SERVICES[normal[:codigo].to_i].parameterize,
         delivery_type: "Normal",
-        deliver_company: "Correios"
+        deliver_company: "Correios",
+        cotation_id: ''
       )
     end
     result
