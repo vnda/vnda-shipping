@@ -34,7 +34,7 @@
   <div class="row">
     <div class="col-md-6">
       <label for="period[exception_date]">Datas excepcionais</label>
-      <% @period.exception_date.each do |date| %>
+      <% (@period.exception_date || []).each do |date| %>
         <div class="form-group">
           <input name="period[exception_date][]" type="text" value="<%= date %>" class="form-control">
         </div>
