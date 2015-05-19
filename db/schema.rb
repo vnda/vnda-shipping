@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150330042959) do
+ActiveRecord::Schema.define(version: 20150519002057) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -32,6 +32,7 @@ ActiveRecord::Schema.define(version: 20150330042959) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "shop_id"
+    t.text     "exception_date"
   end
 
   create_table "periods_zip_rules", force: true do |t|
@@ -42,13 +43,13 @@ ActiveRecord::Schema.define(version: 20150330042959) do
   end
 
   create_table "shipping_methods", force: true do |t|
-    t.integer  "shop_id",                                                                                   null: false
-    t.string   "name",                                                                                      null: false
-    t.string   "description",      default: "",                                                             null: false
-    t.string   "slug",                                                                                      null: false
-    t.boolean  "express",          default: false,                                                          null: false
-    t.boolean  "enabled",          default: false,                                                          null: false
-    t.numrange "weigth_range",     default: BigDecimal(-::Float::INFINITY)...BigDecimal(::Float::INFINITY), null: false
+    t.integer  "shop_id",                          null: false
+    t.string   "name",                             null: false
+    t.string   "description",      default: "",    null: false
+    t.string   "slug",                             null: false
+    t.boolean  "express",          default: false, null: false
+    t.boolean  "enabled",          default: false, null: false
+    t.numrange "weigth_range",                     null: false
     t.integer  "delivery_type_id"
   end
 

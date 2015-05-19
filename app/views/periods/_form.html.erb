@@ -31,6 +31,20 @@
     </div>
   </div>
 
+  <div class="row">
+    <div class="col-md-6">
+      <label for="period[exception_date]">Datas excepcionais</label>
+      <% @period.exception_date.each do |date| %>
+        <div class="form-group">
+          <input name="period[exception_date][]" type="text" value="<%= date %>" class="form-control">
+        </div>
+      <% end %>
+      <div class="form-group text-right">
+        <a href="#" id="new_exception">Adicionar</a>
+      </div>
+    </div>
+  </div>
+
   <%= f.submit 'Salvar', class: 'btn btn-primary' %>
   <%= link_to 'Cancelar', shop_periods_path(@shop), class: 'btn btn-default' %>
 
@@ -42,5 +56,9 @@ $(".multiselect").multiselect({
    noneSelectedText: "Selecione...",
    selectedList: 3,
    header: false
+});
+$("#new_exception").on("click", function(e){
+  e.preventDefault();
+  $('<div class="form-group"><input name="period[exception_date][]" type="text" class="form-control"></div>').insertBefore($(this).parent());
 });
 </script>
