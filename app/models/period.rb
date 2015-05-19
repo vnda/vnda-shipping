@@ -17,6 +17,7 @@ class Period < ActiveRecord::Base
 
   validates :name, :limit_time, presence: true
   serialize :days_off
+  serialize :exception_date
 
   DAYS = ['Sábado', 'Domingo', 'Segunda-Feira', 'Terça-Feira',
                'Quarta-Feira', 'Quinta-Feira', 'Sexta-Feira']
@@ -44,7 +45,7 @@ class Period < ActiveRecord::Base
   end
 
   def available_on?(date)
-    case week_day = date.strftime("%A")
+    status = case date.strftime("%A")
     when 'Sunday'
       self.days_off.grep('Domingo').present? ? false : true
     when 'Monday'
@@ -60,6 +61,7 @@ class Period < ActiveRecord::Base
     when 'Saturday'
       self.days_off.grep('Sábado').present? ? false : true
     end
+    status || exception_date.to_s.include?( date.strftime("%d/%m/%Y") )
   end
 
 end
