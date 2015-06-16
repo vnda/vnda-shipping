@@ -7,7 +7,7 @@
   </div>
 
   <div class="row">
-    <fieldset class="col-md-6">
+    <fieldset class="col-md-4">
       <legend>Correios</legend>
       <div class="checkbox">
         <label>
@@ -23,30 +23,8 @@
         <%= f.label :correios_password %>
         <%= f.text_field :correios_password, class: 'form-control' %>
       </div>
-      <div class="form-group">
-        <%= f.label :correios_services %>
-        <% Correios::SERVICES.each do |id, name| %>
-          <div class="checkbox">
-            <%= check_box_tag 'shop[correios_services][]', id,
-                              @shop.correios_services.include?(id.to_i),
-                              class: 'switch' %>
-            <%= name %>
-          </div>
-        <% end %>
-      </div>
-
-      <div class="form-group">
-        <%= f.label :normal_shipping_name %>
-        <%= f.text_field :normal_shipping_name, class: 'form-control' %>
-      </div>
-
-      <div class="form-group">
-        <%= f.label :express_shipping_name %>
-        <%= f.text_field :express_shipping_name, class: 'form-control' %>
-      </div>
-
     </fieldset>
-    <fieldset class="col-md-6">
+    <fieldset class="col-md-4">
       <legend>Axado</legend>
       <div class="checkbox">
         <label>
@@ -60,7 +38,7 @@
       </div>
     </fieldset>
 
-    <fieldset class="col-md-6">
+    <fieldset class="col-md-4">
       <legend>Intelipost</legend>
       <div class="checkbox">
         <label>
@@ -75,9 +53,9 @@
     </fieldset>
   </div>
 
-  <div class="row">
+  <div class="row" style="margin-top: 30px;">
     <fieldset class="col-md-6">
-       <legend>Backup</legend>
+      <legend>Backup</legend>
       <div class="form-group">
         <%= f.label :backup_method_id %>
         (No caso de API offilne)
