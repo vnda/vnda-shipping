@@ -2,13 +2,14 @@
 #
 # Table name: periods
 #
-#  id         :integer          not null, primary key
-#  name       :string(255)
-#  limit_time :time
-#  days_off   :text
-#  created_at :datetime
-#  updated_at :datetime
-#  shop_id    :integer
+#  id             :integer          not null, primary key
+#  name           :string(255)
+#  limit_time     :time
+#  days_off       :text
+#  created_at     :datetime
+#  updated_at     :datetime
+#  shop_id        :integer
+#  exception_date :text
 #
 
 class Period < ActiveRecord::Base

@@ -21,7 +21,7 @@ class Correios
       response = send_message(:calc_preco_prazo,
         'nCdEmpresa' => @shop.correios_code,
         'sDsSenha' => @shop.correios_password,
-        'nCdServico' => @shop.correios_services.join(?,),
+        'nCdServico' => @shop.enabled_correios_service.join(?,),
         'sCepOrigem' => request[:origin_zip],
         'sCepDestino' => request[:shipping_zip],
         'nVlPeso' => request[:products].sum { |i| i[:weight].to_f },
@@ -51,34 +51,26 @@ class Correios
       end
     end
 
-    groups = success.partition { |s| EXPRESS.include?(s[:codigo].to_i) }
+    allowed, blocked = success.partition { |s| check_blocked_zip(request[:shipping_zip], s) }
+    blocked.each do |s|
+      Rails.logger.error("Block rule found for service #{s[:codigo]} #{SERVICES[s[:codigo].to_i]}")
+    end
+
+    groups = allowed.partition { |s| EXPRESS.include?(s[:codigo].to_i) }
     express, normal = groups.flat_map do |group|
       group.min { |s1, s2| parse_price(s1[:valor]) <=> parse_price(s2[:valor]) }
     end
 
     result = []
-    if express.present?
-      deadline = express[:erro] == '010'? express[:prazo_entrega].to_i + 7 : express[:prazo_entrega].to_i
+    [express, normal].compact.each do |option|
+      deadline = option[:erro] == '010'? option[:prazo_entrega].to_i + 7 : option[:prazo_entrega].to_i
 
       result << Quotation.new(
-        name: @shop.express_shipping_name.presence || SERVICES[express[:codigo].to_i],
-        price: parse_price(express[:valor]),
+        name: shipping_name(option[:codigo]),
+        price: parse_price(option[:valor]),
         deadline: deadline,
-        slug: SERVICES[express[:codigo].to_i].parameterize,
-        delivery_type: "Expressa",
-        deliver_company: "Correios",
-        cotation_id: ''
-      )
-    end
-    if normal.present?
-      deadline = normal[:erro] == '010'? normal[:prazo_entrega].to_i + 7 : normal[:prazo_entrega].to_i
-
-      result << Quotation.new(
-        name: @shop.normal_shipping_name.presence || SERVICES[normal[:codigo].to_i],
-        price: parse_price(normal[:valor]),
-        deadline: deadline,
-        slug: SERVICES[normal[:codigo].to_i].parameterize,
-        delivery_type: "Normal",
+        slug: SERVICES[option[:codigo].to_i].parameterize,
+        delivery_type: shipping_type(option[:codigo]),
         deliver_company: "Correios",
         cotation_id: ''
       )
@@ -110,6 +102,37 @@ class Correios
   def activate_backup_method(request)
     Rails.logger.info("Backup mode activated for: #{@shop.name}")
     return @shop.quote(request, true)
+  end
+
+  def shipping_name(code)
+    method_name = @shop.shipping_methods_correios.where(service: code.to_s)
+    return method_name.pluck(:name).first if method_name.any?
+    config_name = if EXPRESS.include?(code.to_i)
+      @shop.express_shipping_name
+    else
+      @shop.normal_shipping_name
+    end
+    config_name.presence || SERVICES[code.to_i]
+  end
+
+  def shipping_type(code)
+    method_name = @shop.shipping_methods_correios.where(service: code.to_s)
+    return method_name.first.delivery_type.name if method_name.any?
+    if EXPRESS.include?(code.to_i)
+      "Expressa"
+    else
+      "Normal"
+    end
+  end
+
+  def check_blocked_zip(zip, response)
+    methods = @shop.shipping_methods_correios.where(service: response[:codigo].to_s)
+    return true if methods.empty? #to compatibility to old config method
+    blocked_methods = methods.joins(:block_rules).merge(BlockRule.for_zip(zip.to_i))
+    if blocked_methods.any?
+      methods = methods.where("id NOT IN (?)", blocked_methods.pluck(:id))
+    end
+    methods.any?
   end
 
 end

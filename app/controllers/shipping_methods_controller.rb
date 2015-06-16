@@ -60,9 +60,9 @@ class ShippingMethodsController < ApplicationController
 
   def method_params
     params.require(:shipping_method).permit(
-      :delivery_type_id, :name, :description, :enabled, :min_weigth, :max_weigth,
-      zip_rules_attributes: [:id, :min, :max, :price, :deadline, :_destroy,
-        period_ids: [] ]
+      :delivery_type_id, :name, :description, :enabled, :min_weigth, :max_weigth, :data_origin,
+      :service, block_rules_attributes: [:id, :min, :max, :_destroy],
+      zip_rules_attributes: [:id, :min, :max, :price, :deadline, :_destroy, period_ids: [] ]
     )
   end
 end

@@ -6,7 +6,7 @@
   <%= render 'shared/error_messages', resource: @method %>
 
   <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-4">
       <div class="form-group">
         <%= f.label :name %>
         <%= f.text_field :name, class: 'form-control' %>
@@ -16,7 +16,7 @@
         <%= f.text_field :description, class: 'form-control' %>
       </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-4">
       <div class="form-group">
         <%= f.label :min_weigth %>
         <div class="input-group">
@@ -32,22 +32,37 @@
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="row">
-    <div class="col-md-12">
-      <div class="selectbox">
-        <label>
-          <%= f.label :delivery_type_id %>
-          <%= f.collection_select :delivery_type_id, @delivery_types, :id, :name, {prompt: "Selecione o tipo de entrega"}, {class: "form-control"} %>
-        </label>
+    <div class="col-md-4">
+      <div class="form-group">
+        <div class="selectbox">
+          <label>
+            <%= f.label :delivery_type_id %>
+            <%= f.collection_select :delivery_type_id, @delivery_types, :id, :name, {prompt: "Selecione o tipo de entrega"}, {class: "form-control"} %>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="selectbox">
+          <label>
+            <%= f.label :data_origin %>
+            <%= f.select :data_origin, @shop.enabled_origins, {prompt: "Selecione o tipo de entrega"}, class: "form-control" %>
+          </label>
+        </div>
+
+        <div class="selectbox correios-services">
+          <label>
+            <%= f.label :service %>
+            <%= f.select :service, Correios::SERVICES.map{|k,v| [v,k]}, {prompt: "Selecione o tipo de entrega"}, class: "form-control" %>
+          </label>
+        </div>
       </div>
     </div>
   </div>
 
 
-
-  <table class="table table-form">
+  <table class="table table-form rules">
     <thead>
       <tr>
         <th>CEP Início</th>
@@ -61,7 +76,7 @@
       </tr>
     </thead>
     <tbody id="zip_rule_fields">
-      <% 3.times { @method.zip_rules.build } if @method.zip_rules.none? %>
+
       <%= f.fields_for :zip_rules do |builder| %>
         <%= render 'form_item', f: builder %>
       <% end %>
@@ -71,6 +86,33 @@
         <td colspan="5">
           <%= link_to 'javascript:void(0)', class: 'btn btn-default btn-block',
               data: { add_item: new_form_item(f, :zip_rules, 'form_item'), add_target: '#zip_rule_fields' } do %>
+            <span class="glyphicon glyphicon-plus"></span>
+          <% end %>
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <table class="table table-form block-rules">
+    <thead>
+      <tr>
+        <th>Ação</th>
+        <th>CEP Início</th>
+        <th>CEP Fim</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="block_rule_fields">
+
+      <%= f.fields_for :block_rules do |builder| %>
+        <%= render 'form_block_item', f: builder %>
+      <% end %>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="6">
+          <%= link_to 'javascript:void(0)', class: 'btn btn-default btn-block',
+              data: { add_item: new_form_item(f, :block_rules, 'form_block_item'), add_target: '#block_rule_fields' } do %>
             <span class="glyphicon glyphicon-plus"></span>
           <% end %>
         </td>
@@ -105,6 +147,9 @@
 
     $('[data-add-item]').click(function (e) {
       e.preventDefault();
+      $addItem = $(this);
+      $addItemTarget = $($(this).data('addTarget'));
+      itemTemplate = $addItem.data('addItem');
       addItem(function ($i) { $addItemTarget.append($i); });
     });
 
@@ -128,6 +173,25 @@
         });
       });
     });
+
+    function changeDataOrigin(){
+      if( $("#shipping_method_data_origin").val() == "local" ) {
+        $("table.rules").show();
+        $("table.block-rules").hide();
+        $(".correios-services").hide();
+      } else {
+        $("table.rules").hide();
+        $("table.block-rules").show();
+
+        if( $("#shipping_method_data_origin").val() == "correios" ) {
+          $(".correios-services").show();
+        } else {
+          $(".correios-services").hide();
+        }
+      }
+    }
+    changeDataOrigin()
+    $(document.body).on('change', '#shipping_method_data_origin', changeDataOrigin);
 
     maskInputs(document.body);
   }());

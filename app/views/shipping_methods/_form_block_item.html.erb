@@ -1,0 +1,27 @@
+<tr data-index="<%= f.index %>">
+  <td>
+    <%= f.hidden_field :price, value: 0 %>
+    <%= f.hidden_field :deadline, value: 0 %>
+    <p>Bloquear</p>
+  </td>
+
+  <td>
+    <%= f.text_field :min, value: zero_filed_zip(f.object.min), data: { mask_zip: true }, class: 'form-control' %>
+  </td>
+
+  <td>
+    <%= f.text_field :max, value: zero_filed_zip(f.object.max), data: { mask_zip: true }, class: 'form-control' %>
+  </td>
+
+  <td style="width: 90px;">
+    <%= link_to 'javascript:void(0)', class: 'btn btn-default',
+        data: { clone_rule: true } do %>
+      <span class="glyphicon glyphicon-retweet"></span>
+    <% end %>
+    <%= f.hidden_field :_destroy %>
+    <%= link_to 'javascript:void(0)', class: 'btn btn-default',
+        data: { remove_parent: 'tr' } do %>
+      <span class="glyphicon glyphicon-remove"></span>
+    <% end %>
+  </td>
+</tr>

@@ -11,11 +11,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150519002057) do
+ActiveRecord::Schema.define(version: 20150616185857) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "hstore"
+
+  create_table "block_rules", force: true do |t|
+    t.integer   "shipping_method_id", null: false
+    t.int4range "range",              null: false
+  end
+
+  add_index "block_rules", ["shipping_method_id"], name: "index_block_rules_on_shipping_method_id", using: :btree
 
   create_table "delivery_types", force: true do |t|
     t.string   "name"
@@ -43,14 +50,16 @@ ActiveRecord::Schema.define(version: 20150519002057) do
   end
 
   create_table "shipping_methods", force: true do |t|
-    t.integer  "shop_id",                          null: false
-    t.string   "name",                             null: false
-    t.string   "description",      default: "",    null: false
-    t.string   "slug",                             null: false
-    t.boolean  "express",          default: false, null: false
-    t.boolean  "enabled",          default: false, null: false
-    t.numrange "weigth_range",                     null: false
+    t.integer  "shop_id",                            null: false
+    t.string   "name",                               null: false
+    t.string   "description",      default: "",      null: false
+    t.string   "slug",                               null: false
+    t.boolean  "express",          default: false,   null: false
+    t.boolean  "enabled",          default: false,   null: false
+    t.numrange "weigth_range",                       null: false
     t.integer  "delivery_type_id"
+    t.string   "data_origin",      default: "local", null: false
+    t.string   "service"
   end
 
   add_index "shipping_methods", ["shop_id", "slug"], name: "index_shipping_methods_on_shop_id_and_slug", unique: true, using: :btree
@@ -83,6 +92,8 @@ ActiveRecord::Schema.define(version: 20150519002057) do
   end
 
   add_index "zip_rules", ["shipping_method_id"], name: "index_zip_rules_on_shipping_method_id", using: :btree
+
+  add_foreign_key "block_rules", "shipping_methods", name: "block_rules_shipping_method_id_fk"
 
   add_foreign_key "shipping_methods", "shops", name: "shipping_methods_shop_id_fk"
 

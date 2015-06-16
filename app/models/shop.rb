@@ -10,9 +10,12 @@
 #  correios_code         :string(255)
 #  correios_password     :string(255)
 #  forward_to_correios   :boolean          default(FALSE), not null
-#  correios_services     :integer          default([]), not null, is an Array
+#  correios_services     :integer          default([]), not null
 #  normal_shipping_name  :string(255)
 #  express_shipping_name :string(255)
+#  backup_method_id      :integer
+#  intelipost_token      :string(255)
+#  forward_to_intelipost :boolean          default(FALSE), not null
 #
 
 class Shop < ActiveRecord::Base
@@ -99,4 +102,27 @@ class Shop < ActiveRecord::Base
     return cubic_capacity > total_weight ? cubic_capacity : total_weight
   end
 
+
+  def data_origin
+    {
+      local: true,
+      correios: forward_to_correios,
+      axado: forward_to_axado,
+      intelipost: forward_to_intelipost,
+    }
+  end
+
+  def enabled_origins
+    data_origin.select{|k,v| v == true}.keys
+  end
+
+  def shipping_methods_correios
+    methods.where(data_origin:"correios").where(enabled: true)
+  end
+
+  def enabled_correios_service
+    services = shipping_methods_correios.pluck(:service)
+    return services if services.any?
+    correios_services
+  end
 end
