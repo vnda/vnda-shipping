@@ -20,7 +20,7 @@ module Intelipost
     data['content']['delivery_options'].map do |o|
       Quotation.new(
         cotation_id: cotation_id,
-        name: o['delivery_method_name'],
+        name: o['description'],
         price: o['final_shipping_cost'],
         deadline: o['delivery_estimate_business_days'],
         slug: o['delivery_method_name'].parameterize,
