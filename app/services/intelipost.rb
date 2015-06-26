@@ -25,7 +25,7 @@ module Intelipost
         deadline: o['delivery_estimate_business_days'],
         slug: o['delivery_method_name'].parameterize,
         deliver_company: o['logistic_provider_name'],
-        delivery_type: express_service?(o['delivery_method_type']) ? 'Expressa' : 'Normal'
+        delivery_type: find_delivery_type(o['delivery_method_type'], o['description'])
       )
     end
   rescue Excon::Errors::BadRequest => e
@@ -39,6 +39,16 @@ module Intelipost
   end
 
   private
+
+  def find_delivery_type(delivery_method, description)
+    if express_service?(delivery_method)
+      return 'Expressa'
+    elsif description.include?('Retirar na Fábrica')
+      return 'Retirada'
+    else
+      return 'Normal'
+    end
+  end
 
   def express_service?(metaname)
     !!(metaname =~ /EXPRESS/)
