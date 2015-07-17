@@ -90,7 +90,7 @@ class Correios
   end
 
   def package_dimensions(items)
-    dims = items.map { |i| i.values_at(:width, :height, :length).map{|dim| dim * i[:quantity]} }
+    dims = items.map { |i| i.values_at(:width, :height, :length).map{|dim| dim * (i[:quantity] || 1)} }
     dims.reject! { |ds| ds.any?(&:blank?) }
     BinPack.min_bounding_box(dims.map { |ds| BinPack::Box.new(*ds) })
   end
