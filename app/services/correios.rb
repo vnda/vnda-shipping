@@ -24,7 +24,7 @@ class Correios
         'nCdServico' => @shop.enabled_correios_service.join(?,),
         'sCepOrigem' => request[:origin_zip],
         'sCepDestino' => request[:shipping_zip],
-        'nVlPeso' => request[:products].sum { |i| i[:weight].to_f },
+        'nVlPeso' => request[:products].sum { |i| i[:weight].to_f * i[:quantity].to_i },
         'nCdFormato' => 1,
         'nVlComprimento' => box.l,
         'nVlAltura' => box.h,
