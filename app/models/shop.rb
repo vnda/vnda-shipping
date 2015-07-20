@@ -125,4 +125,27 @@ class Shop < ActiveRecord::Base
     return services if services.any?
     correios_services
   end
+
+  def delivery_day_status(date, zip, period_name)
+    if (date > Date.current)
+      (available_periods(zip, date).include?(period_name) ? "yes" : "close")
+    elsif (date == Date.current)
+      p = zip_rules.for_zip(zip).order_by_limit.map do |zip_rule|
+        rules = zip_rule.periods.where(name: period_name).valid_on(Time.zone.now.strftime("%T"))
+        rules.select{|p| p.available_on?(Time.zone.now)}.any?
+      end
+      p.uniq.select{|v| v }.any? ? "yes" : "close"
+    else
+      "close"
+    end
+  end
+
+  def delivery_days_list(num_days, date, zip, period_name)
+    list = []
+    num_days.times do
+      list << delivery_day_status(date, zip, period_name)
+      date += 1.day
+    end
+    list
+  end
 end

@@ -30,25 +30,10 @@ class ApiController < ActionController::Base
     if @shop && zip
       periods = []
       @shop.available_periods(zip).each do |period_name|
-        period = {name: period_name, delivery: []}
-        date = start_date
-        num_days.times do |index|
-          period[:delivery] << if (date > Date.current)
-            (@shop.available_periods(zip, date).include?(period_name) ? "yes" : "close")
-          elsif (date == Date.current)
-            puts " "
-            p = @shop.zip_rules.for_zip(zip).order_by_limit.map do |zip_rule|
-              zip_rule.periods.where(name: period_name).valid_on(Time.zone.now.strftime("%T")).select do |p|
-                p.available_on?(Time.zone.now)
-              end.any?
-            end.uniq.select{|v| v }
-            p.any? ? "yes" : "close"
-          else
-            "close"
-          end
-          date += 1.day
-        end
-        periods << period
+        periods << {
+          name: period_name,
+          delivery: @shop.delivery_days_list(num_days, start_date, zip, period_name)
+        }
       end
 # expected return
 #[
