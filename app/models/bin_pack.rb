@@ -3,9 +3,15 @@ module BinPack
 
   class Box
     attr_reader :w, :h, :l
+    MIN_LENGTH = 16
+    MIN_WIDTH = 11
+    MIN_HEIGHT = 2
 
     def initialize(w, h, l)
       @w, @h, @l = [w, h, l].map(&:to_f)
+      @w = MIN_WIDTH if @w < MIN_WIDTH
+      @h = MIN_HEIGHT if @h < MIN_HEIGHT
+      @l = MIN_LENGTH if @l < MIN_LENGTH
     end
 
     def vol
