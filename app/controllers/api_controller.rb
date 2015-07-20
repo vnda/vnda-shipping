@@ -38,7 +38,9 @@ class ApiController < ActionController::Base
           elsif (date == Date.current)
             puts " "
             p = @shop.zip_rules.for_zip(zip).order_by_limit.map do |zip_rule|
-              zip_rule.periods.where(name: period_name).valid_on(Time.zone.now.strftime("%T")).any?
+              zip_rule.periods.where(name: period_name).valid_on(Time.zone.now.strftime("%T")).select do |p|
+                p.available_on?(Time.zone.now)
+              end.any?
             end.uniq.select{|v| v }
             p.any? ? "yes" : "close"
           else
