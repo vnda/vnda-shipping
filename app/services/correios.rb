@@ -96,7 +96,7 @@ class Correios
   def package_dimensions(items)
     whl = (@shop.volume_for(items)**(1/3.0)).ceil
     {
-      witdh: [whl, MIN_WIDTH].max,
+      width: [whl, MIN_WIDTH].max,
       height: [whl, MIN_HEIGHT].max,
       length: [whl, MIN_LENGTH].max
     }
