@@ -90,14 +90,13 @@ class Shop < ActiveRecord::Base
     end
   end
 
-  def package_dimensions(items)
-    dims = items.map { |i| i.values_at(:width, :height, :length) }
-    dims.reject! { |ds| ds.any?(&:blank?) }
-    BinPack.min_bounding_box(dims.map { |ds| BinPack::Box.new(*ds) })
+  def volume_for(items)
+    volumes = items.map{ |i| i.values_at(:width, :height, :length, :quantity)}
+    volumes.map{|i| i.reduce(:*)}.reduce(:+)
   end
 
   def greater_weight(products)
-    cubic_capacity = package_dimensions(products).vol / 6000
+    cubic_capacity = volume_for(products) / 6000
     total_weight = products.sum { |i| i[:weight].to_f }
     return cubic_capacity > total_weight ? cubic_capacity : total_weight
   end

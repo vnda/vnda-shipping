@@ -94,9 +94,7 @@ class Correios
   end
 
   def package_dimensions(items)
-    volumes = items.map{ |i| i.values_at(:width, :height, :length, :quantity)}
-    total_volume = volumes.map{|i| i.reduce(:*)}.reduce(:+)
-    whl = (total_volumes**(1/3.0)).ceil
+    whl = (@shop.volume_for(items)**(1/3.0)).ceil
     {
       witdh: [whl, MIN_WIDTH].max,
       height: [whl, MIN_HEIGHT].max,
