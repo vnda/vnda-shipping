@@ -50,7 +50,7 @@ class ApiController < ActionController::Base
     quotations += forward_quote || [] unless check_express(quotations)
     quotations = lower_prices(quotations) unless quotations.empty?
 
-    puts "Error: No methods available shop: #{@shop.name} parameters: #{params}" if quotations.empty?
+    puts "No methods available shop: #{@shop.name} parameters: #{params}" if quotations.empty?
     render json: quotations, status: 200
   end
 
