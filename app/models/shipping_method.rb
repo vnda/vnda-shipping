@@ -27,7 +27,7 @@ class ShippingMethod < ActiveRecord::Base
 
   before_save :generate_slug, if: :name_changed?
 
-  scope :for_weigth, -> weigth { where('shipping_methods.weigth_range @> ?', weigth) }
+  scope :for_weigth, -> weigth { where('shipping_methods.weigth_range @> ?', weigth.to_f) }
 
   attr_writer :min_weigth, :max_weigth
   def min_weigth
