@@ -90,14 +90,13 @@ class Shop < ActiveRecord::Base
     end
   end
 
-  def package_dimensions(items)
-    dims = items.map { |i| i.values_at(:width, :height, :length) }
-    dims.reject! { |ds| ds.any?(&:blank?) }
-    BinPack.min_bounding_box(dims.map { |ds| BinPack::Box.new(*ds) })
+  def volume_for(items)
+    volumes = items.map{ |i| i.values_at(:width, :height, :length, :quantity)}
+    volumes.map{|i| i.reduce(:*)}.reduce(:+)
   end
 
   def greater_weight(products)
-    cubic_capacity = package_dimensions(products).vol / 6000
+    cubic_capacity = volume_for(products) / 6000
     total_weight = products.sum { |i| i[:weight].to_f }
     return cubic_capacity > total_weight ? cubic_capacity : total_weight
   end
@@ -124,5 +123,28 @@ class Shop < ActiveRecord::Base
     services = shipping_methods_correios.pluck(:service)
     return services if services.any?
     correios_services
+  end
+
+  def delivery_day_status(date, zip, period_name)
+    if (date > Date.current)
+      (available_periods(zip, date).include?(period_name) ? "yes" : "close")
+    elsif (date == Date.current)
+      p = zip_rules.for_zip(zip).order_by_limit.map do |zip_rule|
+        rules = zip_rule.periods.where(name: period_name).valid_on(Time.zone.now.strftime("%T"))
+        rules.select{|p| p.available_on?(Time.zone.now)}.any?
+      end
+      p.uniq.select{|v| v }.any? ? "yes" : "close"
+    else
+      "close"
+    end
+  end
+
+  def delivery_days_list(num_days, date, zip, period_name)
+    list = []
+    num_days.times do
+      list << delivery_day_status(date, zip, period_name)
+      date += 1.day
+    end
+    list
   end
 end

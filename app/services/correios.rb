@@ -11,6 +11,10 @@ class Correios
 
   EXPRESS = [40010, 40045, 40215, 40290]
 
+  MIN_WIDTH = 11
+  MIN_HEIGHT = 2
+  MIN_LENGTH = 16
+
   def initialize(shop)
     @shop = shop
   end
@@ -24,11 +28,11 @@ class Correios
         'nCdServico' => @shop.enabled_correios_service.join(?,),
         'sCepOrigem' => request[:origin_zip],
         'sCepDestino' => request[:shipping_zip],
-        'nVlPeso' => request[:products].sum { |i| i[:weight].to_f },
+        'nVlPeso' => request[:products].sum { |i| i[:weight].to_f * i[:quantity].to_i },
         'nCdFormato' => 1,
-        'nVlComprimento' => box.l,
-        'nVlAltura' => box.h,
-        'nVlLargura' => box.w,
+        'nVlComprimento' => box[:length],
+        'nVlAltura' => box[:height],
+        'nVlLargura' => box[:width],
         'nVlDiametro' => 0,
         'sCdMaoPropria' => 'N',
         'nVlValorDeclarado' => request[:order_total_price],
@@ -90,9 +94,12 @@ class Correios
   end
 
   def package_dimensions(items)
-    dims = items.map { |i| i.values_at(:width, :height, :length) }
-    dims.reject! { |ds| ds.any?(&:blank?) }
-    BinPack.min_bounding_box(dims.map { |ds| BinPack::Box.new(*ds) })
+    whl = (@shop.volume_for(items)**(1/3.0)).ceil
+    {
+      width: [whl, MIN_WIDTH].max,
+      height: [whl, MIN_HEIGHT].max,
+      length: [whl, MIN_LENGTH].max
+    }
   end
 
   def parse_price(str)
