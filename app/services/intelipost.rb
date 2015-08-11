@@ -26,7 +26,7 @@ module Intelipost
         slug: o['delivery_method_name'].parameterize,
         deliver_company: o['logistic_provider_name'],
         delivery_type: find_delivery_type(o['delivery_method_type'], o['description'])
-      )
+      ) if is_number?(o['delivery_estimate_business_days'])
     end
   rescue Excon::Errors::BadRequest => e
     json = JSON.parse(e.response.body)
@@ -39,6 +39,11 @@ module Intelipost
   end
 
   private
+
+  def is_number?(delivery_days)
+    return true if /\A\d+\z/.match(delivery_days)
+    false
+  end
 
   def find_delivery_type(delivery_method, description)
     if express_service?(delivery_method)
