@@ -41,7 +41,11 @@ module Intelipost
   private
 
   def is_number?(delivery_days)
-    return true if /\A\d+\z/.match(delivery_days)
+    if /\A\d+\z/.match(delivery_days.to_s)
+      if delivery_days.to_i > 0
+        return true
+      end
+    end
     false
   end
 
