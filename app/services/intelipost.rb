@@ -29,6 +29,7 @@ module Intelipost
       ) if is_number?(o['delivery_estimate_business_days'])
     end
     deliveries.compact!
+    deliveries
   rescue Excon::Errors::BadRequest => e
     json = JSON.parse(e.response.body)
 
