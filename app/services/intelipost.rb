@@ -17,7 +17,7 @@ module Intelipost
 
     data = JSON.parse(Zlib::GzipReader.new(StringIO.new(response[:body])).read)
     cotation_id = data['content']['id']
-    data['content']['delivery_options'].map do |o|
+    deliveries = data['content']['delivery_options'].map do |o|
       Quotation.new(
         cotation_id: cotation_id,
         name: o['description'],
@@ -28,6 +28,7 @@ module Intelipost
         delivery_type: find_delivery_type(o['delivery_method_type'], o['description'])
       ) if is_number?(o['delivery_estimate_business_days'])
     end
+    deliveries.compact!
   rescue Excon::Errors::BadRequest => e
     json = JSON.parse(e.response.body)
 
