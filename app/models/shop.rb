@@ -97,7 +97,7 @@ class Shop < ActiveRecord::Base
 
   def greater_weight(products)
     cubic_capacity = volume_for(products) / 6000
-    total_weight = products.sum { |i| i[:weight].to_f }
+    total_weight = products.sum { |i| i[:weight].to_f * i[:quantity].to_i }
     return cubic_capacity > total_weight ? cubic_capacity : total_weight
   end
 
