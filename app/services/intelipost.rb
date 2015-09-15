@@ -5,7 +5,7 @@ module Intelipost
   def quote(api_token, request, shop = nil)
     response = Excon.post(
       'https://api.intelipost.com.br/api/v1/quote_by_product',
-      headers: { 'Content-Type' => 'application/json', 
+      headers: { 'Content-Type' => 'application/json',
       'Accept' => 'application/json',
       'api_key' => api_token },
       body: build_request(request).to_json
@@ -30,12 +30,14 @@ module Intelipost
     end
     deliveries.compact!
     deliveries
-  rescue Excon::Errors::BadRequest => e
-    json = JSON.parse(e.response.body)
-
-    if e.response.body.include?('quote.destinationZipCode.invalid')
+  rescue Excon::Errors::BadRequest, Zlib::GzipFile::Error
+    if response[:body].include?('quote.destinationZipCode.invalid')
       raise InvalidZip
+    elsif response[:body].include?('quote.no.delivery.options')
+      []
     else
+      puts "Intelipost request: #{build_request(request).to_json}"
+      puts "Intelipost response #{response[:body]}"
       raise e
     end
   end
