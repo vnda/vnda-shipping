@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150616185857) do
+ActiveRecord::Schema.define(version: 20150917200721) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -49,16 +49,35 @@ ActiveRecord::Schema.define(version: 20150616185857) do
     t.datetime "updated_at"
   end
 
+  create_table "shipping_errors", force: true do |t|
+    t.string   "message"
+    t.integer  "shop_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "shipping_errors", ["shop_id"], name: "index_shipping_errors_on_shop_id", using: :btree
+
+  create_table "shipping_friendly_errors", force: true do |t|
+    t.string   "message"
+    t.string   "rule"
+    t.integer  "shop_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "shipping_friendly_errors", ["shop_id"], name: "index_shipping_friendly_errors_on_shop_id", using: :btree
+
   create_table "shipping_methods", force: true do |t|
-    t.integer  "shop_id",                            null: false
-    t.string   "name",                               null: false
-    t.string   "description",      default: "",      null: false
-    t.string   "slug",                               null: false
-    t.boolean  "express",          default: false,   null: false
-    t.boolean  "enabled",          default: false,   null: false
-    t.numrange "weigth_range",                       null: false
+    t.integer  "shop_id",                                                                                   null: false
+    t.string   "name",                                                                                      null: false
+    t.string   "description",      default: "",                                                             null: false
+    t.string   "slug",                                                                                      null: false
+    t.boolean  "express",          default: false,                                                          null: false
+    t.boolean  "enabled",          default: false,                                                          null: false
+    t.numrange "weigth_range",     default: BigDecimal(-::Float::INFINITY)...BigDecimal(::Float::INFINITY), null: false
     t.integer  "delivery_type_id"
-    t.string   "data_origin",      default: "local", null: false
+    t.string   "data_origin",      default: "local",                                                        null: false
     t.string   "service"
   end
 

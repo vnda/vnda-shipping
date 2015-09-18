@@ -1,0 +1,19 @@
+<% content_for :title, 'Erros encontrados' %>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Mensagem de erro</th>
+      <th>Data</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% if @shipping_errors.empty? %>
+      <tr><td colspan="4" class="text-center text-muted">Não ocorreram erros nessa loja.</td></tr>
+    <% end %>
+    <%= content_tag_for :tr, @shipping_errors do |error| %>
+      <td><%= error.message %></td>
+      <td><%= l error.created_at %></td>
+    <% end %>
+  </tbody>
+</table>

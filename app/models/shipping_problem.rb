@@ -1,0 +1,1 @@
+class ShippingProblem < StandardError; end

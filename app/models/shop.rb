@@ -23,6 +23,8 @@ class Shop < ActiveRecord::Base
   has_many :delivery_types, dependent: :destroy
   has_many :periods, dependent: :destroy
   has_many :zip_rules, through: :methods
+  has_many :shipping_errors, class_name: 'ShippingError'
+  has_many :shipping_friendly_errors
 
   before_create { self.token = SecureRandom.hex }
   after_create :create_delivery_types
@@ -30,6 +32,19 @@ class Shop < ActiveRecord::Base
   validates :name, presence: true, uniqueness: true
   validates  :axado_token, presence: true, if: 'forward_to_axado.present?'
   validates  :correios_code, :correios_password, presence: true, if: 'forward_to_correios.present?'
+
+  def friendly_message_for(message)
+    self.shipping_friendly_errors.order(:created_at).each do |friendly_message|
+      return friendly_message.message if message.include?(friendly_message.rule)
+    end
+    message
+  end
+
+  def add_shipping_error(message)
+    unless self.shipping_errors.where(message: message).size > 0
+      self.shipping_errors << ShippingError.new(message: message)
+    end
+  end
 
   def quote(params, backup=false)
     raise BadParams unless params[:shipping_zip] && params[:products]

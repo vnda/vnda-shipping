@@ -18,6 +18,8 @@
             <li><%= link_to 'Formas de Entrega', shop_shipping_methods_path(@shop) %>
             <li><%= link_to 'Tipos de Entrega', shop_delivery_types_path(@shop) %>
             <li><%= link_to 'Períodos de Entrega', shop_periods_path(@shop) %>
+            <li><%= link_to 'Mensagens de erro mapeadas', shop_shipping_friendly_errors_path(@shop) %>
+            <li><%= link_to 'Erros ocorridos', shop_shipping_errors_path(@shop) %>
           <% end %>
         </ul>
         <% other = Shop.all.where.not(id: @shop.id) %>

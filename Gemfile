@@ -11,6 +11,7 @@ gem 'dotenv-rails'
 gem 'rails_12factor', group: :production
 gem 'rollbar', '~> 1.0.0'
 gem 'puma'
+gem 'pry', group: :development
 
 group :development, :staging, :production do
   gem "newrelic_rpm"

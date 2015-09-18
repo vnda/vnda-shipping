@@ -1,0 +1,19 @@
+<% content_for :title, 'Nova mensagem de erro' %>
+
+<%= render 'form' %>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="well">
+      <h3><strong>Ajuda:</strong></h3>
+      <p>A regra será comparada com as mensagens de erro ocorridas da seguinte forma:</p>
+      <ul>
+        <li>O texto da regra deverá estar incluso no texto da mensagem de erro recebida</li>
+        <li>A primeira regra encontrada que esteja inclusa em uma mensagem será retornada</li>
+      </ul>
+      <p><strong>Exemplo:</strong>
+      <p>Para a mensagem de erro "<strong>99999-999: Este cep não foi encontrado.</strong>" uma regra válida seria "<strong>Este cep não foi encontrado</strong>" pois compara apenas com a parte que não varia da mensagem de erro.</p>
+      <p>Dica: Utilizar o maior texto possível das mensagens de erro mapeadas como regra, afim de evitar mapeamentos muito genéricos.</p>
+    </div>
+  </div>
+</div>

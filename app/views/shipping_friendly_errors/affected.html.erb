@@ -1,0 +1,22 @@
+<% content_for :title, 'Erros afetados' %>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Erro</th>
+      <th>Mensagem amigável</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% if @affected.empty? %>
+      <tr><td colspan="4" class="text-center text-muted">Nenhuma mensagem de erro mapeada foi impactada pela regra criada. <%= link_to 'Ver todas', shop_shipping_errors_path(@shop) %></td></tr>
+    <% end %>
+    <%= content_tag_for :tr, @affected do |error| %>
+      <td><%= error.message %></td>
+      <td><%= @shipping_friendly_error.message %></td>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to 'Voltar', shop_shipping_friendly_errors_path(@shop), class: 'btn btn-default' %>

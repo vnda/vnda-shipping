@@ -30,11 +30,8 @@ module Axado
   rescue Excon::Errors::BadRequest => e
     json = JSON.parse(e.response.body)
 
-    if json['erro_id'] == 102
-      raise InvalidZip
-    else
-      raise e
-    end
+    @shop.add_shipping_error(json['erro_msg'])
+    raise ShippingProblem, json['erro_msg']
   end
 
   private

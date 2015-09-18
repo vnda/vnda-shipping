@@ -30,16 +30,23 @@ module Intelipost
     end
     deliveries.compact!
     deliveries
+
+  #rescue Excon::Errors::BadRequest, Zlib::GzipFile::Error
+  #  if response[:body].include?('quote.destinationZipCode.invalid')
+  #    raise InvalidZip
+  #  elsif response[:body].include?('quote.no.delivery.options')
+  #    []
+  #  else
+  #    puts "Intelipost request: #{build_request(request).to_json}"
+  #    puts "Intelipost response #{response[:body]}"
+  #    raise e
+  #  end
+  #end
   rescue Excon::Errors::BadRequest, Zlib::GzipFile::Error
-    if response[:body].include?('quote.destinationZipCode.invalid')
-      raise InvalidZip
-    elsif response[:body].include?('quote.no.delivery.options')
-      []
-    else
-      puts "Intelipost request: #{build_request(request).to_json}"
-      puts "Intelipost response #{response[:body]}"
-      raise e
-    end
+    json = JSON.parse(e.response.body)
+
+    @shop.add_shipping_error(json['messages']['text'])
+    raise ShippingProblem, json['messages']['text']
   end
 
   private

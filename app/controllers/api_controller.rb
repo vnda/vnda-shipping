@@ -4,6 +4,10 @@ class ApiController < ActionController::Base
     head :bad_request
   end
 
+  rescue_from ShippingProblem do |ex|
+    render json: {error: @shop.friendly_message_for(ex.message)}, status: 400
+  end
+
   def delivery_types
     delivery_types = @shop.delivery_types.pluck(:name) || []
     render json: delivery_types || [], status: 200
@@ -42,7 +46,12 @@ class ApiController < ActionController::Base
 #]
     end
 
-    render json: periods || [], status: 200
+    if periods.nil? or periods.empty?
+      @shop.shipping_errors << ShippingError.new(message: "Não existem opções de entrega para este endereço.")
+      render json: {error: @shop.friendly_message_for("Não existem opções de entrega para este endereço.")}, status: 400
+    else
+      render json: periods, status: 200
+    end
   end
 
   def quote
@@ -50,8 +59,14 @@ class ApiController < ActionController::Base
     quotations += forward_quote || [] unless check_express(quotations)
     quotations = lower_prices(quotations) unless quotations.empty?
 
-    puts "No methods available shop: #{@shop.name} parameters: #{params}" if quotations.empty?
-    render json: quotations, status: 200
+    if quotations.empty?
+      puts "No methods available shop: #{@shop.name} parameters: #{params}"
+      message = "Não existem opções de entrega para este endereço."
+      @shop.add_shipping_error(message)
+      render json: {error: @shop.friendly_message_for(message)}, status: 400
+    else
+      render json: quotations, status: 200
+    end
   end
 
   def lower_prices(quotations)

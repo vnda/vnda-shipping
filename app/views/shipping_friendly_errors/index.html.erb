@@ -1,0 +1,48 @@
+<% content_for :title, 'Mensagens de erro' %>
+
+<% content_for :actions do %>
+  <%= link_to 'Nova Mensagem de erro', new_shop_shipping_friendly_error_path(@shop),
+      class: 'btn btn-success' %>
+<% end %>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Mensagem</th>
+      <th>Regra</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% if @shipping_friendly_errors.empty? %>
+      <tr><td colspan="4" class="text-center text-muted">Não existem regras cadastradas</td></tr>
+    <% end %>
+    <%= content_tag_for :tr, @shipping_friendly_errors do |friendly_error| %>
+      <td><%= link_to friendly_error.message, edit_shop_shipping_friendly_error_path(@shop, friendly_error) %></td>
+      <td><%= friendly_error.rule %></td>
+      <td>
+      	<%= link_to "Ver Erros mapeados para esta regra", affected_shop_shipping_friendly_error_path(@shop, friendly_error) %>
+      </td>
+      <td class="text-right">
+        <%= link_to_destroy shop_shipping_friendly_error_path(@shop, friendly_error) %>
+      </td>
+    <% end %>
+  </tbody>
+</table>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="well">
+      <h3><strong>Ajuda:</strong></h3>
+      <p>A regra será comparada com as mensagens de erro ocorridas da seguinte forma:</p>
+      <ul>
+        <li>O texto da regra deverá estar incluso no texto da mensagem de erro recebida</li>
+        <li>A primeira regra encontrada que esteja inclusa em uma mensagem será retornada</li>
+      </ul>
+      <p><strong>Exemplo:</strong>
+      <p>Para a mensagem de erro "<strong>99999-999: Este cep não foi encontrado.</strong>" uma regra válida seria "<strong>Este cep não foi encontrado</strong>" pois compara apenas com a parte que não varia da mensagem de erro.</p>
+      <p>Dica: Utilizar o maior texto possível das mensagens de erro mapeadas como regra, afim de evitar mapeamentos muito genéricos.</p>
+    </div>
+  </div>
+</div>

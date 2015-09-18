@@ -42,6 +42,8 @@ class Correios
       return activate_backup_method(request)
     end
 
+    puts response.body
+
     services = response.body[:calc_preco_prazo_response][:calc_preco_prazo_result][:servicos][:c_servico]
     services = [services] unless services.is_a?(Array)
 
@@ -52,6 +54,8 @@ class Correios
         raise InvalidZip
       else
         Rails.logger.error("#{e[:erro]}: #{e[:msg_erro]}")
+        @shop.add_shipping_error(e[:msg_erro])
+        raise ShippingProblem, e[:msg_erro]
       end
     end
 

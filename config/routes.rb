@@ -4,11 +4,15 @@ Rails.application.routes.draw do
 
   root to: 'shops#index'
   resources :shops, only: [:index, :new, :create, :edit, :update, :destroy] do
+    resources :shipping_friendly_errors, only: [:index, :new, :create, :edit, :update, :destroy] do
+      get :affected, on: :member
+    end
     resources :shipping_methods, only: [:index, :new, :create, :edit, :update, :destroy] do
       patch :toggle, on: :member
       get :duplicate, on: :member
       get :copy_to_all_shops, on: :member
     end
+    resources :shipping_errors, only: [:index]
     resources :delivery_types do
       patch :toggle, on: :member
     end
