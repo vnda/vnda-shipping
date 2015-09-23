@@ -77,7 +77,7 @@ class Correios
         name: shipping_name(option[:codigo]),
         price: parse_price(option[:valor]),
         deadline: deadline,
-        slug: SERVICES[option[:codigo].to_i].parameterize,
+        slug: (SERVICES[option[:codigo].to_i] || option[:codigo]).parameterize,
         delivery_type: shipping_type(option[:codigo]),
         deliver_company: "Correios",
         cotation_id: ''
