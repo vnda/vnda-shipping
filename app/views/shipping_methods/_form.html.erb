@@ -54,7 +54,7 @@
         <div class="selectbox correios-services">
           <label>
             <%= f.label :service %>
-            <%= f.select :service, Correios::SERVICES.map{|k,v| [v,k]}, {prompt: "Selecione o tipo de entrega"}, class: "form-control" %>
+            <%= f.select :service, @correios_services.map{|k,v| [v,k]}, {prompt: "Selecione o tipo de entrega"}, class: "form-control" %>
           </label>
         </div>
       </div>

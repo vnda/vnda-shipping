@@ -140,6 +140,11 @@ class Shop < ActiveRecord::Base
     correios_services
   end
 
+  def allowed_correios_services
+    codes = correios_custom_services.to_s.split(",").select{|code| code.present?}
+    Correios::SERVICES.merge( Hash[codes.map{|code| [code, code]}] )
+  end
+
   def delivery_day_status(date, zip, period_name)
     if (date > Date.current)
       (available_periods(zip, date).include?(period_name) ? "yes" : "close")
