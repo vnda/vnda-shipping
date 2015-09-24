@@ -63,7 +63,7 @@ class Correios
 
     allowed, blocked = success.partition { |s| check_blocked_zip(request[:shipping_zip], s) }
     blocked.each do |s|
-      Rails.logger.error("Block rule found for service #{s[:codigo]} #{@shop.allowed_correios_services[option[:codigo]] || SERVICES[s[:codigo].to_i]}") #SERVICES is deprecated
+      Rails.logger.error("Block rule found for service #{s[:codigo]} #{@shop.allowed_correios_services[s[:codigo]] || SERVICES[s[:codigo].to_i]}") #SERVICES is deprecated
     end
 
     result = []
