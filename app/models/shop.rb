@@ -141,9 +141,10 @@ class Shop < ActiveRecord::Base
   end
 
   def allowed_correios_services
-    s = {}
-    JSON.load(correios_custom_services).map{|service| s.merge!(service) }
-    s
+    services = {}
+    JSON.load(.correios_custom_services).map{|service| @services.merge!(service) } if .correios_custom_services.present?
+    services = Correios::SERVICES if services.empty?
+    services
   end
 
   def delivery_day_status(date, zip, period_name)

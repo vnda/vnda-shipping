@@ -26,7 +26,7 @@
 
       <div class="form-group" id="services">
         <%= f.label :correios_services %>
-        <% @services.each do |k,v| %>
+        <% @shop.allowed_correios_services.each do |k,v| %>
           <div>
             <input type="button" id="remove" value="Remover">
             <input checked="checked" name="shop[correios_custom_services][]" type="checkbox" value="<%= "{\"#{k}\":\"#{v}\"}" %>" style="display:none;"><%= k %>: <%= v %>
