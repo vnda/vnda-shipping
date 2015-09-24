@@ -123,7 +123,7 @@ class Correios
       @shop.normal_shipping_name
     end
 
-    config_name.presence || @shop.allowed_correios_services[option[code]] || SERVICES[code.to_i] #SERVICES is deprecated
+    config_name.presence || @shop.allowed_correios_services[code] || SERVICES[code.to_i] #SERVICES is deprecated
   end
 
   #deprecated
