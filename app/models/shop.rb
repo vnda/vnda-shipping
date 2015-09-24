@@ -142,7 +142,7 @@ class Shop < ActiveRecord::Base
 
   def allowed_correios_services
     services = {}
-    JSON.load(correios_custom_services).map{|service| @services.merge!(service) } if correios_custom_services.present?
+    JSON.load(correios_custom_services).map{|service| services.merge!(service) } if correios_custom_services.present?
     services = Correios::SERVICES if services.empty?
     services
   end
