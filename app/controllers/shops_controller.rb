@@ -5,6 +5,7 @@ class ShopsController < ApplicationController
 
   def new
     @shop = Shop.new
+    set_services
   end
 
   def create
@@ -12,12 +13,14 @@ class ShopsController < ApplicationController
     if @shop.save
       success_redirect shop_shipping_methods_path(@shop)
     else
+      set_services
       render :new
     end
   end
 
   def edit
     @shop = Shop.find(params[:id])
+    set_services
   end
 
   def update
@@ -25,6 +28,7 @@ class ShopsController < ApplicationController
     if @shop.update(shop_params)
       success_redirect shops_path
     else
+      set_services
       render :edit
     end
   end
@@ -38,9 +42,16 @@ class ShopsController < ApplicationController
 
   def shop_params
     params.require(:shop).permit(:name, :intelipost_token, :forward_to_intelipost,
-      :axado_token, :forward_to_axado, :correios_custom_services,
+      :axado_token, :forward_to_axado,
       :forward_to_correios, :correios_code, :correios_password,
       :normal_shipping_name, :express_shipping_name, :backup_method_id,
-      correios_services: [])
+      correios_services: []).merge(correios_custom_services: (params[:shop][:correios_custom_services] || []).map{|i| JSON.parse(i)}.to_json )
+  end
+
+  def set_services
+    @services = {}
+    JSON.load(@shop.correios_custom_services).map{|service| @services.merge!(service) }
+    @services = Correios::SERVICES if @services.empty?
+    @services
   end
 end

@@ -1,6 +1,7 @@
 class Correios
   URL = 'http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx?WSDL'
 
+  #deprecated
   SERVICES = {
     40010 => 'SEDEX Varejo',
     40045 => 'SEDEX a Cobrar Varejo',
@@ -9,6 +10,7 @@ class Correios
     41106 => 'PAC Varejo',
   }
 
+  #deprecated
   EXPRESS = [40010, 40045, 40215, 40290]
 
   MIN_WIDTH = 11
@@ -61,23 +63,18 @@ class Correios
 
     allowed, blocked = success.partition { |s| check_blocked_zip(request[:shipping_zip], s) }
     blocked.each do |s|
-      Rails.logger.error("Block rule found for service #{s[:codigo]} #{SERVICES[s[:codigo].to_i]}")
-    end
-
-    groups = allowed.partition { |s| EXPRESS.include?(s[:codigo].to_i) }
-    express, normal = groups.flat_map do |group|
-      group.min { |s1, s2| parse_price(s1[:valor]) <=> parse_price(s2[:valor]) }
+      Rails.logger.error("Block rule found for service #{s[:codigo]} #{@shop.allowed_correios_services[option[:codigo]] || SERVICES[s[:codigo].to_i]}") #SERVICES is deprecated
     end
 
     result = []
-    [express, normal].compact.each do |option|
+    allowed.compact.each do |option|
       deadline = option[:erro] == '010'? option[:prazo_entrega].to_i + 7 : option[:prazo_entrega].to_i
 
       result << Quotation.new(
         name: shipping_name(option[:codigo]),
         price: parse_price(option[:valor]),
         deadline: deadline,
-        slug: (SERVICES[option[:codigo].to_i] || option[:codigo]).parameterize,
+        slug: (@shop.allowed_correios_services[option[:codigo]] || option[:codigo]).parameterize,
         delivery_type: shipping_type(option[:codigo]),
         deliver_company: "Correios",
         cotation_id: ''
@@ -118,14 +115,18 @@ class Correios
   def shipping_name(code)
     method_name = @shop.shipping_methods_correios.where(service: code.to_s)
     return method_name.pluck(:name).first if method_name.any?
+
+    #deprecated
     config_name = if EXPRESS.include?(code.to_i)
       @shop.express_shipping_name
     else
       @shop.normal_shipping_name
     end
-    config_name.presence || SERVICES[code.to_i]
+
+    config_name.presence || @shop.allowed_correios_services[option[code]] || SERVICES[code.to_i] #SERVICES is deprecated
   end
 
+  #deprecated
   def shipping_type(code)
     method_name = @shop.shipping_methods_correios.where(service: code.to_s)
     return method_name.first.delivery_type.name if method_name.any?

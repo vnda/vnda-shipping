@@ -23,11 +23,20 @@
         <%= f.label :correios_password %>
         <%= f.text_field :correios_password, class: 'form-control' %>
       </div>
-      <div class="form-group">
-        <%= f.label :correios_custom_services %>
-        <%= f.text_field :correios_custom_services , class: 'form-control' %>
-        <p class="help-block">Separar por vírgula e não usar espaços.</p>
+
+      <div class="form-group" id="services">
+        <%= f.label :correios_services %>
+        <% @services.each do |k,v| %>
+          <div>
+            <input type="button" id="remove" value="Remover">
+            <input checked="checked" name="shop[correios_custom_services][]" type="checkbox" value="<%= "{\"#{k}\":\"#{v}\"}" %>" style="display:none;"><%= k %>: <%= v %>
+          </div>
+        <% end %>
+        <div>
+          <input type="button" id="add" style="margin-top:20px;" value="Adicionar">
+        </div>
       </div>
+
     </fieldset>
     <fieldset class="col-md-4">
       <legend>Axado</legend>
@@ -74,3 +83,21 @@
     </div>
   </div>
 <% end %>
+
+<script>
+  (function () {
+    $("#services").on("click", "#add", function(){
+      var code = prompt("Informe o código do serviço");
+      var name = prompt("Informe o nome do serviço");
+      if(code != "" && name != "" && code != null && name != null){
+        $('<div><input type="button" id="remove" value="Remover"> <input checked="checked" name="shop[correios_custom_services][]" type="checkbox" value="{&quot;'+code+'&quot;: &quot;'+name+'&quot;}" style="display:none;"> '+code+': '+name+'</div>').insertBefore( $(this) );
+      }
+      return false;
+    });
+
+    $("#services").on("click", "#remove", function(){
+      $(this).parent().remove();
+      return false;
+    });
+  }());
+</script>

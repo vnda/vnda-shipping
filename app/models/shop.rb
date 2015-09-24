@@ -141,8 +141,9 @@ class Shop < ActiveRecord::Base
   end
 
   def allowed_correios_services
-    codes = correios_custom_services.to_s.split(",").select{|code| code.present?}
-    Correios::SERVICES.merge( Hash[codes.map{|code| [code, code]}] )
+    s = {}
+    JSON.load(correios_custom_services).map{|service| s.merge!(service) }
+    s
   end
 
   def delivery_day_status(date, zip, period_name)
