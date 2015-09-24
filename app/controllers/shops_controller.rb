@@ -50,7 +50,7 @@ class ShopsController < ApplicationController
 
   def set_services
     @services = {}
-    JSON.load(@shop.correios_custom_services).map{|service| @services.merge!(service) }
+    JSON.load(@shop.correios_custom_services || []).map{|service| @services.merge!(service) }
     @services = Correios::SERVICES if @services.empty?
     @services
   end
