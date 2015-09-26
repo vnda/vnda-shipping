@@ -57,7 +57,7 @@ class Correios
       else
         Rails.logger.error("#{e[:erro]}: #{e[:msg_erro]}")
         @shop.add_shipping_error(e[:msg_erro])
-        raise ShippingProblem, e[:msg_erro]
+        #raise ShippingProblem, e[:msg_erro]
       end
     end
 
