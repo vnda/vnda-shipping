@@ -1,4 +1,6 @@
 class ShopsController < ApplicationController
+  protect_from_forgery except: [:create]
+
   def index
     @shops = Shop.order(:name)
   end
@@ -9,10 +11,15 @@ class ShopsController < ApplicationController
 
   def create
     @shop = Shop.new(shop_params)
-    if @shop.save
-      success_redirect shop_shipping_methods_path(@shop)
-    else
-      render :new
+
+    respond_to do |format|
+      if @shop.save
+        format.html { success_redirect shop_shipping_methods_path(@shop), notice: I18n.t(:create, scope: [:flashes, :store]) }
+        format.json { render json:  @shop.token, status: 201 }
+      else
+        format.html { render :new }
+        format.json { render json:  @shop }
+      end
     end
   end
 

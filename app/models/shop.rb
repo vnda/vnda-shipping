@@ -27,7 +27,7 @@ class Shop < ActiveRecord::Base
   has_many :shipping_friendly_errors
 
   before_create { self.token = SecureRandom.hex }
-  after_create :create_delivery_types
+  after_create :create_delivery_types, :create_correios_methods
 
   validates :name, presence: true, uniqueness: true
   validates  :axado_token, presence: true, if: 'forward_to_axado.present?'
@@ -71,6 +71,32 @@ class Shop < ActiveRecord::Base
   def create_delivery_types
     self.delivery_types.where(name: "Normal").first_or_create(enabled: true)
     self.delivery_types.where(name: "Expressa").first_or_create(enabled: true)
+  end
+
+  def create_correios_methods
+    if forward_to_correios
+      self.methods.create(
+        name: "Normal",
+        enabled: true,
+        description: "PAC",
+        min_weigth: 0,
+        max_weigth: 30,
+        delivery_type_id: self.delivery_types.where(name: "Normal").first.id,
+        data_origin: "correios",
+        service: "41106"
+      )
+
+      self.methods.create(
+        name: "Expressa",
+        enabled: true,
+        description: "SEDEX",
+        min_weigth: 0,
+        max_weigth: 30,
+        delivery_type_id: self.delivery_types.where(name: "Expressa").first.id,
+        data_origin: "correios",
+        service: "40010"
+      )
+    end
   end
 
   def available_periods(zip, date = nil)
