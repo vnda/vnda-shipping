@@ -3,19 +3,34 @@ module Intelipost
   class InvalidZip < StandardError; end
 
   def quote(api_token, request, shop = nil)
-    response = Excon.post(
-      'https://api.intelipost.com.br/api/v1/quote_by_product',
-      headers: { 'Content-Type' => 'application/json',
-      'Accept' => 'application/json',
-      'api_key' => api_token },
-      body: build_request(request).to_json
-    )
+    begin
+      response = Excon.post(
+        'https://api.intelipost.com.br/api/v1/quote_by_product',
+        headers: { 'Content-Type' => 'application/json',
+        'Accept' => 'application/json',
+        'api_key' => 'e551dcee51c5233132e7a6f67af65618eb57d0715ef95b6d51b5cc08e6c6361b' },
+        body: build_request(request).to_json
+      )
+    rescue Excon::Errors::BadRequest
+      puts "Intelipost request: #{build_request(request).to_json}"
+      puts "Intelipost response #{response[:body]}"
+
+      json = JSON.parse(response[:body])
+
+      @shop.add_shipping_error(json['messages']['text'])
+      raise ShippingProblem, json['messages']['text']
+    end
 
     if response.status == 503
       return activate_backup_method(request, shop)
     end
 
-    data = JSON.parse(Zlib::GzipReader.new(StringIO.new(response[:body])).read)
+    begin
+      data = JSON.parse(Zlib::GzipReader.new(StringIO.new(response[:body])).read)
+    rescue Zlib::GzipFile::Error
+      data = JSON.parse(response[:body])
+    end
+
     cotation_id = data['content']['id']
     deliveries = data['content']['delivery_options'].map do |o|
       Quotation.new(
@@ -42,11 +57,6 @@ module Intelipost
   #    raise e
   #  end
   #end
-  rescue Excon::Errors::BadRequest, Zlib::GzipFile::Error
-    json = JSON.parse(response[:body])
-
-    @shop.add_shipping_error(json['messages']['text'])
-    raise ShippingProblem, json['messages']['text']
   end
 
   private
