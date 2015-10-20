@@ -8,7 +8,7 @@ module Intelipost
         'https://api.intelipost.com.br/api/v1/quote_by_product',
         headers: { 'Content-Type' => 'application/json',
         'Accept' => 'application/json',
-        'api_key' => 'e551dcee51c5233132e7a6f67af65618eb57d0715ef95b6d51b5cc08e6c6361b' },
+        'api_key' => api_token },
         body: build_request(request).to_json
       )
     rescue Excon::Errors::BadRequest
@@ -25,7 +25,11 @@ module Intelipost
       return activate_backup_method(request, shop)
     end
 
-    data = JSON.parse(response[:body])
+    begin
+      data = JSON.parse(Zlib::GzipReader.new(StringIO.new(response[:body])).read)
+    rescue Zlib::GzipFile::Error
+      data = JSON.parse(response[:body])
+    end
     puts "Intelipost response data #{data}"
 
     cotation_id = data['content']['id']
