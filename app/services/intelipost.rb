@@ -25,11 +25,8 @@ module Intelipost
       return activate_backup_method(request, shop)
     end
 
-    begin
-      data = JSON.parse(Zlib::GzipReader.new(StringIO.new(response[:body])).read)
-    rescue Zlib::GzipFile::Error
-      data = JSON.parse(response[:body])
-    end
+    data = JSON.parse(response[:body])
+    puts "Intelipost response data #{data}"
 
     cotation_id = data['content']['id']
     deliveries = data['content']['delivery_options'].map do |o|
