@@ -43,7 +43,7 @@ module Intelipost
   #  end
   #end
   rescue Excon::Errors::BadRequest, Zlib::GzipFile::Error
-    json = JSON.parse(e.response.body)
+    json = JSON.parse(response[:body])
 
     @shop.add_shipping_error(json['messages']['text'])
     raise ShippingProblem, json['messages']['text']
