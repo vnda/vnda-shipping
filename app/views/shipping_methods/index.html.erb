@@ -1,8 +1,8 @@
 <% content_for :title, 'Formas de Entrega' %>
 
 <% content_for :actions do %>
-  <%= link_to 'Nova Forma de Entrega', new_shop_shipping_method_path(@shop),
-      class: 'btn btn-success' %>
+  <%= link_to 'Nova Forma de Entrega', new_shop_shipping_method_path(@shop), class: 'btn btn-success' %>
+  <%= link_to 'Importar planilhas', import_shop_shipping_methods_path(@shop), class: 'btn btn-success' %>
 <% end %>
 
 <table class="table">

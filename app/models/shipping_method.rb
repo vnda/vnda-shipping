@@ -48,10 +48,6 @@ class ShippingMethod < ActiveRecord::Base
     self.slug = name.try(:parameterize)
   end
 
-  def to_param
-    slug
-  end
-
   def duplicate(shop_id = self.shop.id)
     self.class.new do |r|
       r.enabled     = false

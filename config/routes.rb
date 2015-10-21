@@ -11,6 +11,8 @@ Rails.application.routes.draw do
       patch :toggle, on: :member
       get :duplicate, on: :member
       get :copy_to_all_shops, on: :member
+      get :import, on: :collection
+      post :import_line, on: :collection
     end
     resources :shipping_errors, only: [:index]
     resources :delivery_types do
