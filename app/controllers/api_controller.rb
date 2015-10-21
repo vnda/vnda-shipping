@@ -105,7 +105,7 @@ class ApiController < ActionController::Base
       Axado.quote(@shop.axado_token, request_params, @shop)
     elsif @shop.forward_to_intelipost?
       Intelipost.quote(@shop.intelipost_token, request_params, @shop)
-    elsif @shop.forward_to_correios?
+    elsif @shop.forward_to_correios? && @shop.enabled_correios_service.any?
       Correios.new(@shop).quote(request_params)
     else
 

@@ -161,9 +161,7 @@ class Shop < ActiveRecord::Base
   end
 
   def enabled_correios_service
-    services = shipping_methods_correios.pluck(:service)
-    return services if services.any?
-    correios_services
+    shipping_methods_correios.pluck(:service)
   end
 
   def allowed_correios_services

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150923174002) do
+ActiveRecord::Schema.define(version: 20151021181231) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -69,15 +69,15 @@ ActiveRecord::Schema.define(version: 20150923174002) do
   add_index "shipping_friendly_errors", ["shop_id"], name: "index_shipping_friendly_errors_on_shop_id", using: :btree
 
   create_table "shipping_methods", force: true do |t|
-    t.integer  "shop_id",                                                                                   null: false
-    t.string   "name",                                                                                      null: false
-    t.string   "description",      default: "",                                                             null: false
-    t.string   "slug",                                                                                      null: false
-    t.boolean  "express",          default: false,                                                          null: false
-    t.boolean  "enabled",          default: false,                                                          null: false
-    t.numrange "weigth_range",     default: BigDecimal(-::Float::INFINITY)...BigDecimal(::Float::INFINITY), null: false
+    t.integer  "shop_id",                            null: false
+    t.string   "name",                               null: false
+    t.string   "description",      default: "",      null: false
+    t.string   "slug",                               null: false
+    t.boolean  "express",          default: false,   null: false
+    t.boolean  "enabled",          default: false,   null: false
+    t.numrange "weigth_range",                       null: false
     t.integer  "delivery_type_id"
-    t.string   "data_origin",      default: "local",                                                        null: false
+    t.string   "data_origin",      default: "local", null: false
     t.string   "service"
   end
 
@@ -92,7 +92,6 @@ ActiveRecord::Schema.define(version: 20150923174002) do
     t.string  "correios_code"
     t.string  "correios_password"
     t.boolean "forward_to_correios",                 default: false, null: false
-    t.integer "correios_services",                   default: [],    null: false, array: true
     t.string  "normal_shipping_name"
     t.string  "express_shipping_name"
     t.integer "backup_method_id"
