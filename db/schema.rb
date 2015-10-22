@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151021181231) do
+ActiveRecord::Schema.define(version: 20151022010952) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -81,7 +81,6 @@ ActiveRecord::Schema.define(version: 20151021181231) do
     t.string   "service"
   end
 
-  add_index "shipping_methods", ["shop_id", "slug"], name: "index_shipping_methods_on_shop_id_and_slug", unique: true, using: :btree
   add_index "shipping_methods", ["shop_id"], name: "index_shipping_methods_on_shop_id", using: :btree
 
   create_table "shops", force: true do |t|

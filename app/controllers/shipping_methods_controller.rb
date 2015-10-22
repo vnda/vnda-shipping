@@ -16,15 +16,18 @@ class ShippingMethodsController < ApplicationController
 
   def import_line
     args = params[:line].gsub('"', '').split(",")
-    service_name = "#{params[:service_name]} - de #{args[3]} a #{args[4]}"
+    service_name = DeliveryType.find(params[:delivery_type_id]).name
+    min_weigth = (args[3] == 0 ? 0 : args[3].to_i / 1000.0).round(3).to_s
+    max_weigth = (args[4] == 0 ? 0 : args[4].to_i / 1000.0).round(3).to_s
+    description = "#{params[:service_name]} CSV #{min_weigth} até #{max_weigth}"
 
     if args[4].to_i > 0 && args[5].to_f > 0
-      unless method = @shop.methods.find_by(name: service_name)
+      unless method = @shop.methods.find_by(name: service_name, description: description)
         method = @shop.methods.create(
           name: service_name,
-          description: "#{params[:service_name]} - CSV",
-          min_weigth: (args[3] == 0 ? 0 : args[3].to_i / 1000.0).round(3).to_s,
-          max_weigth: (args[4] == 0 ? 0 : args[4].to_i / 1000.0).round(3).to_s,
+          description: description,
+          min_weigth: min_weigth,
+          max_weigth: max_weigth,
           data_origin: "local",
           delivery_type_id: params[:delivery_type_id]
         )
@@ -37,8 +40,11 @@ class ShippingMethodsController < ApplicationController
         price: args[5].to_f,
         deadline: args[9].to_i
       )
-
-      render text: "ok"
+      if rule.errors.empty?
+        render text: "ok"
+      else
+        render text: rule.errors, status: 422
+      end
     else
       render text: "error", status: 422
     end
