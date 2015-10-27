@@ -1,5 +1,9 @@
 <% content_for :title, 'Importar planilhas' %>
 
+<% content_for :actions do %>
+  <%= link_to 'http://planilha.zone', "http://planilha.zone", class: 'btn btn-success', target: "_blank" %>
+<% end %>
+
 <div class="selectbox correios-services">
   <label>
     <%= label_tag :service %>
