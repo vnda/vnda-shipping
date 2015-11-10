@@ -23,6 +23,10 @@ class Correios
 
   def quote(request)
     box = package_dimensions(request[:products])
+    weight = request[:products].sum { |i| i[:weight].to_f * i[:quantity].to_i }
+    if ((box[:length].to_f* box[:height].to_f * box[:width].to_f) / 6000.0) > weight
+      weight = (box[:length].to_f* box[:height].to_f * box[:width].to_f) / 6000.0
+    end
     begin
       response = send_message(:calc_preco_prazo,
         'nCdEmpresa' => @shop.correios_code,
@@ -30,7 +34,7 @@ class Correios
         'nCdServico' => @shop.enabled_correios_service.join(?,),
         'sCepOrigem' => request[:origin_zip],
         'sCepDestino' => request[:shipping_zip],
-        'nVlPeso' => request[:products].sum { |i| i[:weight].to_f * i[:quantity].to_i },
+        'nVlPeso' => weight,
         'nCdFormato' => 1,
         'nVlComprimento' => box[:length],
         'nVlAltura' => box[:height],
