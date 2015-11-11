@@ -47,7 +47,6 @@ class ApiController < ActionController::Base
     end
 
     if periods.nil? or periods.empty?
-      @shop.shipping_errors << ShippingError.new(message: "Não existem opções de entrega para este endereço.")
       render json: {error: @shop.friendly_message_for("Não existem opções de entrega para este endereço.")}, status: 400
     else
       render json: periods, status: 200
