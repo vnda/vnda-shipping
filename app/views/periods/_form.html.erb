@@ -33,7 +33,7 @@
 
   <div class="row">
     <div class="col-md-6">
-      <label for="period[exception_date]">Datas excepcionais</label>
+      <label for="period[exception_date]">Datas com entrega</label>
       <% (@period.exception_date || []).each do |date| %>
         <div class="form-group">
           <input name="period[exception_date][]" type="text" value="<%= date %>" class="form-control">
@@ -41,6 +41,20 @@
       <% end %>
       <div class="form-group text-right">
         <a href="#" id="new_exception">Adicionar</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <label for="period[closed_date]">Datas sem entrega</label>
+      <% (@period.closed_date || []).each do |date| %>
+        <div class="form-group">
+          <input name="period[closed_date][]" type="text" value="<%= date %>" class="form-control">
+        </div>
+      <% end %>
+      <div class="form-group text-right">
+        <a href="#" id="new_closed">Adicionar</a>
       </div>
     </div>
   </div>
@@ -60,5 +74,9 @@ $(".multiselect").multiselect({
 $("#new_exception").on("click", function(e){
   e.preventDefault();
   $('<div class="form-group"><input name="period[exception_date][]" type="text" class="form-control"></div>').insertBefore($(this).parent());
+});
+$("#new_closed").on("click", function(e){
+  e.preventDefault();
+  $('<div class="form-group"><input name="period[closed_date][]" type="text" class="form-control"></div>').insertBefore($(this).parent());
 });
 </script>
