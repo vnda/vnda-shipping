@@ -9,10 +9,10 @@ module Intelipost
         headers: { 'Content-Type' => 'application/json',
         'Accept' => 'application/json',
         'api_key' => api_token },
-        body: build_request(request).to_json
+        body: build_request(request, shop).to_json
       )
     rescue Excon::Errors::BadRequest
-      puts "Intelipost request: #{build_request(request).to_json}"
+      puts "Intelipost request: #{build_request(request, shop).to_json}"
       puts "Intelipost response #{response[:body]}"
 
       json = JSON.parse(response[:body])
@@ -85,8 +85,8 @@ module Intelipost
     !!(metaname =~ /EXPRESS/)
   end
 
-  def build_request(r)
-    {
+  def build_request(r, shop)
+    request = {
       origin_zip_code:      r[:origin_zip][0..4] + '-' + r[:origin_zip][5..7],
       destination_zip_code: r[:shipping_zip][0..4] + '-' + r[:shipping_zip][5..7],
       additional_information: {},
@@ -103,6 +103,12 @@ module Intelipost
         }
       end
     }
+
+    request[:additional_information] = {
+      sell_channel: shop.name
+    } if shop
+    
+    request
   end
 
   def activate_backup_method(request, shop)
