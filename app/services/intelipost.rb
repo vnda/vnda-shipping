@@ -4,12 +4,14 @@ module Intelipost
 
   def quote(api_token, request, shop = nil)
     begin
+      req = build_request(request, shop)
+      puts req
       response = Excon.post(
         'https://api.intelipost.com.br/api/v1/quote_by_product',
         headers: { 'Content-Type' => 'application/json',
         'Accept' => 'application/json',
         'api_key' => api_token },
-        body: build_request(request, shop).to_json
+        body: req.to_json
       )
     rescue Excon::Errors::BadRequest
       puts "Intelipost request: #{build_request(request, shop).to_json}"
@@ -107,7 +109,7 @@ module Intelipost
     request[:additional_information] = {
       sell_channel: shop.name
     } if shop
-    
+
     request
   end
 
