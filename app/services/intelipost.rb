@@ -107,7 +107,7 @@ module Intelipost
     }
 
     request[:additional_information] = {
-      sell_channel: shop.name
+      sales_channel: shop.name
     } if shop
 
     request
