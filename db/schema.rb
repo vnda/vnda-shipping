@@ -15,7 +15,6 @@ ActiveRecord::Schema.define(version: 20151214161745) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "hstore"
 
   create_table "block_rules", force: true do |t|
     t.integer   "shipping_method_id", null: false
@@ -70,15 +69,15 @@ ActiveRecord::Schema.define(version: 20151214161745) do
   add_index "shipping_friendly_errors", ["shop_id"], name: "index_shipping_friendly_errors_on_shop_id", using: :btree
 
   create_table "shipping_methods", force: true do |t|
-    t.integer  "shop_id",                            null: false
-    t.string   "name",                               null: false
-    t.string   "description",      default: "",      null: false
-    t.string   "slug",                               null: false
-    t.boolean  "express",          default: false,   null: false
-    t.boolean  "enabled",          default: false,   null: false
-    t.numrange "weigth_range",                       null: false
+    t.integer  "shop_id",                                                                                   null: false
+    t.string   "name",                                                                                      null: false
+    t.string   "description",      default: "",                                                             null: false
+    t.string   "slug",                                                                                      null: false
+    t.boolean  "express",          default: false,                                                          null: false
+    t.boolean  "enabled",          default: false,                                                          null: false
+    t.numrange "weigth_range",     default: BigDecimal(-::Float::INFINITY)...BigDecimal(::Float::INFINITY), null: false
     t.integer  "delivery_type_id"
-    t.string   "data_origin",      default: "local", null: false
+    t.string   "data_origin",      default: "local",                                                        null: false
     t.string   "service"
   end
 

@@ -4,9 +4,3 @@ development: &DEVELOPMENT
   encoding: unicode
   database: shipping_development
   pool: 5
-  username: vagrant
-  password: vnda
-
-test:
-  <<: *DEVELOPMENT
-  database: site_test
