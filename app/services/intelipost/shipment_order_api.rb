@@ -20,8 +20,8 @@ class Intelipost::ShipmentOrderApi
     post("https://#{@base_uri}/api/v1/shipment_order", mount_intelipost_order(params))
   end
 
-  def ready_for_shipment(params)
-    post("https://#{@base_uri}/api/v1/shipment_order/multi/shipped/with_date", [params])
+  def shipped(params)
+    post("https://#{@base_uri}/api/v1/shipment_order/multi/shipped/with_date", [params["code"]])
   end
 
   def mount_intelipost_order(json)

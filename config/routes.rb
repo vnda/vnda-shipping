@@ -28,5 +28,5 @@ Rails.application.routes.draw do
   match '/delivery_types', to: 'api#delivery_types', via: [:get, :post], format: :json
 
   post '/intelipost/:shop_token/create', to: 'api#create_intelipost'
-  post '/intelipost/:shop_token/ready_for_shipment', to: 'api#ready_for_shipment'
+  post '/intelipost/:shop_token/shipped', to: 'api#shipped'
 end
