@@ -16,6 +16,14 @@ class Intelipost::ShipmentOrderApi
     get("https://#{@base_uri}/api/v1/shipment_order/#{id}")
   end
 
+  def read_quote(id)
+    get("https://#{@base_uri}/api/v1/quote/#{id}")
+  end
+
+  def delivery_methods
+    get("https://#{@base_uri}/api/v1/info")
+  end
+
   def create(params)
     post("https://#{@base_uri}/api/v1/shipment_order", mount_intelipost_order(params))
   end
@@ -26,9 +34,16 @@ class Intelipost::ShipmentOrderApi
 
   def mount_intelipost_order(json)
     params = {}
-    params[:quote_id] = json["extra"]["cotation_id"] if json["extra"]
+    if json["extra"] and json["extra"]["cotation_id"]
+      params[:quote_id] = json["extra"]["cotation_id"].to_i
+
+      quote = read_quote(params[:quote_id])["content"]["delivery_options"]
+      quote = quote.select{|d| d if d["delivery_method_name"].downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '') == json["shipping_method"]}.last
+      params[:delivery_method_id] = quote["delivery_method_id"].to_i
+    end
+
+    params[:estimated_delivery_date] = (Date.current + json["delivery_days"].days).strftime("%Y-%m-%d") if json["delivery_days"].to_i > 0
     params[:order_number] = json["code"]
-    params[:delivery_method_id] = "2"
     params[:customer_shipping_costs] = json["shipping_price"]
     params[:end_customer] = {}
     params[:end_customer][:first_name] = json["first_name"]
@@ -59,6 +74,14 @@ class Intelipost::ShipmentOrderApi
       item[:products_nature] = "household appliance"
       item[:is_icms_exempt] = false
       item[:tracking_code] = json["tracking_code"]
+      item[:shipment_order_volume_invoice] = {}
+      item[:shipment_order_volume_invoice][:invoice_series] = "1"
+      item[:shipment_order_volume_invoice][:invoice_number] = "1000"
+      item[:shipment_order_volume_invoice][:invoice_key] = "41140502834982004563550010000084111000132317"
+      item[:shipment_order_volume_invoice][:invoice_date] = Date.current.strftime("%Y-%m-%d").to_s
+      item[:shipment_order_volume_invoice][:invoice_total_value] = i["total"].to_s
+      item[:shipment_order_volume_invoice][:invoice_products_value] = i["subtotal"].to_s
+      item[:shipment_order_volume_invoice][:invoice_cfop] = "2809"
       params[:shipment_order_volume_array] << item
     end
     JSON.parse(params.to_json)
