@@ -93,7 +93,11 @@ class ApiController < ActionController::Base
     intelipost_api = Intelipost::ShipmentOrderApi.new(shop)
     res = intelipost_api.create(params)
 
-    render json: res, status: 200
+    if res["status"] == "OK"
+      render json: res, status: 200
+    else
+      render json: { error: "It could not be created" }, status: 400
+    end
   end
 
   def shipped
