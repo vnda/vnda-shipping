@@ -94,6 +94,7 @@ class ApiController < ActionController::Base
     res = intelipost_api.create(params)
 
     if res["status"] == "OK"
+      puts "ORDER #{res['content']['order_number']} CREATED ON INTELIPOST"
       render json: res, status: 200
     else
       render json: { error: "It could not be created" }, status: 400
