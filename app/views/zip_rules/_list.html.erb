@@ -18,6 +18,7 @@
   <%= form_for [@shop, @method, zip_rule], remote: true, html: {class: 'zip-rule-form'} do |f| %>
     <div>
       <div class="col-md-2">
+        <%= f.hidden_field :id %>
         <%= f.text_field :min, value: zero_filed_zip(f.object.min), data: { mask_zip: true }, class: 'form-control' %>
       </div>
       <div class="col-md-2">

@@ -16,7 +16,8 @@ class ZipRulesController < ApplicationController
   end
 
   def update
-    
+    @zip_rule = ZipRule.find(params[:id])
+    flash.now[:notice] = I18n.t('notices.zip_rule.update') if @zip_rule.update_attributes(zip_rule_params)
   end
 
   private
