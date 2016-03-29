@@ -110,18 +110,14 @@
       $.ajax({
         type: "GET",
         dataType: 'script',
-        url: '<%= shop_shipping_method_zip_rules_path(@shop, @method) %>',
-        success: function(){
-          console.log('sucesso');
-        }
-      
+        url: '<%= shop_shipping_method_zip_rules_path(@shop, @method) %>'      
       });
 
       $(document.body).on('click', 'button#new_zip_rule', function(){
+        $("#zip-code-messages").html('');
         var form_clone = $('.zip-rule-form:first').clone();
         form_clone.find('input').val('');
         form_clone.attr('action', '<%= shop_shipping_method_zip_rules_path(@shop, @method) %>');
-        console.log("CLONE");
         $('#zip-rules-container').append(form_clone);
       });    
     });
