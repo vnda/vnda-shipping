@@ -1,0 +1,4 @@
+jQuery(document).ready(function($) {
+    $("#zip-codes-form").append("<%= escape_javascript(render :partial => 'list', :locals => { :shop => @shop, :method => @method }) %>");
+});
+

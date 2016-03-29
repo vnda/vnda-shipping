@@ -1,4 +1,4 @@
-<tr data-index="<%= f.index %>">
+<tr data-zip-rule="true" data-index="<%= f.index %>">
   <td><%= f.text_field :min, value: zero_filed_zip(f.object.min), data: { mask_zip: true }, class: 'form-control' %></td>
   <td><%= f.text_field :max, value: zero_filed_zip(f.object.max), data: { mask_zip: true }, class: 'form-control' %></td>
   <td style="width: 140px;">
@@ -18,6 +18,9 @@
     </td>
     <% end %>
   <td style="width: 90px;">
+    <%= link_to 'javascript:void(0)', class: 'btn btn-default zip-code-ajax' do %>
+      <span class="glyphicon glyphicon-ok"></span>
+    <% end %>
     <%= link_to 'javascript:void(0)', class: 'btn btn-default',
         data: { clone_rule: true } do %>
       <span class="glyphicon glyphicon-retweet"></span>

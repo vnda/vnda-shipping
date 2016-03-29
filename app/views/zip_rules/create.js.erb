@@ -1,0 +1,11 @@
+$("#zip-code-messages").html('');
+
+<% if @zip_rule.errors.empty? %>
+  $(function(){
+    $("#zip-code-messages").append("<%= escape_javascript(render 'shared/flash_messages') %>");  
+  });
+<% else %>
+  $(function(){
+    $("#zip-code-messages").append("<%= escape_javascript(render 'shared/error_messages', :resource => @zip_rule) %>");
+  });
+<% end %>

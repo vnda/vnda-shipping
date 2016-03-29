@@ -13,6 +13,7 @@ Rails.application.routes.draw do
       get :copy_to_all_shops, on: :member
       get :import, on: :collection
       post :import_line, on: :collection
+      resources :zip_rules
     end
     resources :shipping_errors, only: [:index]
     resources :delivery_types do
