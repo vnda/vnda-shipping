@@ -119,8 +119,6 @@
         form_clone.find('input').val('');
         form_clone.attr('action', '<%= shop_shipping_method_zip_rules_path(@shop, @method) %>');
 
-        //form_clone.find('.multiselect').parent('div').html('<div class="multiselect">');
-
         form_clone.find('.multiselect').multiselect({
            noneSelectedText: "Selecione...",
            selectedList: 3,
