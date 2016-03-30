@@ -115,7 +115,7 @@
 
       var newZipRule = function(){
         $("#zip-code-messages").html('');
-        var form_clone = $('.zip-rule-form:first').clone();
+        var form_clone = $('.zip-rule-row:first').clone();
         form_clone.find('input').val('');
         form_clone.attr('action', '<%= shop_shipping_method_zip_rules_path(@shop, @method) %>');
         form_clone.attr('id', 'new');
@@ -152,7 +152,7 @@
       });    
 
       $(document.body).on('click', '[data-clone-zip-rule]', function (e) {
-        var formToClone = $(this).parents('form');
+        var formToClone = $(this).parents('.zip-rule-row');
         cloneZipRuleFrom(formToClone).insertAfter(formToClone);
       });
     });

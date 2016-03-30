@@ -1,30 +1,74 @@
-<div id="zip-code-messages" class="row">
+<style>
+  #zip-codes-form{
+    margin-top: 70px;
+  }  
+  
+  #zip-rules-header{
+    font-weight: bold;
+  }
 
+  .zip-rule-row{
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 0px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  #zip-rules-panel .zip-code {
+    width: 130px;
+  }
+
+  #zip-rules-panel .price {
+    width: 180px;
+  }
+
+  #zip-rules-panel .deadline {
+    width: 100px;
+  }
+
+  #zip-rules-panel .period {
+    width: 290px;
+  }
+
+ 
+</style>
+
+
+<div id="zip-rules-panel" class="panel panel-default">
+  <div class="panel-heading">
+    <button id="new_zip_rule" class="btn btn-default">Nova regra</button>
+  </div>
+  <div class="panel-body">
+    <div id="zip-code-messages" class="row">
+
+    </div>
+
+    <div id="zip-rules-header" class="row">
+      <div class="col-md-2 zip-code">CEP Início</div>
+      <div class="col-md-2 zip-code">CEP Fim</div>
+      <div class="col-md-2 price">Preço</div>
+      <div class="col-md-2 deadline">Prazo</div>
+      <% unless @shop.periods.empty?  %>
+        <div class="col-md-2 period">Período</div>
+      <% end %>
+      <div class="col-md-2"></div>
+    </div>
+
+    <div id="zip-rules-container" class="row">
+    <% @zip_rules.each do |zip_rule| %>
+      <%= render 'zip_rule_form', zip_rule: zip_rule %>
+    <% end %>
+    </div>
+    
+  </div>
+  <div class="panel-footer">
+    <div class="row">
+      <%= paginate(@zip_rules, remote: true) if @zip_rules.respond_to?(:total_pages) %>
+    </div>
+  </div>
 </div>
 
-<div class="row">
-  <div class="col-md-2">CEP Início</div>
-  <div class="col-md-2">CEP Fim</div>
-  <div class="col-md-2">Preço</div>
-  <div class="col-md-2">Prazo</div>
-  <% unless @shop.periods.empty?  %>
-    <div class="col-md-2">Período</div>
-  <% end %>
-  <div class="col-md-2"></div>
-</div>
 
-<div id="zip-rules-container" class="row">
-<% @zip_rules.each do |zip_rule| %>
-  <%= render 'zip_rule_form', zip_rule: zip_rule %>
-<% end %>
-</div>
-<div class="row">
-  <%= paginate(@zip_rules, remote: true) if @zip_rules.respond_to?(:total_pages) %>
-</div>
-
-<div class="row">
-  <button id="new_zip_rule" class="btn btn-default">Nova regra</button>
-</div>
 
 
 
