@@ -1,3 +1,4 @@
+$("#zip-code-messages").html('');
 $("#zip-code-messages").append("<%= escape_javascript(render 'shared/flash_messages') %>");  
 $('[data-zip-rule-id=' + <%= @zip_rule.id %> + ']').remove();
 

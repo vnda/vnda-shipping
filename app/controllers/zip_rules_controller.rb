@@ -10,6 +10,7 @@ class ZipRulesController < ApplicationController
   end
 
   def create
+    @shop = Shop.find(params[:shop_id])
     @method = ShippingMethod.find(params[:shipping_method_id])
     @zip_rule = @method.zip_rules.create(zip_rule_params)
     flash.now[:notice] = I18n.t('notices.zip_rule.create') if @zip_rule.persisted?
