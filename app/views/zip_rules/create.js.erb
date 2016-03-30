@@ -1,4 +1,4 @@
 <%= render('form') %>
 
-$('#new').remove();
-$("#zip-rules-container").append("<%= escape_javascript(render 'zip_rule_form', zip_rule: @zip_rule) %>");  
+$('#new').parents('.zip-rule-row').remove();
+$("#zip-rules-container").prepend("<%= escape_javascript(render 'zip_rule_form', zip_rule: @zip_rule) %>");  
