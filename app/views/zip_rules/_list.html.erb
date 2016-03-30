@@ -17,6 +17,8 @@
 <% @zip_rules.each do |zip_rule| %>
   <%= render 'zip_rule_form', zip_rule: zip_rule %>
 <% end %>
+</div>
+<div class="row">
   <%= paginate(@zip_rules, remote: true) if @zip_rules.respond_to?(:total_pages) %>
 </div>
 
