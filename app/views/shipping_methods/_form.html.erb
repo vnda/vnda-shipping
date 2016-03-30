@@ -113,7 +113,7 @@
         url: '<%= shop_shipping_method_zip_rules_path(@shop, @method) %>'      
       });
 
-      $(document.body).on('click', 'button#new_zip_rule', function(){
+      var newZipRule = function(){
         $("#zip-code-messages").html('');
         var form_clone = $('.zip-rule-form:first').clone();
         form_clone.find('input').val('');
@@ -127,9 +127,34 @@
         });
 
         form_clone.find('.multiselect').parent('div').find('button:last').remove();
+        return form_clone;
+      };
 
-        $('#zip-rules-container').append(form_clone);
+      var cloneZipRuleFrom = function(formToClone){
+        $("#zip-code-messages").html('');
+        var form_clone = formToClone.clone();
+        form_clone.attr('action', '<%= shop_shipping_method_zip_rules_path(@shop, @method) %>');
+        form_clone.attr('id', 'new');
+        form_clone.find('[name=_method]').val('post')
+
+        form_clone.find('.multiselect').multiselect({
+           noneSelectedText: "Selecione...",
+           selectedList: 3,
+           header: false
+        });
+
+        form_clone.find('.multiselect').parent('div').find('button:last').remove();
+        return form_clone;
+      }
+
+      $(document.body).on('click', 'button#new_zip_rule', function(){
+        $('#zip-rules-container').append(newZipRule());
       });    
+
+      $(document.body).on('click', '[data-clone-zip-rule]', function (e) {
+        var formToClone = $(this).parents('form');
+        cloneZipRuleFrom(formToClone).insertAfter(formToClone);
+      });
     });
   </script>
 <% end %>
@@ -176,6 +201,7 @@
     $(document.body).on('click', '[data-clone-rule]', function (e) {
       var $target = $(this).parents('tr');
       var inputNames = ['min', 'max', 'price', 'deadline'];
+
       addItem(function ($i) {
         $target.after($i);
         $.each(inputNames, function (i, name) {
