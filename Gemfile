@@ -13,7 +13,7 @@ gem 'rollbar', '~> 1.0.0'
 gem 'puma'
 gem 'pry', group: :development
 gem 'httparty', '0.13.5'
-gem 'will_paginate'
+gem 'kaminari'
 
 group :development, :staging, :production do
   gem "newrelic_rpm"

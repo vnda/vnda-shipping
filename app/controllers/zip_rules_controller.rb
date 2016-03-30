@@ -6,7 +6,7 @@ class ZipRulesController < ApplicationController
     
     @zip_rules = @method.zip_rules.empty? ? 
       [@method.zip_rules.build] :
-      @method.zip_rules.paginate(page: params[:page], per_page: 5)    
+      @method.zip_rules.page(params[:page]).per(5)    
   end
 
   def create
