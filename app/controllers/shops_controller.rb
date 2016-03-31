@@ -46,7 +46,7 @@ class ShopsController < ApplicationController
   def shop_params
     params.require(:shop).permit(
       :name, :intelipost_token, :forward_to_intelipost,
-      :axado_token, :forward_to_axado, :vnda_token,
+      :axado_token, :forward_to_axado,
       :forward_to_correios, :correios_code, :correios_password,
       :normal_shipping_name, :express_shipping_name, :backup_method_id)
     .merge(correios_custom_services: (params[:shop][:correios_custom_services] || [])

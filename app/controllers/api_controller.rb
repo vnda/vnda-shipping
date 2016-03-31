@@ -89,7 +89,7 @@ class ApiController < ActionController::Base
   end
 
   def create_intelipost
-    shop = Shop.find_by(vnda_token: params[:shop_token])
+    shop = Shop.find_by(token: params[:shop_token])
     intelipost_api = Intelipost::ShipmentOrderApi.new(shop)
     res = intelipost_api.create(params)
 
@@ -102,7 +102,7 @@ class ApiController < ActionController::Base
   end
 
   def shipped
-    shop = Shop.find_by(vnda_token: params[:shop_token])
+    shop = Shop.find_by(token: params[:shop_token])
     intelipost_api = Intelipost::ShipmentOrderApi.new(shop)
     res = intelipost_api.ready_for_shipment(params)
 

@@ -23,9 +23,10 @@ class Correios
 
   def quote(request)
     box = package_dimensions(request[:products])
+    cubic_weight = (box[:length].to_f* box[:height].to_f * box[:width].to_f) / 6000.0
     weight = request[:products].sum { |i| i[:weight].to_f * i[:quantity].to_i }
-    if ((box[:length].to_f* box[:height].to_f * box[:width].to_f) / 6000.0) > weight
-      weight = (box[:length].to_f* box[:height].to_f * box[:width].to_f) / 6000.0
+    if cubic_weight > 10.0 and cubic_weight > weight
+      weight = cubic_weight
     end
     begin
       response = send_message(:calc_preco_prazo,
