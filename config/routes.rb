@@ -14,6 +14,7 @@ Rails.application.routes.draw do
       get :import, on: :collection
       post :import_line, on: :collection
       resources :zip_rules
+      resources :map_rules
     end
     resources :shipping_errors, only: [:index]
     resources :delivery_types do

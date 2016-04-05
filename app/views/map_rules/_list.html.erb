@@ -1,0 +1,33 @@
+<div id="map-rules-panel" class="panel panel-default">
+  <div class="panel-heading">
+    <button id="new_zip_rule" class="btn btn-default">Baixar Mapa</button>
+  </div>
+  <div class="panel-body">
+    <div id="map-code-messages" class="row">
+
+    </div>
+
+    <div id="map-rules-header" class="row">
+      <div class="col-md-2">Nome</div>
+      <div class="col-md-2 price">Preço</div>
+      <div class="col-md-2 deadline">Prazo</div>
+      <% unless @shop.periods.empty?  %>
+        <div class="col-md-2 period">Período</div>
+      <% end %>
+      <div class="col-md-2"></div>
+    </div>
+
+    <div id="map-rules-container" class="row">
+    <% @map_rules.each do |map_rule| %>
+      <%= render 'map_rule_form', map_rule: map_rule %>
+    <% end %>
+    </div>
+    
+  </div>
+  <div class="panel-footer">
+    <div class="row">
+      <%= paginate(@map_rules, remote: true) if @map_rules.respond_to?(:total_pages) %>
+    </div>
+  </div>
+</div>
+

@@ -102,6 +102,10 @@
     
 </div>  
 
+<div id="map-rules-form" class="">
+    
+</div>  
+
 
 <% if @method.id %>
   <script type="text/javascript">
@@ -111,6 +115,12 @@
         type: "GET",
         dataType: 'script',
         url: '<%= shop_shipping_method_zip_rules_path(@shop, @method) %>'      
+      });
+
+      $.ajax({
+        type: "GET",
+        dataType: 'script',
+        url: '<%= shop_shipping_method_map_rules_path(@shop, @method) %>'      
       });
 
       var newZipRule = function(){
