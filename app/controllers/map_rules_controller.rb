@@ -14,14 +14,18 @@ class MapRulesController < ApplicationController
       response = RestClient.get 'https://www.google.com/maps/d/kml', {params: {mid: params[:shipping_method][:mid], forcekml: '1'}}
       xml_doc  = Nokogiri::XML(response)
 
+      @shop = Shop.find(params[:shop_id])
       @method = ShippingMethod.find(params[:shipping_method_id])
       @method.update_attributes(shipping_method_params)      
       
-      @polygons = xml_doc.css('Document Folder Placemark').collect do |placemark|
-        #name: placemark.css('name').text, coordinates: placemark.css('Polygon coordinates').text
+      @map_rules = xml_doc.css('Document Folder Placemark').collect do |placemark|
+        MapRule.new(
+          name: placemark.css('name').text, 
+          price: nil,
+          deadline: nil,
+          coordinates: placemark.css('Polygon coordinates').text
+        )
       end
-
-      @map_rules = []      
     rescue RestClient::ResourceNotFound => e
       flash.now[:error] = "Mapa não encontrado para MID: #{params[:shipping_method][:mid]}"
     end

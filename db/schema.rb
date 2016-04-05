@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160405174921) do
+ActiveRecord::Schema.define(version: 20160405180711) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -30,6 +30,16 @@ ActiveRecord::Schema.define(version: 20160405174921) do
     t.datetime "updated_at"
     t.integer  "shop_id"
   end
+
+  create_table "map_rules", force: true do |t|
+    t.integer "shipping_method_id",                          null: false
+    t.decimal "price",              precision: 10, scale: 2
+    t.integer "deadline",                                    null: false
+    t.string  "coordinates",                                 null: false
+    t.string  "name",                                        null: false
+  end
+
+  add_index "map_rules", ["shipping_method_id"], name: "index_map_rules_on_shipping_method_id", using: :btree
 
   create_table "periods", force: true do |t|
     t.string   "name"
@@ -114,6 +124,8 @@ ActiveRecord::Schema.define(version: 20160405174921) do
   add_index "zip_rules", ["shipping_method_id"], name: "index_zip_rules_on_shipping_method_id", using: :btree
 
   add_foreign_key "block_rules", "shipping_methods", name: "block_rules_shipping_method_id_fk"
+
+  add_foreign_key "map_rules", "shipping_methods", name: "map_rules_shipping_method_id_fk"
 
   add_foreign_key "shipping_methods", "shops", name: "shipping_methods_shop_id_fk"
 

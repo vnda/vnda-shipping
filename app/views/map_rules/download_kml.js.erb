@@ -6,7 +6,7 @@ $("#map-code-messages").html('');
 <% else %>
   
   <% @map_rules.each do |map_rule| %>
-    <%= render 'map_rule_form', map_rule: map_rule %>
+    $("#map-rules-container").append("<%= escape_javascript(render 'map_rule_form', map_rule: map_rule) %>");  
   <% end %>
 <% end %>
 
