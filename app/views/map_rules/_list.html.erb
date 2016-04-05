@@ -1,6 +1,6 @@
 <div id="map-rules-panel" class="panel panel-default">
   <div class="panel-heading">
-    <%= form_for :shipping_method, url: download_kml_shop_shipping_method_map_rules_path(@shop, @method), remote: true, method: :get do |f| %>
+    <%= form_for @method, url: download_kml_shop_shipping_method_map_rules_path(@shop, @method), remote: true, method: :get do |f| %>
       <div class="form-group">
         <%= f.text_field :mid %>
         <%= f.submit "Baixar Mapa", class: 'btn btn-default' %>

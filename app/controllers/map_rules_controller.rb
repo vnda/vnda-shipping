@@ -13,6 +13,9 @@ class MapRulesController < ApplicationController
     begin
       response = RestClient.get 'https://www.google.com/maps/d/kml', {params: {mid: params[:shipping_method][:mid], forcekml: '1'}}
       xml_doc  = Nokogiri::XML(response)
+
+      @method = ShippingMethod.find(params[:shipping_method_id])
+      @method.update_attributes(shipping_method_params)      
       
       @polygons = xml_doc.css('Document Folder Placemark').collect do |placemark|
         #name: placemark.css('name').text, coordinates: placemark.css('Polygon coordinates').text
@@ -25,4 +28,9 @@ class MapRulesController < ApplicationController
 
   end
 
+  private
+
+  def shipping_method_params
+    params.require(:shipping_method).permit(:mid)
+  end
 end

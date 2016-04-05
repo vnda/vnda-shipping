@@ -14,7 +14,7 @@ gem 'puma'
 gem 'pry', group: :development
 gem 'httparty', '0.13.5'
 gem 'kaminari'
-gem 'rest_client'
+gem 'rest-client'
 
 group :development, :staging, :production do
   gem "newrelic_rpm"

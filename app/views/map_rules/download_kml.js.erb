@@ -4,7 +4,7 @@ $("#map-code-messages").html('');
 <% if flash[:error].present? %>
   $("#map-code-messages").append("<%= escape_javascript(render 'flash_messages') %>");  
 <% else %>
-  $("#zip-code-messages").append("<%= escape_javascript(render 'shared/error_messages', :resource => @zip_rule) %>");  
+  
   <% @map_rules.each do |map_rule| %>
     <%= render 'map_rule_form', map_rule: map_rule %>
   <% end %>
