@@ -198,7 +198,7 @@
   <script type="text/javascript">
     $(function(){
       var newZipRule = function(){
-        var form_clone = cloneZipRuleFrom($('.zip-rule-row:first'));
+        var form_clone = cloneZipRuleFrom($('.zip-code-row:first'));
         form_clone.find('form').attr('action', '/shops/<%= @shop.id %>/shipping_methods/<%= @method.id %>/zip_rules');
         form_clone.find('input').val('');
         
@@ -223,11 +223,11 @@
       }
 
       $(document.body).on('click', 'button#new_zip_rule', function(){
-        newZipRule().insertBefore($('.zip-rule-row:first'));
+        newZipRule().insertBefore($('.zip-code-row:first'));
       });    
 
       $(document.body).on('click', '[data-clone-zip-rule]', function (e) {
-        var formToClone = $(this).parents('.zip-rule-row');
+        var formToClone = $(this).parents('.zip-code-row');
         cloneZipRuleFrom(formToClone).insertAfter(formToClone);
       });
     });
