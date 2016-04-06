@@ -72,4 +72,22 @@ class ShippingMethod < ActiveRecord::Base
     end
   end
 
+  def build_or_update_map_rules_from(xml_doc)
+    xml_doc.css('Document Folder Placemark').collect do |placemark|
+      name = placemark.css('name').text.strip
+
+      if map_rule = self.map_rules.where(name: name).first
+        map_rule.update_attribute(:coordinates, placemark.css('Polygon coordinates').text)
+      else
+        map_rule = MapRule.new(
+          name: name, 
+          price: nil,
+          deadline: nil,
+          coordinates: placemark.css('Polygon coordinates').text
+        )
+      end
+
+      map_rule      
+    end
+  end
 end

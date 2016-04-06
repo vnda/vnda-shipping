@@ -34,7 +34,7 @@ class MapRulesController < ApplicationController
       @method.update_attributes(shipping_method_params)      
 
       response = RestClient.get 'https://www.google.com/maps/d/kml', {params: {mid: params[:shipping_method][:mid], forcekml: '1'}}
-      @map_rules = MapRule.build_from(Nokogiri::XML(response))      
+      @map_rules = @method.build_or_update_map_rules_from(Nokogiri::XML(response))      
     rescue RestClient::ResourceNotFound => e
       flash.now[:error] = "Mapa não encontrado para MID: #{params[:shipping_method][:mid]}"
     end
