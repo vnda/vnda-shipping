@@ -158,6 +158,10 @@
       }
     };
 
+    $(document.body).on('click', '.map-rule-destroy', function(){
+      $(this).parents('.zip-code-row').remove();
+    });
+
   </script>
 
   <div id="zip-rules-form" class="zip-codes-container items-container" style="display: <%= @method.data_origin.eql?('local') ? '' : 'none' %>">

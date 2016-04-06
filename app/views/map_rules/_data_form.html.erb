@@ -27,9 +27,15 @@
       </button>
       
       <%= f.hidden_field :_destroy %>
-      <%= link_to map_rule.persisted? ? shop_shipping_method_map_rule_path(@shop, @method, map_rule) : 'javascript:void(0)', class: 'btn btn-default map-rule-destroy',
-          method: :delete, remote: true do %>
-        <span class="glyphicon glyphicon-remove"></span>
+      <% if map_rule.persisted? %>
+        <%= link_to shop_shipping_method_map_rule_path(@shop, @method, map_rule), class: 'btn btn-default',
+            method: :delete, remote: true do %>
+          <span class="glyphicon glyphicon-remove"></span>
+        <% end %>
+      <% else %>
+        <%= link_to 'javascript:void(0)', class: 'btn btn-default map-rule-destroy' do %>
+          <span class="glyphicon glyphicon-remove"></span>
+        <% end %>
       <% end %>
     </div>
   </div>
