@@ -28,26 +28,16 @@ class MapRulesController < ApplicationController
   end
 
   def download_kml
-    begin
-      response = RestClient.get 'https://www.google.com/maps/d/kml', {params: {mid: params[:shipping_method][:mid], forcekml: '1'}}
-      xml_doc  = Nokogiri::XML(response)
-
+    begin      
       @shop = Shop.find(params[:shop_id])
       @method = ShippingMethod.find(params[:shipping_method_id])
       @method.update_attributes(shipping_method_params)      
-      
-      @map_rules = xml_doc.css('Document Folder Placemark').collect do |placemark|
-        MapRule.new(
-          name: placemark.css('name').text, 
-          price: nil,
-          deadline: nil,
-          coordinates: placemark.css('Polygon coordinates').text
-        )
-      end
+
+      response = RestClient.get 'https://www.google.com/maps/d/kml', {params: {mid: params[:shipping_method][:mid], forcekml: '1'}}
+      @map_rules = MapRule.build_from(Nokogiri::XML(response))      
     rescue RestClient::ResourceNotFound => e
       flash.now[:error] = "Mapa não encontrado para MID: #{params[:shipping_method][:mid]}"
     end
-
   end
 
   private
