@@ -19,6 +19,7 @@ class ShippingMethod < ActiveRecord::Base
   belongs_to :shop
   belongs_to :delivery_type
   has_many :zip_rules, dependent: :destroy
+  has_many :map_rules, dependent: :destroy
   has_many :block_rules, dependent: :destroy
   accepts_nested_attributes_for :zip_rules, allow_destroy: true, reject_if: :all_blank
   accepts_nested_attributes_for :block_rules, allow_destroy: true, reject_if: :all_blank

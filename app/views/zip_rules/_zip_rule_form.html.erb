@@ -1,4 +1,4 @@
-<div class="zip-rule-row col-md-12" data-zip-rule-id="<%= zip_rule.id %>">
+<div class="zip-code-row col-md-12" data-zip-rule-id="<%= zip_rule.id %>">
   <%= form_for [@shop, @method, zip_rule], remote: true, html: {id: (zip_rule.persisted? ? zip_rule.id : 'new' ), class: 'zip-rule-form'} do |f| %>
     <div  >
       <div class="col-md-2 zip-code">

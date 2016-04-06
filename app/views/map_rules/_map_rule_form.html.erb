@@ -1,4 +1,4 @@
-<div class="map-rule-row col-md-12" data-map-rule-id="<%= map_rule.id %>">
+<div class="zip-code-row col-md-12" data-map-rule-id="<%= map_rule.id %>">
   <%= form_for [@shop, @method, map_rule], remote: true, html: {id: (map_rule.persisted? ? map_rule.id : 'new' ), class: 'map-rule-form'} do |f| %>
     <div  >
       <div class="col-md-2 map-code">

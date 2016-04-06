@@ -146,6 +146,7 @@ class Shop < ActiveRecord::Base
   def data_origin
     {
       local: true,
+      google_maps: true,
       correios: forward_to_correios,
       axado: forward_to_axado,
       intelipost: forward_to_intelipost,

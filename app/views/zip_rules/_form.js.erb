@@ -1,7 +1,7 @@
-$("#zip-code-messages").html('');
+$("#zip-rules-form .zip-messages").html('');
 
 <% if @zip_rule.errors.empty? %>
-  $("#zip-code-messages").append("<%= escape_javascript(render 'shared/flash_messages') %>");  
+  $("#zip-rules-form .zip-messages").append("<%= escape_javascript(render 'shared/flash_messages') %>");  
 <% else %>
-  $("#zip-code-messages").append("<%= escape_javascript(render 'shared/error_messages', :resource => @zip_rule) %>");  
+  $("#zip-rules-form .zip-messages").append("<%= escape_javascript(render 'shared/error_messages', :resource => @zip_rule) %>");  
 <% end %>

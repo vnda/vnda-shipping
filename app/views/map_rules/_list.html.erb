@@ -1,41 +1,19 @@
-<div id="map-rules-panel" class="panel panel-default">
-  <div class="panel-heading">
-    <%= form_for @method, url: download_kml_shop_shipping_method_map_rules_path(@shop, @method), remote: true, method: :get do |f| %>
-      <div class="form-group">
-        <%= f.label :mid %>
-        <%= f.text_field :mid %>
-        <%= f.submit "Baixar Mapa", class: 'btn btn-default' %>
-      </div>
-    <% end %>    
-  </div>
-  <div class="panel-body">
-    <div id="map-code-messages" class="row">
-
-    </div>
-
-    <div id="map-rules-header" class="row">
-      <div class="col-md-2">Nome</div>
-      <div class="col-md-2 price">Preço</div>
-      <div class="col-md-2 deadline">Prazo</div>
-      <% unless @shop.periods.empty?  %>
-        <div class="col-md-2 period">Período</div>
-      <% end %>
-      <div class="col-md-2"></div>
-    </div>
-
-    <div id="map-rules-container" class="row">
-    <% @map_rules.each do |map_rule| %>
-      <%= render 'map_rule_form', map_rule: map_rule %>
-    <% end %>
-    </div>
-    
-  </div>
-  <div class="panel-footer">
-    <div class="row">
-      <%= paginate(@map_rules, remote: true) if @map_rules.respond_to?(:total_pages) %>
-    </div>
-  </div>
+<div class="row zip-codes-header">
+  <div class="col-md-2">Nome</div>
+  <div class="col-md-2 price">Preço</div>
+  <div class="col-md-2 deadline">Prazo</div>
+  <% unless @shop.periods.empty?  %>
+    <div class="col-md-2 period">Período</div>
+  <% end %>
+  <div class="col-md-2"></div>
 </div>
+
+<div id="map-rules-container" class="row">
+<% @map_rules.each do |map_rule| %>
+  <%= render 'map_rule_form', map_rule: map_rule %>
+<% end %>
+</div>
+  
 
 <script type="text/javascript">
   $(function(){
