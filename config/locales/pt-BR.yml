@@ -253,3 +253,7 @@ pt-BR:
       create: 'Regra de CEP criada com sucesso'
       update: 'Regra de CEP atualizada com sucesso'
       destroy: 'Regra de CEP excluida com sucesso'
+    map_rule:
+      create: 'Região criada com sucesso'
+      update: 'Região atualizada com sucesso'
+      destroy: 'Região excluida com sucesso'

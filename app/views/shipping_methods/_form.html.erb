@@ -137,64 +137,63 @@
  
 </style>
 
-<script type="text/javascript">
-  
-  var $service = {
-    getZipRules: function(){
-      $.ajax({
-        type: "GET",
-        dataType: 'script',
-        url: '<%= shop_shipping_method_zip_rules_path(@shop, @method) %>'      
-      });
-    },
+<% if @method.persisted? %>
+  <script type="text/javascript">
+    
+    var $service = {
+      getZipRules: function(){
+        $.ajax({
+          type: "GET",
+          dataType: 'script',
+          url: '<%= shop_shipping_method_zip_rules_path(@shop, @method) %>'      
+        });
+      },
 
-    getMapRules: function(){
-      $.ajax({
-        type: "GET",
-        dataType: 'script',
-        url: '<%= shop_shipping_method_map_rules_path(@shop, @method) %>'      
-      });
-    }
-  };
+      getMapRules: function(){
+        $.ajax({
+          type: "GET",
+          dataType: 'script',
+          url: '<%= shop_shipping_method_map_rules_path(@shop, @method) %>'      
+        });
+      }
+    };
 
-</script>
+  </script>
 
-<div id="zip-rules-form" class="zip-codes-container items-container" style="display: <%= @method.data_origin.eql?('local') ? '' : 'none' %>">
-  <div id="zip-rules-panel" class="panel panel-default">
-    <div class="panel-heading">
-      <div class="row">      
-        <div class="col-md-1">
-          <button id="new_zip_rule" class="btn btn-default">Nova regra</button>
-        </div>      
+  <div id="zip-rules-form" class="zip-codes-container items-container" style="display: <%= @method.data_origin.eql?('local') ? '' : 'none' %>">
+    <div id="zip-rules-panel" class="panel panel-default">
+      <div class="panel-heading">
+        <div class="row">      
+          <div class="col-md-1">
+            <button id="new_zip_rule" class="btn btn-default">Nova regra</button>
+          </div>      
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="zip-messages"></div>
+        <div class="zip-container"></div>
+      </div>
+    </div>    
+  </div>  
+
+  <div id="map-rules-form" class="zip-codes-container items-container" style="display: <%= @method.data_origin.eql?('google_maps') ? '' : 'none' %>">  
+    <div id="map-rules-panel" class="panel panel-default">
+      <div class="panel-heading">
+        <%= form_for @method, url: download_kml_shop_shipping_method_map_rules_path(@shop, @method), remote: true, method: :get do |f| %>
+          <div class="form-group">
+            <%= f.label :mid %>
+            <%= f.text_field :mid %>
+            <%= f.submit "Baixar Mapa", class: 'btn btn-default' %>
+          </div>
+        <% end %>    
+      </div>
+      <div class="panel-body">
+        <div class="zip-messages"></div>
+        <div class="zip-container"></div>
       </div>
     </div>
-    <div class="panel-body">
-      <div class="zip-messages"></div>
-      <div class="zip-container"></div>
-    </div>
-  </div>    
-</div>  
+  </div>  
 
-<div id="map-rules-form" class="zip-codes-container items-container" style="display: <%= @method.data_origin.eql?('google_maps') ? '' : 'none' %>">  
-  <div id="map-rules-panel" class="panel panel-default">
-    <div class="panel-heading">
-      <%= form_for @method, url: download_kml_shop_shipping_method_map_rules_path(@shop, @method), remote: true, method: :get do |f| %>
-        <div class="form-group">
-          <%= f.label :mid %>
-          <%= f.text_field :mid %>
-          <%= f.submit "Baixar Mapa", class: 'btn btn-default' %>
-        </div>
-      <% end %>    
-    </div>
-    <div class="panel-body">
-      <div class="zip-messages"></div>
-      <div class="zip-container"></div>
-    </div>
-  </div>
-</div>  
-
-
-<% if @method.id %>
   <script type="text/javascript">
     $(function(){
       var newZipRule = function(){

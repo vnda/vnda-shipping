@@ -6,7 +6,25 @@ class MapRulesController < ApplicationController
     @shop = Shop.find(params[:shop_id])
     @method = ShippingMethod.find(params[:shipping_method_id])
 
-    @map_rules = []  
+    @map_rules = @method.map_rules.order('id asc')
+  end
+
+  def create
+    @shop = Shop.find(params[:shop_id])
+    @method = ShippingMethod.find(params[:shipping_method_id])
+    @map_rule = @method.map_rules.create(map_rule_params)
+    flash.now[:notice] = I18n.t('notices.map_rule.create') if @map_rule.persisted?  
+  end
+
+  def update
+    @map_rule = MapRule.find(params[:id])
+    flash.now[:notice] = I18n.t('notices.map_rule.update') if @map_rule.update_attributes(map_rule_params)
+  end
+
+  def destroy
+    @map_rule = MapRule.find(params[:id])  
+    @map_rule.destroy
+    flash.now[:notice] = I18n.t('notices.map_rule.destroy')
   end
 
   def download_kml
@@ -36,5 +54,9 @@ class MapRulesController < ApplicationController
 
   def shipping_method_params
     params.require(:shipping_method).permit(:mid)
+  end
+
+  def map_rule_params
+    params.require(:map_rule).permit(:name, :price, :deadline, :coordinates, period_ids: [])
   end
 end

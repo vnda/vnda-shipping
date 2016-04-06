@@ -1,0 +1,4 @@
+$("#map-rules-form .zip-messages").html('');
+$("#map-rules-form zip-messages").append("<%= escape_javascript(render 'shared/flash_messages') %>");  
+$('[data-map-rule-id=' + <%= @map_rule.id %> + ']').remove();
+

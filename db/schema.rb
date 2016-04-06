@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160405180711) do
+ActiveRecord::Schema.define(version: 20160406174210) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -35,11 +35,18 @@ ActiveRecord::Schema.define(version: 20160405180711) do
     t.integer "shipping_method_id",                          null: false
     t.decimal "price",              precision: 10, scale: 2
     t.integer "deadline",                                    null: false
-    t.string  "coordinates",                                 null: false
+    t.text    "coordinates",                                 null: false
     t.string  "name",                                        null: false
   end
 
   add_index "map_rules", ["shipping_method_id"], name: "index_map_rules_on_shipping_method_id", using: :btree
+
+  create_table "map_rules_periods", force: true do |t|
+    t.integer  "period_id"
+    t.integer  "map_rule_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "periods", force: true do |t|
     t.string   "name"

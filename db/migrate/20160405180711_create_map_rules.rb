@@ -8,7 +8,7 @@ class CreateMapRules < ActiveRecord::Migration
       t.decimal :price, precision: 10, scale: 2
       t.integer :deadline, null: false
 
-      t.string :coordinates, null: false
+      t.text :coordinates, null: false
       t.string :name, null: false
     end
   end

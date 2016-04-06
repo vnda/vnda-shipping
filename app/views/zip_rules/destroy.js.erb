@@ -1,4 +1,4 @@
-$("#zip-messages").html('');
-$("#zip-messages").append("<%= escape_javascript(render 'shared/flash_messages') %>");  
+$("#zip-rules-form .zip-messages").html('');
+$("#zip-rules-form .zip-messages").append("<%= escape_javascript(render 'shared/flash_messages') %>");  
 $('[data-zip-rule-id=' + <%= @zip_rule.id %> + ']').remove();
 
