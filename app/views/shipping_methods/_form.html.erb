@@ -292,24 +292,20 @@
       $('.items-container').hide(); // hide everything
 
       if( $("#shipping_method_data_origin").val() == "local" ) {
-        $("table.rules").show(); // <------- REVER
-        $("table.block-rules").hide(); // <------- REVER
-        $(".correios-services").hide(); // <------- REVER
-
         $('#zip-rules-form').show();
-        $service.getZipRules();
+        if (typeof $service !== 'undefined'){          
+          $service.getZipRules();
+        }
       } else if ($("#shipping_method_data_origin").val() == "google_maps") {
         $('#map-rules-form').show();
-        $service.getMapRules();
-      } else {
-        $("table.rules").hide(); // <------- REVER
-        $("table.block-rules").show(); // <------- REVER
-
-        if( $("#shipping_method_data_origin").val() == "correios" ) { // <------- REVER
-          $(".correios-services").show(); // <------- REVER
-        } else {
-          $(".correios-services").hide(); // <------- REVER
+        if (typeof $service !== 'undefined'){          
+          $service.getMapRules();
         }
+      } else if ($("#shipping_method_data_origin").val() == "correios") {
+        $(".correios-services").show();
+        $("table.block-rules").show();
+      } else {
+        $("table.block-rules").show();
       }
     }
     changeDataOrigin()
