@@ -1,4 +1,5 @@
 require 'test_helper'
+require 'pry'
 
 class ApiSpec < ActionDispatch::IntegrationTest
 
@@ -12,17 +13,17 @@ class ApiSpec < ActionDispatch::IntegrationTest
        ])
    @period = periods(:one)
    ZipRule.first.periods << @period
-
   end
+
 
   describe "api quote" do
     it "returns available methods" do
 
-      params = JSON.parse('{"origin_zip":"12946636","shipping_zip":"92200290","order_total_price":10.0,"aditional_deadline":null,"aditional_price":null,"products":[{"sku":"CSMT-1","price":10.0,"height":2,"length":16,"width":11,"weight":10}]}')
+      params = JSON.parse('{"origin_zip":"12946636","shipping_zip":"92200290","order_total_price":10.0,"aditional_deadline":null,"aditional_price":null,"products":[{"sku":"CSMT-1","price":10.0,"height":2,"length":16,"width":11,"weight":10, "quantity":1}]}')
       post "/quote?token=#{@shop.token}", params
 
       response.status.must_equal 200
-      response.body.must_equal '[{"name":"Metodo 1","price":15.0,"deadline":2,"slug":"metodo-1","delivery_type":"Tipo de envio 1","delivery_type_slug":"tipo-de-envio-1"}]'
+      response.body.must_equal '[{"cotation_id":"","name":"Metodo 1","price":15.0,"deadline":2,"slug":"metodo-1","delivery_type":"Tipo de envio 1","delivery_type_slug":"tipo-de-envio-1","deliver_company":""}]'
     end
 
     it "returns nothing when params is not ok" do
@@ -42,7 +43,7 @@ class ApiSpec < ActionDispatch::IntegrationTest
       post "/quote?token=#{@shop.token}", params
 
       response.status.must_equal 200
-      response.body.must_equal '[{"name":"Metodo 2","price":10.0,"deadline":2,"slug":"metodo-2","delivery_type":"Tipo de envio 1","delivery_type_slug":"tipo-de-envio-1"}]'
+      response.body.must_equal '[{"cotation_id":"","name":"Metodo 2","price":10.0,"deadline":2,"slug":"metodo-2","delivery_type":"Tipo de envio 1","delivery_type_slug":"tipo-de-envio-1","deliver_company":""}]'
     end
 
   end

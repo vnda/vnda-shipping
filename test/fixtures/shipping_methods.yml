@@ -1,0 +1,15 @@
+one:
+  shop: :one
+  name: "Metodo 1"
+  data_origin: 'local'
+  enabled: true
+  delivery_type: :one
+  slug: 'metodo-1'
+
+two:
+  shop: :one
+  name: "Metodo 2"
+  data_origin: 'local'
+  enabled: true
+  delivery_type: :one
+  slug: 'metodo-2'

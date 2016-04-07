@@ -1,0 +1,18 @@
+one:
+  name: "shop"
+  token: 'token_one'
+  forward_to_axado: false
+  forward_to_correios: false
+  forward_to_intelipost: false
+
+axado:  
+  name: "shop with axado"
+  token: 'token_shop_axado'
+  forward_to_axado: true
+  axado_token: '123456'
+
+correios: 
+  name: "shop with correios"
+  token: 'token_shop_correios'
+  forward_to_correios: false
+  correios_code: 'asd'

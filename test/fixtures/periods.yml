@@ -1,0 +1,5 @@
+one:
+  name: "Manha"
+  shop: :one
+  limit_time: <%= Time.now %>
+  days_off: <%= ['Sábado', 'Domingo', 'Segunda-Feira'] %>

@@ -133,7 +133,7 @@ class Shop < ActiveRecord::Base
 
   def volume_for(items)
     volumes = items.map{ |i| i.values_at(:width, :height, :length, :quantity)}
-    volumes.map{|i| i.reduce(:*)}.reduce(:+)
+    volumes.map{|i| i.collect(&:to_f).reduce(:*)}.reduce(:+)
   end
 
   def greater_weight(products)
