@@ -49,7 +49,7 @@ class ShippingMethod < ActiveRecord::Base
   end
 
   def generate_slug
-    self.slug = name.try(:parameterize)
+    self.slug = description.to_s.split("CSV").first.to_s.strip
   end
 
   def duplicate(shop_id = self.shop.id)
