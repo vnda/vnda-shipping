@@ -47,6 +47,6 @@ class MapRulesController < ApplicationController
   end
 
   def map_rule_params
-    params.require(:map_rule).permit(:name, :price, :deadline, :coordinates, period_ids: [])
+    params.require(:map_rule).permit(:name, :price, :deadline, :region, period_ids: [])
   end
 end

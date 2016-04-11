@@ -1,5 +1,5 @@
 development: &DEVELOPMENT
-  adapter: postgresql
+  adapter: postgis
   host: localhost
   encoding: unicode
   database: shipping_development
@@ -8,7 +8,7 @@ development: &DEVELOPMENT
   pool: 5
 
 test: &DEVELOPMENT
-  adapter: postgresql
+  adapter: postgis
   host: localhost
   encoding: unicode
   database: shipping_test

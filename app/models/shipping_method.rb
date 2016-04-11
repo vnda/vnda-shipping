@@ -73,17 +73,21 @@ class ShippingMethod < ActiveRecord::Base
   end
 
   def build_or_update_map_rules_from(xml_doc)
+    factory = RGeo::Cartesian.factory
+    
     xml_doc.css('Document Folder Placemark').collect do |placemark|
       name = placemark.css('name').text.strip
+      points = placemark.css('Polygon coordinates').text.split(' ').collect{|z| c = z.split(','); c.pop; c.map(&:to_f)}.collect{|coordinates| factory.point(coordinates[0], coordinates[1])}
+      region = factory.polygon(factory.line_string(points))
 
       if map_rule = self.map_rules.where(name: name).first
-        map_rule.update_attribute(:coordinates, placemark.css('Polygon coordinates').text)
+        map_rule.update_attribute(:region, region)
       else
         map_rule = MapRule.new(
           name: name, 
           price: nil,
           deadline: nil,
-          coordinates: placemark.css('Polygon coordinates').text
+          region: region
         )
       end
 

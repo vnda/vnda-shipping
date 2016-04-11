@@ -11,17 +11,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160406174210) do
+ActiveRecord::Schema.define(version: 20160411185836) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "postgis"
 
   create_table "block_rules", force: true do |t|
     t.integer   "shipping_method_id", null: false
     t.int4range "range",              null: false
   end
 
-  add_index "block_rules", ["shipping_method_id"], name: "index_block_rules_on_shipping_method_id", using: :btree
+  add_index "block_rules", ["shipping_method_id"], :name => "index_block_rules_on_shipping_method_id"
 
   create_table "delivery_types", force: true do |t|
     t.string   "name"
@@ -32,14 +33,15 @@ ActiveRecord::Schema.define(version: 20160406174210) do
   end
 
   create_table "map_rules", force: true do |t|
-    t.integer "shipping_method_id",                          null: false
-    t.decimal "price",              precision: 10, scale: 2
-    t.integer "deadline",                                    null: false
-    t.text    "coordinates",                                 null: false
-    t.string  "name",                                        null: false
+    t.integer "shipping_method_id",                                                               null: false
+    t.decimal "price",                                                   precision: 10, scale: 2
+    t.integer "deadline",                                                                         null: false
+    t.text    "coordinates",                                                                      null: false
+    t.string  "name",                                                                             null: false
+    t.spatial "region",             limit: {:srid=>0, :type=>"polygon"}
   end
 
-  add_index "map_rules", ["shipping_method_id"], name: "index_map_rules_on_shipping_method_id", using: :btree
+  add_index "map_rules", ["shipping_method_id"], :name => "index_map_rules_on_shipping_method_id"
 
   create_table "map_rules_periods", force: true do |t|
     t.integer  "period_id"
@@ -73,7 +75,7 @@ ActiveRecord::Schema.define(version: 20160406174210) do
     t.datetime "updated_at"
   end
 
-  add_index "shipping_errors", ["shop_id"], name: "index_shipping_errors_on_shop_id", using: :btree
+  add_index "shipping_errors", ["shop_id"], :name => "index_shipping_errors_on_shop_id"
 
   create_table "shipping_friendly_errors", force: true do |t|
     t.string   "message"
@@ -83,7 +85,7 @@ ActiveRecord::Schema.define(version: 20160406174210) do
     t.datetime "updated_at"
   end
 
-  add_index "shipping_friendly_errors", ["shop_id"], name: "index_shipping_friendly_errors_on_shop_id", using: :btree
+  add_index "shipping_friendly_errors", ["shop_id"], :name => "index_shipping_friendly_errors_on_shop_id"
 
   create_table "shipping_methods", force: true do |t|
     t.integer  "shop_id",                                                                                   null: false
@@ -99,7 +101,7 @@ ActiveRecord::Schema.define(version: 20160406174210) do
     t.string   "mid"
   end
 
-  add_index "shipping_methods", ["shop_id"], name: "index_shipping_methods_on_shop_id", using: :btree
+  add_index "shipping_methods", ["shop_id"], :name => "index_shipping_methods_on_shop_id"
 
   create_table "shops", force: true do |t|
     t.string  "name",                                                null: false
@@ -118,8 +120,8 @@ ActiveRecord::Schema.define(version: 20160406174210) do
     t.string  "vnda_token"
   end
 
-  add_index "shops", ["name"], name: "index_shops_on_name", unique: true, using: :btree
-  add_index "shops", ["token"], name: "index_shops_on_token", unique: true, using: :btree
+  add_index "shops", ["name"], :name => "index_shops_on_name", :unique => true
+  add_index "shops", ["token"], :name => "index_shops_on_token", :unique => true
 
   create_table "zip_rules", force: true do |t|
     t.integer   "shipping_method_id",                          null: false
@@ -128,7 +130,7 @@ ActiveRecord::Schema.define(version: 20160406174210) do
     t.integer   "deadline",                                    null: false
   end
 
-  add_index "zip_rules", ["shipping_method_id"], name: "index_zip_rules_on_shipping_method_id", using: :btree
+  add_index "zip_rules", ["shipping_method_id"], :name => "index_zip_rules_on_shipping_method_id"
 
   add_foreign_key "block_rules", "shipping_methods", name: "block_rules_shipping_method_id_fk"
 
