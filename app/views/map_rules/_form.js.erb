@@ -1,0 +1,7 @@
+$("#map-rules-form .zip-messages").html('');
+
+<% if @map_rule.errors.empty? %>
+  $("#map-rules-form .zip-messages").append("<%= escape_javascript(render 'shared/flash_messages') %>");  
+<% else %>
+  $("#map-rules-form .zip-messages").append("<%= escape_javascript(render 'shared/error_messages', :resource => @map_rule) %>");  
+<% end %>

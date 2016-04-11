@@ -1,0 +1,6 @@
+<%= render('form') %>
+
+var zipCodeRow = $('#new').parents('.zip-code-row');
+zipCodeRow.find('form').remove();
+
+zipCodeRow.html("<%= escape_javascript(render 'data_form', map_rule: @map_rule) %>");  

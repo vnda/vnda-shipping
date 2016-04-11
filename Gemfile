@@ -14,6 +14,8 @@ gem 'puma'
 gem 'pry', group: :development
 gem 'httparty', '0.13.5'
 gem 'kaminari'
+gem 'rest-client'
+gem 'activerecord-postgis-adapter'
 
 group :development, :staging, :production do
   gem "newrelic_rpm"

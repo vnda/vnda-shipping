@@ -15,6 +15,7 @@
 class Period < ActiveRecord::Base
   belongs_to :shop
   has_and_belongs_to_many :zip_rules
+  has_and_belongs_to_many :map_rules
 
   validates :name, :limit_time, presence: true
   serialize :days_off

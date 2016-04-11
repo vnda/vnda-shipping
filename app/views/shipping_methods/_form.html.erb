@@ -54,7 +54,7 @@
             </label>
           </div>
 
-          <div class="selectbox correios-services">
+          <div class="selectbox correios-services items-container">
             <label>
               <%= f.label :service %>
               <%= f.select :service, @correios_services.map{|k,v| [v,k]}, {prompt: "Selecione o tipo de entrega"}, class: "form-control" %>
@@ -65,7 +65,7 @@
     </div>
 
 
-    <table class="table table-form block-rules">
+    <table class="table table-form block-rules items-container">
       <thead>
         <tr>
           <th>Ação</th>
@@ -98,23 +98,110 @@
   <% end %>
 </div>
 
-<div id="zip-codes-form" class="">
+<style>
+  .zip-codes-container{
+    margin-top: 70px;
+  }  
+  
+  .zip-codes-container .zip-code-row{
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 0px;
+    border-bottom: 1px solid #ddd;
+  }
+
+ .zip-codes-container .panel {
+    margin-top: 70px;
+ }
+
+ .zip-codes-container .panel .zip-codes-header {
+  font-weight: bold;
+ }
+
+ .zip-codes-container .panel .zip-code {
+    width: 130px;
+  }
+
+  .zip-codes-container .panel .price {
+    width: 180px;
+  }
+
+  .zip-codes-container .panel .deadline {
+    width: 100px;
+  }
+
+  .zip-codes-container .panel .period {
+    width: 290px;
+  }
+
+ 
+</style>
+
+<% if @method.persisted? %>
+  <script type="text/javascript">
     
-</div>  
+    var $service = {
+      getZipRules: function(){
+        $.ajax({
+          type: "GET",
+          dataType: 'script',
+          url: '<%= shop_shipping_method_zip_rules_path(@shop, @method) %>'      
+        });
+      },
 
+      getMapRules: function(){
+        $.ajax({
+          type: "GET",
+          dataType: 'script',
+          url: '<%= shop_shipping_method_map_rules_path(@shop, @method) %>'      
+        });
+      }
+    };
 
-<% if @method.id %>
+    $(document.body).on('click', '.map-rule-destroy', function(){
+      $(this).parents('.zip-code-row').remove();
+    });
+
+  </script>
+
+  <div id="zip-rules-form" class="zip-codes-container items-container" style="display: <%= @method.data_origin.eql?('local') ? '' : 'none' %>">
+    <div id="zip-rules-panel" class="panel panel-default">
+      <div class="panel-heading">
+        <div class="row">      
+          <div class="col-md-1">
+            <button id="new_zip_rule" class="btn btn-default">Nova regra</button>
+          </div>      
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="zip-messages"></div>
+        <div class="zip-container"></div>
+      </div>
+    </div>    
+  </div>  
+
+  <div id="map-rules-form" class="zip-codes-container items-container" style="display: <%= @method.data_origin.eql?('google_maps') ? '' : 'none' %>">  
+    <div id="map-rules-panel" class="panel panel-default">
+      <div class="panel-heading">
+        <%= form_for @method, url: download_kml_shop_shipping_method_map_rules_path(@shop, @method), remote: true, method: :get do |f| %>
+          <div class="form-group">
+            <%= f.label :mid %>
+            <%= f.text_field :mid %>
+            <%= f.submit "Baixar Mapa", class: 'btn btn-default' %>
+          </div>
+        <% end %>    
+      </div>
+      <div class="panel-body">
+        <div class="zip-messages"></div>
+        <div class="zip-container"></div>
+      </div>
+    </div>
+  </div>  
+
   <script type="text/javascript">
     $(function(){
-
-      $.ajax({
-        type: "GET",
-        dataType: 'script',
-        url: '<%= shop_shipping_method_zip_rules_path(@shop, @method) %>'      
-      });
-
       var newZipRule = function(){
-        var form_clone = cloneZipRuleFrom($('.zip-rule-row:first'));
+        var form_clone = cloneZipRuleFrom($('.zip-code-row:first'));
         form_clone.find('form').attr('action', '/shops/<%= @shop.id %>/shipping_methods/<%= @method.id %>/zip_rules');
         form_clone.find('input').val('');
         
@@ -139,11 +226,11 @@
       }
 
       $(document.body).on('click', 'button#new_zip_rule', function(){
-        newZipRule().insertBefore($('.zip-rule-row:first'));
+        newZipRule().insertBefore($('.zip-code-row:first'));
       });    
 
       $(document.body).on('click', '[data-clone-zip-rule]', function (e) {
-        var formToClone = $(this).parents('.zip-rule-row');
+        var formToClone = $(this).parents('.zip-code-row');
         cloneZipRuleFrom(formToClone).insertAfter(formToClone);
       });
     });
@@ -152,8 +239,6 @@
 <script>
 
   (function () {
-    
-
     
     var maskInputs = function (ctx) {
       $('[data-mask-money]', ctx).mask("#.##0,00", { reverse: true, maxlength: false })
@@ -204,19 +289,23 @@
     });
 
     function changeDataOrigin(){
-      if( $("#shipping_method_data_origin").val() == "local" ) {
-        $("table.rules").show();
-        $("table.block-rules").hide();
-        $(".correios-services").hide();
-      } else {
-        $("table.rules").hide();
-        $("table.block-rules").show();
+      $('.items-container').hide(); // hide everything
 
-        if( $("#shipping_method_data_origin").val() == "correios" ) {
-          $(".correios-services").show();
-        } else {
-          $(".correios-services").hide();
+      if( $("#shipping_method_data_origin").val() == "local" ) {
+        $('#zip-rules-form').show();
+        if (typeof $service !== 'undefined'){          
+          $service.getZipRules();
         }
+      } else if ($("#shipping_method_data_origin").val() == "google_maps") {
+        $('#map-rules-form').show();
+        if (typeof $service !== 'undefined'){          
+          $service.getMapRules();
+        }
+      } else if ($("#shipping_method_data_origin").val() == "correios") {
+        $(".correios-services").show();
+        $("table.block-rules").show();
+      } else {
+        $("table.block-rules").show();
       }
     }
     changeDataOrigin()

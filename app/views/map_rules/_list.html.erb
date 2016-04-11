@@ -1,0 +1,31 @@
+<div class="row zip-codes-header">
+  <div class="col-md-2">Nome</div>
+  <div class="col-md-2 price">Preço</div>
+  <div class="col-md-2 deadline">Prazo</div>
+  <% unless @shop.periods.empty?  %>
+    <div class="col-md-2 period">Período</div>
+  <% end %>
+  <div class="col-md-2"></div>
+</div>
+
+<div id="map-rules-container" class="row">
+<% @map_rules.each do |map_rule| %>
+  <%= render 'map_rule_form', map_rule: map_rule %>
+<% end %>
+</div>
+  
+
+<script type="text/javascript">
+  $(function(){
+
+    $('#download-kml-button').on('click', function(){
+      $.ajax({
+        type: "GET",
+        dataType: 'script',
+        url: '<%= download_kml_shop_shipping_method_map_rules_path(@shop, @method) %>'      
+      });
+    });
+
+  });
+</script>
+

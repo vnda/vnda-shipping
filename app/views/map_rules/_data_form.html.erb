@@ -1,0 +1,50 @@
+<%= form_for [@shop, @method, map_rule], remote: true, html: {id: (map_rule.persisted? ? map_rule.id : 'new' ), class: 'map-rule-form'} do |f| %>
+  <div  >
+    <div class="col-md-2 map-code">
+      <%= f.text_field :name, class: 'form-control' %>
+      <%= f.hidden_field :region %>
+    </div>
+    <div class="col-md-2 price">
+      <div class="input-group">
+        <span class="input-group-addon">R$</span>
+        <%= f.text_field :price, data: { mask_money: true }, class: 'text-right form-control' %>
+      </div>
+    </div>
+    <div class="col-md-2 deadline">
+      <%= f.text_field :deadline, class: 'form-control' %>
+    </div>
+    <% unless @shop.periods.empty?  %>
+      <div class="col-md-2 period">
+        <div class="multiselect">
+          <%= f.select :period_ids, options_for_select(@shop.periods.collect { |p| [p.name, p.id] }, selected: f.object.periods.pluck(:id)), {:include_blank => false}, {:multiple => true} %>
+          <%= f.object.periods.pluck(:name) %>
+      </div>
+      </div>
+    <% end %>
+    <div class="col-md-2">
+      <button type="submit" class="btn btn-primary">
+        <span class="glyphicon glyphicon-ok"></span>
+      </button>
+      
+      <%= f.hidden_field :_destroy %>
+      <% if map_rule.persisted? %>
+        <%= link_to shop_shipping_method_map_rule_path(@shop, @method, map_rule), class: 'btn btn-default',
+            method: :delete, remote: true do %>
+          <span class="glyphicon glyphicon-remove"></span>
+        <% end %>
+      <% else %>
+        <%= link_to 'javascript:void(0)', class: 'btn btn-default map-rule-destroy' do %>
+          <span class="glyphicon glyphicon-remove"></span>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<script>
+$(".multiselect").multiselect({
+   noneSelectedText: "Selecione...",
+   selectedList: 3,
+   header: false
+});
+</script>
