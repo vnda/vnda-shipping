@@ -13,3 +13,6 @@ test: &DEVELOPMENT
   database: shipping_test
   
   pool: 5
+
+production:
+  url: <%= ENV['DATABASE_URL'].sub(/^postgres/, "postgis") if ENV['DATABASE_URL'] %>
