@@ -54,7 +54,9 @@ class Shop < ActiveRecord::Base
     weight = greater_weight(params[:products])
 
     available_methods = backup ? methods.where(id: backup_method_id) : methods.where(enabled: true).joins(:delivery_type).where(delivery_types: { enabled: true })
-    available_methods
+    
+    locals = available_methods
+      .where(data_origin: 'local')
       .for_weigth(weight)
       .joins(:zip_rules)
       .merge(ZipRule.for_zip(zip))
@@ -62,6 +64,17 @@ class Shop < ActiveRecord::Base
       .map do |n, p, d, s, dt|
         Quotation.new(name: n, price: p.to_f, deadline: d, slug: s, delivery_type: set_delivery_type(dt), deliver_company: "", cotation_id: "")
       end
+    
+    maps = available_methods
+      .where(data_origin: 'google_maps')
+      .for_weigth(weight)
+      .joins(:map_rules)
+      .pluck(:name, :price, :deadline, :slug, :delivery_type_id)
+      .map do |n, p, d, s, dt|
+        Quotation.new(name: n, price: p.to_f, deadline: d, slug: s, delivery_type: set_delivery_type(dt), deliver_company: "", cotation_id: "")
+      end
+
+    locals | maps
   end
 
   def set_delivery_type(id)

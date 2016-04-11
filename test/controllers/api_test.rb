@@ -4,27 +4,24 @@ require 'pry'
 class ApiSpec < ActionDispatch::IntegrationTest
 
   setup do
-   @shop = shops(:one)
-   @axado_shop = shops(:axado)
-   @correios_shop = shops(:correios)
-   @shipping_method = shipping_methods(:one)
-   @zip_rule = @shipping_method.zip_rules.create!([
-         { range: 0..99999999, price: 15.0, deadline: 2 }
+    @shop = shops(:one)
+    @axado_shop = shops(:axado)
+    @correios_shop = shops(:correios)
+    @shipping_method = shipping_methods(:one)
+    @zip_rule = @shipping_method.zip_rules.create!([
+         { range: 0..55555555, price: 15.0, deadline: 2 }
        ])
-   @period = periods(:one)
-   ZipRule.first.periods << @period
+    @period = periods(:one)
+    ZipRule.first.periods << @period
+
+    @shipping_method_maps = shipping_methods(:maps)
+    @map_rule = @shipping_method_maps.map_rules.create!([
+       { name: 'region', price: 15.0, deadline: 2, coordinates: '123213 123' }
+     ])
   end
 
 
   describe "api quote" do
-    it "returns available methods" do
-
-      params = JSON.parse('{"origin_zip":"12946636","shipping_zip":"92200290","order_total_price":10.0,"aditional_deadline":null,"aditional_price":null,"products":[{"sku":"CSMT-1","price":10.0,"height":2,"length":16,"width":11,"weight":10, "quantity":1}]}')
-      post "/quote?token=#{@shop.token}", params
-
-      response.status.must_equal 200
-      response.body.must_equal '[{"cotation_id":"","name":"Metodo 1","price":15.0,"deadline":2,"slug":"metodo-1","delivery_type":"Tipo de envio 1","delivery_type_slug":"tipo-de-envio-1","deliver_company":""}]'
-    end
 
     it "returns nothing when params is not ok" do
       params = JSON.parse('{"origin_zip":"12946636"}')
@@ -36,14 +33,49 @@ class ApiSpec < ActionDispatch::IntegrationTest
     it "get the lowers prices" do
       shipping_method_two = shipping_methods(:two)
       zip_rule = shipping_method_two.zip_rules.create!([
-            { range: 0..99999999, price: 10.0, deadline: 2 }
+            { range: 0..55555555, price: 10.0, deadline: 2 }
           ])
 
-      params = JSON.parse('{"origin_zip":"12946636","shipping_zip":"92200290","order_total_price":10.0,"aditional_deadline":null,"aditional_price":null,"products":[{"sku":"CSMT-1","price":10.0,"height":2,"length":16,"width":11,"weight":10}]}')
+      params = JSON.parse('{"origin_zip":"12946636","shipping_zip":"44444444","order_total_price":10.0,"aditional_deadline":null,"aditional_price":null,"products":[{"sku":"CSMT-1","price":10.0,"height":2,"length":16,"width":11,"weight":10}]}')
       post "/quote?token=#{@shop.token}", params
 
       response.status.must_equal 200
       response.body.must_equal '[{"cotation_id":"","name":"Metodo 2","price":10.0,"deadline":2,"slug":"metodo-2","delivery_type":"Tipo de envio 1","delivery_type_slug":"tipo-de-envio-1","deliver_company":""}]'
+    end
+
+    describe "when shipping method has data_origin=local" do      
+      
+      it "returns available methods" do
+        params = JSON.parse('{"origin_zip":"12946636","shipping_zip":"44444444","order_total_price":10.0,"aditional_deadline":null,"aditional_price":null,"products":[{"sku":"CSMT-1","price":10.0,"height":2,"length":16,"width":11,"weight":10, "quantity":1}]}')
+        post "/quote?token=#{@shop.token}", params
+
+        response.status.must_equal 200
+        response.body.must_equal '[{"cotation_id":"","name":"Metodo 1","price":15.0,"deadline":2,"slug":"metodo-1","delivery_type":"Tipo de envio 1","delivery_type_slug":"tipo-de-envio-1","deliver_company":""}]'
+      end
+
+    end
+
+    describe "when shipping method has data_origin=google_maps" do      
+
+      describe "and there are no regions for the zip code" do
+        it "returns nothing" do
+          params = JSON.parse('{"origin_zip":"12946636","shipping_zip":"66623123","order_total_price":10.0,"aditional_deadline":null,"aditional_price":null,"products":[{"sku":"CSMT-1","price":10.0,"height":2,"length":16,"width":11,"weight":10, "quantity":1}]}')
+          post "/quote?token=#{@shop.token}", params
+
+          response.status.must_equal 400
+        end  
+      end
+
+      describe "and there are regions for the zip code" do
+        it "returns available methods" do
+          params = JSON.parse('{"origin_zip":"12946636","shipping_zip":"99999111","order_total_price":10.0,"aditional_deadline":null,"aditional_price":null,"products":[{"sku":"CSMT-1","price":10.0,"height":2,"length":16,"width":11,"weight":10, "quantity":1}]}')
+          post "/quote?token=#{@shop.token}", params
+
+          response.status.must_equal 200
+          response.body.must_equal '[{"cotation_id":"","name":"Metodo Maps","price":15.0,"deadline":2,"slug":"metodo-maps","delivery_type":"Tipo de envio 1","delivery_type_slug":"tipo-de-envio-1","deliver_company":""}]'
+        end
+      end
+      
     end
 
   end

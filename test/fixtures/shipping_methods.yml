@@ -13,3 +13,11 @@ two:
   enabled: true
   delivery_type: :one
   slug: 'metodo-2'
+
+maps:
+  shop: :one
+  name: "Metodo Maps"
+  data_origin: 'google_maps'
+  enabled: true
+  delivery_type: :one
+  slug: 'metodo-maps'

@@ -3,4 +3,15 @@ development: &DEVELOPMENT
   host: localhost
   encoding: unicode
   database: shipping_development
+  username: postgres
+  
+  pool: 5
+
+test: &DEVELOPMENT
+  adapter: postgresql
+  host: localhost
+  encoding: unicode
+  database: shipping_test
+  username: postgres
+  
   pool: 5
