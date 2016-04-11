@@ -3,7 +3,6 @@ development: &DEVELOPMENT
   host: localhost
   encoding: unicode
   database: shipping_development
-  username: postgres
   
   pool: 5
 
@@ -12,6 +11,5 @@ test: &DEVELOPMENT
   host: localhost
   encoding: unicode
   database: shipping_test
-  username: postgres
   
   pool: 5
