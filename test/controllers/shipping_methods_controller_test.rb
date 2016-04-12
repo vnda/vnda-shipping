@@ -24,14 +24,9 @@ describe ShippingMethodsController do
 
   test "should create shipping_method" do
     assert_difference('ShippingMethod.count') do
-      post :create, shipping_method: { name: 'Metodo 5', slug: 'metodo-5', shop: @shop}, shop_id: @shop
+      post :create, shipping_method: { name: 'Metodo 5', slug: 'metodo-5', shop: @shop, delivery_type_id: @shipping_method.delivery_type_id}, shop_id: @shop
     end
     assert_redirected_to edit_shop_shipping_method_path(@shop, ShippingMethod.last)
-  end
-
-  test "should get edit" do
-    get :edit, shop_id: shop, id: shipping_method
-    assert_response :success
   end
 
 end
