@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151214161745) do
+ActiveRecord::Schema.define(version: 20160412004439) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -36,7 +36,6 @@ ActiveRecord::Schema.define(version: 20151214161745) do
     t.integer "shipping_method_id",                                                               null: false
     t.decimal "price",                                                   precision: 10, scale: 2
     t.integer "deadline",                                                                         null: false
-    t.text    "coordinates",                                                                      null: false
     t.string  "name",                                                                             null: false
     t.spatial "region",             limit: {:srid=>0, :type=>"polygon"}
   end

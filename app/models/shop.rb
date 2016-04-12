@@ -55,15 +55,18 @@ class Shop < ActiveRecord::Base
 
     available_methods = backup ? methods.where(id: backup_method_id) : methods.where(enabled: true).joins(:delivery_type).where(delivery_types: { enabled: true })
     
-    available_methods
-      .where(data_origin: 'local')
-      .for_weigth(weight)
-      .joins(:zip_rules)
-      .merge(ZipRule.for_zip(zip))
-      .pluck(:name, :price, :deadline, :slug, :delivery_type_id)
-      .map do |n, p, d, s, dt|
-        Quotation.new(name: n, price: p.to_f, deadline: d, slug: s, delivery_type: set_delivery_type(dt), deliver_company: "", cotation_id: "")
-      end    
+    [
+      available_methods.for_locals_origin(zip),
+      available_methods.for_gmaps_origin(zip)
+    ].collect do |data_origin_methods|
+      quotation_for(data_origin_methods.for_weigth(weight).pluck(:name, :price, :deadline, :slug, :delivery_type_id))
+    end.flatten
+  end
+
+  def quotation_for(shipping_methods)
+    shipping_methods.map do |n, p, d, s, dt|
+      Quotation.new(name: n, price: p.to_f, deadline: d, slug: s, delivery_type: set_delivery_type(dt), deliver_company: "", cotation_id: "")
+    end  
   end
 
   def set_delivery_type(id)

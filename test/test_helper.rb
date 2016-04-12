@@ -4,7 +4,7 @@ require 'rails/test_help'
 require "minitest/spec"
 require 'simplecov'
 require 'mocha/mini_test'
-require 'webmock/minitest'
+#require 'webmock/minitest'
 
 SimpleCov.start 'rails' # feel free to pass block
 

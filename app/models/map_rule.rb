@@ -6,4 +6,8 @@ class MapRule < ActiveRecord::Base
 
   validates :name, :price, :deadline, presence: true  
 
+  scope :for_zip, ->(zip_code) do
+    location = ZipCode.get_geolocation_for(zip_code)
+    where("ST_CONTAINS(region, ST_GeomFromText('POINT(? ?)'))", location[:lng], location[:lat])    
+  end
 end

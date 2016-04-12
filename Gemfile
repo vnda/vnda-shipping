@@ -25,5 +25,5 @@ group :test do
   gem 'minitest-spec-rails'
   gem 'simplecov', :require => false
   gem 'mocha'
-  gem 'webmock'
+#  gem 'webmock'
 end

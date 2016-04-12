@@ -30,6 +30,8 @@ class ShippingMethod < ActiveRecord::Base
   before_save :generate_slug, if: :name_changed?
 
   scope :for_weigth, -> weigth { where('shipping_methods.weigth_range @> ?', weigth.to_f) }
+  scope :for_gmaps_origin, -> zip { where(data_origin: 'google_maps').merge(MapRule.for_zip(zip)).joins(:map_rules) }
+  scope :for_locals_origin, -> zip { where(data_origin: 'local').merge(ZipRule.for_zip(zip)).joins(:zip_rules) }
 
   attr_writer :min_weigth, :max_weigth
   def min_weigth
@@ -83,12 +85,7 @@ class ShippingMethod < ActiveRecord::Base
       if map_rule = self.map_rules.where(name: name).first
         map_rule.update_attribute(:region, region)
       else
-        map_rule = MapRule.new(
-          name: name, 
-          price: nil,
-          deadline: nil,
-          region: region
-        )
+        map_rule = MapRule.new(name: name, price: nil, deadline: nil, region: region)
       end
 
       map_rule      
