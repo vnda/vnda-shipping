@@ -47,6 +47,7 @@ class PeriodsController < ApplicationController
     def period_params
       params[:period][:exception_date].reject! { |c| c.empty? } if params[:period][:exception_date].present?
       params[:period][:closed_date].reject! { |c| c.empty? } if params[:period][:closed_date].present?
-      params.require(:period).permit(:name, :limit_time, days_off: [], exception_date: [], closed_date: [])
+      params.require(:period).permit(:name, :limit_time, :days_ago,
+        days_off: [], exception_date: [], closed_date: [])
     end
 end

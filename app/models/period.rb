@@ -25,7 +25,7 @@ class Period < ActiveRecord::Base
   DAYS = ['Sábado', 'Domingo', 'Segunda-Feira', 'Terça-Feira',
                'Quarta-Feira', 'Quinta-Feira', 'Sexta-Feira']
 
-  scope :valid_on, -> (time) { where("limit_time > ?", time) }
+  scope :valid_on, -> (time) { where("days_ago = 0 AND limit_time > ?", time) }
 
   def next_day(day)
     week_day = day.strftime("%A")
@@ -68,4 +68,11 @@ class Period < ActiveRecord::Base
     (status && !closed_date.to_s.include?( date.strftime("%d/%m/%Y") )) || exception_date.to_s.include?( date.strftime("%d/%m/%Y") )
   end
 
+  def check_days_ago?(date)
+    return true unless self.days_ago > 0
+    datetime_off = date.to_time.change({ hour: limit_time.hour, min: limit_time.min})
+    hours_to_limit = ((datetime_off - Time.zone.now) / 1.hour).round
+    hours_limit = self.days_ago * 24
+    hours_to_limit >= hours_limit
+  end
 end

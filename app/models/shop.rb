@@ -54,7 +54,7 @@ class Shop < ActiveRecord::Base
     weight = greater_weight(params[:products])
 
     available_methods = backup ? methods.where(id: backup_method_id) : methods.where(enabled: true).joins(:delivery_type).where(delivery_types: { enabled: true })
-    
+
     [
       available_methods.for_locals_origin(zip),
       available_methods.for_gmaps_origin(zip)
@@ -66,7 +66,7 @@ class Shop < ActiveRecord::Base
   def quotation_for(shipping_methods)
     shipping_methods.map do |n, p, d, s, dt|
       Quotation.new(name: n, price: p.to_f, deadline: d, slug: s, delivery_type: set_delivery_type(dt), deliver_company: "", cotation_id: "")
-    end  
+    end
   end
 
   def set_delivery_type(id)
@@ -178,12 +178,13 @@ class Shop < ActiveRecord::Base
   end
 
   def delivery_day_status(date, zip, period_name)
-    if (date > Date.current)
-      (available_periods(zip, date).include?(period_name) ? "yes" : "close")
-    elsif (date == Date.current)
+    if (date >= Date.current)
       p = zip_rules.for_zip(zip).order_by_limit.map do |zip_rule|
-        rules = zip_rule.periods.where(name: period_name).valid_on(Time.zone.now.strftime("%T"))
-        rules.select{|p| p.available_on?(Time.zone.now)}.any?
+        periods = zip_rule.periods.where(name: period_name)
+        periods = periods.valid_on(Time.zone.now.strftime("%T")) if date == Date.current
+        periods = periods.select{|p| p.available_on?(date)}
+        periods = periods.select{|p| p.check_days_ago?(date) }
+        periods.select{|p| p.available_on?(Time.zone.now)}.any?
       end
       p.uniq.select{|v| v }.any? ? "yes" : "close"
     else

@@ -235,6 +235,7 @@ pt-BR:
         name: 'Nome'
         limit_time: 'Horário Limite'
         days_off: 'Dias sem entrega'
+        days_ago: 'Dias de antecedência'
   notices:
     shipping_methods:
       create: 'Forma de entrega criada com sucesso'
