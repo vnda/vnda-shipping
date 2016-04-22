@@ -55,7 +55,7 @@ class ApiController < ActionController::Base
 
   def quote
     quotations = @shop.quote(request_params)
-    quotations += forward_quote || [] unless check_express(quotations)
+    quotations += forward_quote || []
     quotations = lower_prices(quotations) unless quotations.empty?
 
     if quotations.empty?
@@ -76,16 +76,6 @@ class ApiController < ActionController::Base
       lower << delivery_types.sort_by{|v| v.price}.first
     end
     return lower || []
-  end
-
-  def check_express(quotations)
-    express = false
-    quotations.each do |q|
-      if method = @shop.methods.find_by(name: q.name)
-        express = true if method.delivery_type.name == 'Expressa'
-      end
-    end
-    return express
   end
 
   def create_intelipost
