@@ -15,7 +15,7 @@ class ZipRule < ActiveRecord::Base
   has_and_belongs_to_many :periods
 
   scope :for_zip, -> zip { where('zip_rules.range @> ?', zip) }
-  scope :order_by_limit, -> { joins(:periods).order("periods.limit_time") }
+  scope :order_by_limit, -> { joins(:periods).order("days_ago DESC, periods.limit_time") }
 
   attr_writer :min, :max
   def min; @min ||= range.try(:min) end
