@@ -26,6 +26,7 @@ class Period < ActiveRecord::Base
                'Quarta-Feira', 'Quinta-Feira', 'Sexta-Feira']
 
   scope :valid_on, -> (time) { where("days_ago = 0 AND limit_time > ?", time) }
+  scope :order_by_limit, -> { order("days_ago DESC, limit_time") }
 
   def next_day(day)
     week_day = day.strftime("%A")
