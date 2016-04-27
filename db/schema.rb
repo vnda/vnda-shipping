@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160420130449) do
+ActiveRecord::Schema.define(version: 20160427171409) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -58,7 +58,7 @@ ActiveRecord::Schema.define(version: 20160420130449) do
     t.integer  "shop_id"
     t.text     "exception_date"
     t.text     "closed_date"
-    t.integer  "days_ago",                default: 0
+    t.integer  "days_ago",       default: 0
   end
 
   create_table "periods_zip_rules", force: true do |t|
@@ -117,6 +117,7 @@ ActiveRecord::Schema.define(version: 20160420130449) do
     t.string  "intelipost_token"
     t.boolean "forward_to_intelipost",               default: false, null: false
     t.string  "correios_custom_services"
+    t.string  "order_prefix",                        default: ""
   end
 
   add_index "shops", ["name"], :name => "index_shops_on_name", :unique => true

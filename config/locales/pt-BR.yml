@@ -223,6 +223,7 @@ pt-BR:
         express_shipping_name: 'Nome para entrega expressa'
         normal_shipping_name: 'Nome para entrega normal'
         backup_method_id: Forma de entrega de backup
+        order_prefix: Prefixo do pedido(Intelipost)
       shipping_method:
         name: 'Nome'
         description: 'Descrição'
