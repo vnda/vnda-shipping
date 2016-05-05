@@ -55,7 +55,7 @@ class ApiController < ActionController::Base
 
   def quote
     quotations = @shop.quote(request_params)
-    quotations += forward_quote || []
+    quotations += forward_quote || [] if quotations.empty?
     quotations = lower_prices(quotations) unless quotations.empty?
 
     if quotations.empty?
