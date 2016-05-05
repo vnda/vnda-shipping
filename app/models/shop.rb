@@ -63,6 +63,13 @@ class Shop < ActiveRecord::Base
     end.flatten
   end
 
+  def fallback_quote(request)
+    Rails.logger.info("Backup mode activated for: #{name}")
+    fallback_shop = Shop.where(name: "fallback").first
+    return [] unless fallback_shop
+    fallback_shop.quote(request)
+  end
+
   def quotation_for(shipping_methods)
     shipping_methods.map do |n, p, d, s, dt|
       Quotation.new(name: n, price: p.to_f, deadline: d, slug: s, delivery_type: set_delivery_type(dt), deliver_company: "", cotation_id: "")
