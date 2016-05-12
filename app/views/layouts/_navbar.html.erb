@@ -22,7 +22,7 @@
             <li><%= link_to 'Erros ocorridos', shop_shipping_errors_path(@shop) %>
           <% end %>
         </ul>
-        <% other = Shop.all.where.not(id: @shop.id) %>
+        <% other = Shop.where.not(id: @shop.id).order(:name) %>
         <ul class="nav navbar-nav navbar-right">
           <% if other.empty? %>
             <p class="navbar-text"><%= @shop.name %></p>
