@@ -55,10 +55,11 @@ class Shop < ActiveRecord::Base
 
     available_methods = backup ? methods.where(id: backup_method_id) : methods.where(enabled: true).joins(:delivery_type).where(delivery_types: { enabled: true })
 
-    [
-      available_methods.for_locals_origin(zip),
-      available_methods.for_gmaps_origin(zip)
-    ].collect do |data_origin_methods|
+    quotations = []
+    quotations << available_methods.for_locals_origin(zip) if available_methods.where(data_origin: "local").any?
+    quotations << available_methods.for_gmaps_origin(zip) if available_methods.where(data_origin: "google_maps").any?
+
+    quotations.collect do |data_origin_methods|
       quotation_for(data_origin_methods.for_weigth(weight).pluck(:name, :price, :deadline, :slug, :delivery_type_id))
     end.flatten
   end
