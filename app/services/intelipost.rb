@@ -24,7 +24,7 @@ module Intelipost
     end
 
     if response.status == 503
-      return activate_backup_method(request, shop)
+      return @shop.fallback_quote(request)
     end
 
     begin
@@ -112,10 +112,4 @@ module Intelipost
 
     request
   end
-
-  def activate_backup_method(request, shop)
-    Rails.logger.info("Backup mode activated for: #{shop.name}")
-    return shop.quote(request, true)
-  end
-
 end

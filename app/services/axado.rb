@@ -12,7 +12,7 @@ module Axado
     )
 
     if response.status == 503
-      return activate_backup_method(request, shop)
+      return @shop.fallback_quote(request)
     end
 
     data = JSON.parse(response.body)
@@ -59,10 +59,4 @@ module Axado
       end
     }
   end
-
-  def activate_backup_method(request, shop)
-    Rails.logger.info("Backup mode activated for: #{shop.name}")
-    return shop.quote(request, true)
-  end
-
 end

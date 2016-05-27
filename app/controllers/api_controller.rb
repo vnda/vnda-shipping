@@ -55,7 +55,7 @@ class ApiController < ActionController::Base
 
   def quote
     quotations = @shop.quote(request_params)
-    quotations += forward_quote || [] unless check_express(quotations)
+    quotations += forward_quote || [] if quotations.empty? || !correios_completed?(@shop, quotations)
     quotations = lower_prices(quotations) unless quotations.empty?
 
     if quotations.empty?
@@ -87,16 +87,6 @@ class ApiController < ActionController::Base
       lower << delivery_types.sort_by{|v| v.price}.first
     end
     return lower || []
-  end
-
-  def check_express(quotations)
-    express = false
-    quotations.each do |q|
-      if method = @shop.methods.find_by(name: q.name)
-        express = true if method.delivery_type.name == 'Expressa'
-      end
-    end
-    return express
   end
 
   def create_intelipost
@@ -141,6 +131,15 @@ class ApiController < ActionController::Base
     else
 
     end
+  end
+
+  def correios_completed?(shop, quotations)
+    correios_delivery_types = @shop.methods.where(enabled: true, data_origin: "correios").map{|m| m.delivery_type.name }.uniq
+    if correios_delivery_types.any?
+      delivery_types_quoted = quotations.map{|q| q.delivery_type}
+      return (correios_delivery_types - delivery_types_quoted).empty?
+    end
+    true
   end
 
   def request_params

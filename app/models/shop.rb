@@ -56,12 +56,20 @@ class Shop < ActiveRecord::Base
 
     available_methods = backup ? methods.where(id: backup_method_id) : methods.where(enabled: true).joins(:delivery_type).where(delivery_types: { enabled: true })
 
-    [
-      available_methods.for_locals_origin(zip),
-      available_methods.for_gmaps_origin(zip)
-    ].collect do |data_origin_methods|
+    quotations = []
+    quotations << available_methods.for_locals_origin(zip) if available_methods.where(data_origin: "local").any?
+    quotations << available_methods.for_gmaps_origin(zip) if available_methods.where(data_origin: "google_maps").any?
+
+    quotations.collect do |data_origin_methods|
       quotation_for(data_origin_methods.for_weigth(weight).pluck(:name, :price, :deadline, :slug, :delivery_type_id))
     end.flatten
+  end
+
+  def fallback_quote(request)
+    Rails.logger.info("Backup mode activated for: #{name}")
+    fallback_shop = Shop.where(name: "fallback").first
+    return [] unless fallback_shop
+    fallback_shop.quote(request)
   end
 
   def quotation_for(shipping_methods)
@@ -116,7 +124,7 @@ class Shop < ActiveRecord::Base
         end
       else
         self.zip_rules.for_zip(zip).order_by_limit.each do |z|
-          available_periods += z.periods.order(:limit_time).pluck(:name) unless z.periods.empty?
+          available_periods += z.periods.order_by_limit.pluck(:name) unless z.periods.empty?
         end
       end
     end
@@ -179,12 +187,13 @@ class Shop < ActiveRecord::Base
   end
 
   def delivery_day_status(date, zip, period_name)
-    if (date > Date.current)
-      (available_periods(zip, date).include?(period_name) ? "yes" : "close")
-    elsif (date == Date.current)
+    if (date >= Date.current)
       p = zip_rules.for_zip(zip).order_by_limit.map do |zip_rule|
-        rules = zip_rule.periods.where(name: period_name).valid_on(Time.zone.now.strftime("%T"))
-        rules.select{|p| p.available_on?(Time.zone.now)}.any?
+        periods = zip_rule.periods.where(name: period_name)
+        periods = periods.valid_on(Time.zone.now.strftime("%T")) if date == Date.current
+        periods = periods.select{|p| p.available_on?(date)}
+        periods = periods.select{|p| p.check_days_ago?(date) }
+        periods.select{|p| p.available_on?(Time.zone.now)}.any?
       end
       p.uniq.select{|v| v }.any? ? "yes" : "close"
     else

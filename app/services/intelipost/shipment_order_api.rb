@@ -43,7 +43,7 @@ class Intelipost::ShipmentOrderApi
     end
 
     params[:estimated_delivery_date] = (Date.current + json["delivery_days"].days).strftime("%Y-%m-%d") if json["delivery_days"].to_i > 0
-    params[:order_number] = json["code"]
+    params[:order_number] = [@shop.order_prefix, json["code"]].join("")
     params[:customer_shipping_costs] = json["shipping_price"]
     params[:end_customer] = {}
     params[:end_customer][:first_name] = json["first_name"]

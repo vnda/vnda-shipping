@@ -25,7 +25,7 @@ class Correios
     box = package_dimensions(request[:products])
     cubic_weight = (box[:length].to_f* box[:height].to_f * box[:width].to_f) / 6000.0
     weight = request[:products].sum { |i| i[:weight].to_f * i[:quantity].to_i }
-    if cubic_weight > 10.0 and cubic_weight > weight
+    if cubic_weight > 10.0 and cubic_weight < weight
       weight = cubic_weight
     end
     begin
@@ -45,8 +45,8 @@ class Correios
         'nVlValorDeclarado' => request[:order_total_price],
         'sCdAvisoRecebimento' => 'N',
       )
-    rescue Wasabi::Resolver::HTTPError
-      return activate_backup_method(request)
+    rescue Wasabi::Resolver::HTTPError, Excon::Errors::Timeout
+      return @shop.fallback_quote(request)
     end
 
     puts response.body
@@ -91,7 +91,7 @@ class Correios
   private
 
   def send_message(method_id, message)
-    client = Savon.client(wsdl: URL, convert_request_keys_to: :none)
+    client = Savon.client(wsdl: URL, convert_request_keys_to: :none, open_timeout: 5, read_timeout: 5)
     request_xml = client.operation(method_id).build(message: message).to_s
     Rails.logger.info("Request: #{request_xml}")
     response = client.call(method_id, message: message)
@@ -110,11 +110,6 @@ class Correios
 
   def parse_price(str)
     str.gsub(/[.,]/, '.' => '', ',' => '.').to_f
-  end
-
-  def activate_backup_method(request)
-    Rails.logger.info("Backup mode activated for: #{@shop.name}")
-    return @shop.quote(request, true)
   end
 
   def shipping_name(code)
