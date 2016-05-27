@@ -1,5 +1,5 @@
 class ApiController < ActionController::Base
-  before_action :set_shop, only: [:quote, :delivery_date, :delivery_types, :delivery_periods]
+  before_action :set_shop, only: [:quote, :delivery_date, :delivery_types, :delivery_periods, :local]
   rescue_from InvalidZip && BadParams do
     head :bad_request
   end
@@ -66,6 +66,17 @@ class ApiController < ActionController::Base
     else
       render json: quotations, status: 200
     end
+  end
+
+  def local
+    render json: {
+      local: @shop.map_rules
+              .joins(:shipping_method)
+              .where(shipping_methods: { enabled: true })
+              .for_zip(params[:zip])
+              .select('shipping_methods.slug')
+              .first.try(:slug) || false
+    }
   end
 
   def lower_prices(quotations)

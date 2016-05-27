@@ -27,6 +27,7 @@ Rails.application.routes.draw do
   end
 
   match '/quote', to: 'api#quote', via: [:get, :post], format: :json
+  match '/local', to: 'api#local', via: :get, format: :json
   match '/delivery_date', to: 'api#delivery_date', via: [:get, :post], format: :json
   match '/delivery_periods', to: 'api#delivery_periods', via: :get, format: :json
   match '/delivery_types', to: 'api#delivery_types', via: [:get, :post], format: :json

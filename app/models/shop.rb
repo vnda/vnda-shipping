@@ -23,6 +23,7 @@ class Shop < ActiveRecord::Base
   has_many :delivery_types, dependent: :destroy
   has_many :periods, dependent: :destroy
   has_many :zip_rules, through: :methods
+  has_many :map_rules, through: :methods
   has_many :shipping_errors, class_name: 'ShippingError'
   has_many :shipping_friendly_errors
 
@@ -54,7 +55,7 @@ class Shop < ActiveRecord::Base
     weight = greater_weight(params[:products])
 
     available_methods = backup ? methods.where(id: backup_method_id) : methods.where(enabled: true).joins(:delivery_type).where(delivery_types: { enabled: true })
-    
+
     [
       available_methods.for_locals_origin(zip),
       available_methods.for_gmaps_origin(zip)
@@ -66,7 +67,7 @@ class Shop < ActiveRecord::Base
   def quotation_for(shipping_methods)
     shipping_methods.map do |n, p, d, s, dt|
       Quotation.new(name: n, price: p.to_f, deadline: d, slug: s, delivery_type: set_delivery_type(dt), deliver_company: "", cotation_id: "")
-    end  
+    end
   end
 
   def set_delivery_type(id)
