@@ -194,7 +194,7 @@ class Shop < ActiveRecord::Base
         periods = periods.valid_on(Time.zone.now.strftime("%T")) if date == Date.current
         periods = periods.select{|p| p.available_on?(date)}
         periods = periods.select{|p| p.check_days_ago?(date) }
-        periods.select{|p| p.available_on?(Time.zone.now)}.any?
+        periods.select{|p| p.available_on?(date)}.any?
       end
       p.uniq.select{|v| v }.any? ? "yes" : "close"
     else
