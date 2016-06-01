@@ -20,6 +20,7 @@ class ShippingMethod < ActiveRecord::Base
   belongs_to :delivery_type
   has_many :zip_rules, dependent: :destroy
   has_many :map_rules, dependent: :destroy
+  has_many :places, dependent: :destroy
   has_many :block_rules, dependent: :destroy
   accepts_nested_attributes_for :zip_rules, allow_destroy: true, reject_if: :all_blank
   accepts_nested_attributes_for :map_rules, allow_destroy: true, reject_if: :all_blank
@@ -76,7 +77,7 @@ class ShippingMethod < ActiveRecord::Base
 
   def build_or_update_map_rules_from(xml_doc)
     factory = RGeo::Cartesian.factory
-    
+
     xml_doc.css('Document Folder Placemark').collect do |placemark|
       name = placemark.css('name').text.strip
       points = placemark.css('Polygon coordinates').text.split(' ').collect{|z| c = z.split(','); c.pop; c.map(&:to_f)}.collect{|coordinates| factory.point(coordinates[0], coordinates[1])}
@@ -88,7 +89,7 @@ class ShippingMethod < ActiveRecord::Base
         map_rule = MapRule.new(name: name, price: nil, deadline: nil, region: region)
       end
 
-      map_rule      
+      map_rule
     end
   end
 end

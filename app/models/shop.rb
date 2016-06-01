@@ -161,6 +161,7 @@ class Shop < ActiveRecord::Base
     {
       local: true,
       google_maps: true,
+      places: true,
       correios: forward_to_correios,
       axado: forward_to_axado,
       intelipost: forward_to_intelipost,
