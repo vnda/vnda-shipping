@@ -1,1 +1,5 @@
-$("#places-form .places-container").html("<%= escape_javascript(render 'list', places: @places) %>");  
+<% if flash.now[:'vnda-places-error'] %>
+  $("#places-form .places-messages").append("<%= escape_javascript(render 'vnda_places_error') %>");
+<% else %>
+  $("#places-form .places-container").html("<%= escape_javascript(render 'list', places: @places) %>");
+<% end %>
