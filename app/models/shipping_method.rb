@@ -16,6 +16,7 @@
 #
 
 class ShippingMethod < ActiveRecord::Base
+
   belongs_to :shop
   belongs_to :delivery_type
   has_many :zip_rules, dependent: :destroy
@@ -90,6 +91,12 @@ class ShippingMethod < ActiveRecord::Base
       end
 
       map_rule
+    end
+  end
+
+  def check_and_update_places
+    Place.retrieve_from_vnda_places_for(self.shop).each do |place_json|
+      self.places.create(name: place_json['name']) unless self.places.find_by_name(place_json['name'])
     end
   end
 end
