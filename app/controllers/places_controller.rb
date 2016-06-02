@@ -7,7 +7,7 @@ class PlacesController < ApplicationController
     @method = ShippingMethod.find(params[:shipping_method_id])
 
     begin
-      @method.check_and_update_places if @method.places.empty?
+      @method.check_and_update_places if @method.places.empty? || params[:force]
       @places = @method.places.order('id asc')
     rescue RestClient::Unauthorized
       flash.now[:'vnda-places-error'] = 'Loja não possui cadastro no vnda-places'

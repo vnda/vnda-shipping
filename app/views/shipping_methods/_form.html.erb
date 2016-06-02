@@ -209,7 +209,9 @@
   <div id="places-form" class="zip-codes-container items-container" style="display: <%= @method.data_origin.eql?('places') ? '' : 'none' %>">
     <div id="places-panel" class="panel panel-default">
       <div class="panel-heading">
-        Places
+        <a href="<%= shop_shipping_method_places_url(@shop, @method, force: true) %>" class="btn btn-default" data-remote="true" data-method="get">
+          Baixar places
+        </a>
       </div>
       <div class="panel-body">
         <div class="places-messages"></div>
