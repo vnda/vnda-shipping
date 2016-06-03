@@ -29,7 +29,7 @@ class ShippingMethod < ActiveRecord::Base
 
   validates :name, :delivery_type_id, presence: true
 
-  before_save :generate_slug, if: :name_changed?
+  before_save :generate_slug, if: :description_changed?
 
   scope :for_weigth, -> weigth { where('shipping_methods.weigth_range @> ?', weigth.to_f) }
   scope :for_gmaps_origin, -> zip { where(data_origin: 'google_maps').merge(MapRule.for_zip(zip)).joins(:map_rules) }
