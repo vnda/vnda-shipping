@@ -34,6 +34,7 @@ class ShippingMethod < ActiveRecord::Base
   scope :for_weigth, -> weigth { where('shipping_methods.weigth_range @> ?', weigth.to_f) }
   scope :for_gmaps_origin, -> zip { where(data_origin: 'google_maps').merge(MapRule.for_zip(zip)).joins(:map_rules) }
   scope :for_locals_origin, -> zip { where(data_origin: 'local').merge(ZipRule.for_zip(zip)).joins(:zip_rules) }
+  scope :for_places, -> { where(data_origin: 'places') }
 
   attr_writer :min_weigth, :max_weigth
   def min_weigth
