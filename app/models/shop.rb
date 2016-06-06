@@ -59,7 +59,6 @@ class Shop < ActiveRecord::Base
     quotations = []
     quotations << available_methods.for_locals_origin(zip) if available_methods.where(data_origin: "local").any?
     quotations << available_methods.for_gmaps_origin(zip) if available_methods.where(data_origin: "google_maps").any?
-    #quotations << available_methods.for_places if available_methods.where(data_origin: "places").any?
 
     quotations.collect do |data_origin_methods|
       quotation_for(data_origin_methods.for_weigth(weight).pluck(:name, :price, :deadline, :slug, :delivery_type_id))
@@ -68,7 +67,7 @@ class Shop < ActiveRecord::Base
 
   def quotations_for_places(available_methods)
     available_methods.for_places.includes(:delivery_type).collect do |method|
-      Quotation.new(name: method.name, price: 0, deadline: 0, slug: '', delivery_type: method.delivery_type.name, deliver_company: "", cotation_id: "")
+      PlaceQuotation.new(name: method.name, delivery_type: method.delivery_type.name)
     end
   end
 
