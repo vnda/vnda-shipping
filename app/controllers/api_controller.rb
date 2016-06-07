@@ -80,9 +80,7 @@ class ApiController < ActionController::Base
   end
 
   def places
-    render json: {
-      places: @shop.places_for_shipping_method(params[:shipping_method_id]).to_json(only: :name)
-    }
+    render json: @shop.places_for_shipping_method(params[:shipping_method_id]).to_json(only: :name)
   end
 
   def lower_prices(quotations)
