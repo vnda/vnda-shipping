@@ -1,5 +1,5 @@
 class ApiController < ActionController::Base
-  before_action :set_shop, only: [:quote, :delivery_date, :delivery_types, :delivery_periods, :local]
+  before_action :set_shop, only: [:quote, :delivery_date, :delivery_types, :delivery_periods, :local, :places]
   rescue_from InvalidZip && BadParams do
     head :bad_request
   end
@@ -76,6 +76,12 @@ class ApiController < ActionController::Base
               .for_zip(params[:zip])
               .select('shipping_methods.slug')
               .first.try(:slug) || false
+    }
+  end
+
+  def places
+    render json: {
+      places: @shop.places_for_shipping_method(params[:shipping_method_id]).to_json(only: :name)
     }
   end
 

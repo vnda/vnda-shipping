@@ -71,6 +71,11 @@ class Shop < ActiveRecord::Base
     end
   end
 
+  def places_for_shipping_method(shipping_method_id)
+    method = methods.find(shipping_method_id)
+    method.places
+  end
+
   def fallback_quote(request)
     Rails.logger.info("Backup mode activated for: #{name}")
     fallback_shop = Shop.where(name: "fallback").first
