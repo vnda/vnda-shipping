@@ -67,7 +67,7 @@ class Shop < ActiveRecord::Base
 
   def quotations_for_places(available_methods)
     available_methods.for_places.includes(:delivery_type).collect do |method|
-      PlaceQuotation.new(name: method.name, delivery_type: method.delivery_type.name, shipping_method_id: method.id)
+      PlaceQuotation.new(name: method.name, delivery_type: method.delivery_type.name, shipping_method_id: method.id, slug: method.slug)
     end
   end
 
