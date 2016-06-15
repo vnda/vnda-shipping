@@ -22,6 +22,7 @@ class Correios
   end
 
   def quote(request)
+    @cart_id = request[:cart_id]
     box = package_dimensions(request[:products])
     cubic_weight = (box[:length].to_f* box[:height].to_f * box[:width].to_f) / 6000.0
     weight = request[:products].sum { |i| i[:weight].to_f * i[:quantity].to_i }
@@ -96,6 +97,12 @@ class Correios
     Rails.logger.info("Request: #{request_xml}")
     response = client.call(method_id, message: message)
     Rails.logger.info("Response: #{response.to_xml}")
+
+    QuoteHistory.register(@shop.id, @cart_id, {
+      :external_request => request_xml,
+      :external_response => response.to_xml
+    })
+
     response
   end
 

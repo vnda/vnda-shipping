@@ -17,13 +17,14 @@ Rails.application.routes.draw do
       resources :map_rules do
         get :download_kml, on: :collection
       end
-      resources :places 
+      resources :places
     end
     resources :shipping_errors, only: [:index]
     resources :delivery_types do
       patch :toggle, on: :member
     end
     resources :periods
+    resources :quote_histories, only: [:index, :show]
 
   end
 

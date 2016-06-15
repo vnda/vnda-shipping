@@ -26,6 +26,7 @@ class Shop < ActiveRecord::Base
   has_many :map_rules, through: :methods
   has_many :shipping_errors, class_name: 'ShippingError'
   has_many :shipping_friendly_errors
+  has_many :quotes, class_name: 'QuoteHistory'
 
   before_create { self.token = SecureRandom.hex }
   after_create :create_delivery_types, :create_correios_methods
