@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160601172850) do
+ActiveRecord::Schema.define(version: 20160615194102) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -76,6 +76,16 @@ ActiveRecord::Schema.define(version: 20160601172850) do
   end
 
   add_index "places", ["shipping_method_id"], :name => "index_places_on_shipping_method_id"
+
+  create_table "quote_histories", force: true do |t|
+    t.integer  "shop_id"
+    t.integer  "cart_id"
+    t.text     "external_request"
+    t.text     "external_response"
+    t.text     "quotations"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "shipping_errors", force: true do |t|
     t.string   "message"
