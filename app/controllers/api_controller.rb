@@ -58,6 +58,8 @@ class ApiController < ActionController::Base
     quotations += forward_quote || [] if quotations.empty? || !correios_completed?(@shop, quotations)
     quotations = lower_prices(quotations) unless quotations.empty?
 
+    QuoteHistory.register(@shop.id, request_params[:cart_id], {:quotations => quotations.to_json})
+
     if quotations.empty?
       puts "No methods available shop: #{@shop.name} parameters: #{params}"
       message = "Não existem opções de entrega para este endereço."
@@ -153,6 +155,7 @@ class ApiController < ActionController::Base
       :order_total_price,
       :aditional_deadline,
       :aditional_price,
+      :cart_id,
       products: [
         :sku,
         :price,

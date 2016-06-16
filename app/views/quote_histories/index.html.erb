@@ -1,0 +1,30 @@
+<% content_for :title, 'Histórico de cotações' %>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th style="width: 70px" \>
+      <th>Carrinho</th>
+      <th>Atualizado em</th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @quotes.each do |quote| %>
+      <tr>
+        <td \>
+        <td><%= quote.cart_id %></td>
+        <td><%= quote.updated_at %></td>
+        <td class="text-right">
+          <%= link_to shop_quote_history_path(@shop, quote) do %>
+            <span class="glyphicon glyphicon-search"></span>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
