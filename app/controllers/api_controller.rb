@@ -1,5 +1,5 @@
 class ApiController < ActionController::Base
-  before_action :set_shop, only: [:quote, :delivery_date, :delivery_types, :delivery_periods, :local, :places]
+  before_action :set_shop, only: [:quotation_details, :quote, :delivery_date, :delivery_types, :delivery_periods, :local, :places]
   rescue_from InvalidZip && BadParams do
     head :bad_request
   end
@@ -114,6 +114,15 @@ class ApiController < ActionController::Base
     res = intelipost_api.ready_for_shipment(params)
 
     render json: res, status: 200
+  end
+
+  def quotation_details
+    @quote = @shop.quotes.where(cart_id: params[:cart_id].to_i).order("updated_at desc").first
+    if @quote
+      render "quote_histories/show", :layout => false
+    else
+      render "quote_histories/not_found", :layout => false
+    end
   end
 
   private
