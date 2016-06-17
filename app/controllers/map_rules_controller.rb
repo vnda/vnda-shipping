@@ -13,7 +13,7 @@ class MapRulesController < ApplicationController
     @shop = Shop.find(params[:shop_id])
     @method = ShippingMethod.find(params[:shipping_method_id])
     @map_rule = @method.map_rules.create(map_rule_params)
-    flash.now[:notice] = I18n.t('notices.map_rule.create') if @map_rule.persisted?  
+    flash.now[:notice] = I18n.t('notices.map_rule.create') if @map_rule.persisted?
   end
 
   def update
@@ -22,21 +22,23 @@ class MapRulesController < ApplicationController
   end
 
   def destroy
-    @map_rule = MapRule.find(params[:id])  
+    @map_rule = MapRule.find(params[:id])
     @map_rule.destroy
     flash.now[:notice] = I18n.t('notices.map_rule.destroy')
   end
 
   def download_kml
-    begin      
+    begin
       @shop = Shop.find(params[:shop_id])
       @method = ShippingMethod.find(params[:shipping_method_id])
-      @method.update_attributes(shipping_method_params)      
+      @method.update_attributes(shipping_method_params)
 
       response = RestClient.get 'https://www.google.com/maps/d/kml', {params: {mid: params[:shipping_method][:mid], forcekml: '1'}}
-      @map_rules = @method.build_or_update_map_rules_from(Nokogiri::XML(response))      
+      @map_rules = @method.build_or_update_map_rules_from(Nokogiri::XML(response))
     rescue RestClient::ResourceNotFound => e
       flash.now[:error] = "Mapa não encontrado para MID: #{params[:shipping_method][:mid]}"
+    rescue RestClient::Forbidden => e
+      flash.now[:error] = "O mapa está privado, para baixá-lo ele precisa ser público"
     end
   end
 
