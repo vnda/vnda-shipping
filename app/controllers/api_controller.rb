@@ -71,14 +71,7 @@ class ApiController < ActionController::Base
   end
 
   def local
-    render json: {
-      local: @shop.map_rules
-              .joins(:shipping_method)
-              .where(shipping_methods: { enabled: true })
-              .for_zip(params[:zip])
-              .select('shipping_methods.slug')
-              .first.try(:slug) || false
-    }
+    render json: { local: find_local(@shop.map_rules).first.try(:slug) || find_local(@shop.zip_rules).first.try(:slug) || false }
   end
 
   def places
@@ -166,5 +159,9 @@ class ApiController < ActionController::Base
         :quantity
       ]
     )
+  end
+
+  def find_local(collection)
+    collection.joins(:shipping_method).where(shipping_methods: { enabled: true }).for_zip(params[:zip].gsub(/\D+/, '').to_i).select('shipping_methods.slug')
   end
 end
