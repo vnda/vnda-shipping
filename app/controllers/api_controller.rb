@@ -57,6 +57,7 @@ class ApiController < ActionController::Base
     quotations = @shop.quote(request_params)
     quotations += forward_quote || [] if quotations.empty? || !correios_completed?(@shop, quotations)
     quotations = lower_prices(quotations) unless quotations.empty?
+    quotations = apply_aditional_deadline(quotations) if params[:aditional_deadline].present?
 
     QuoteHistory.register(@shop.id, request_params[:cart_id], {:quotations => quotations.to_json})
 
@@ -71,14 +72,7 @@ class ApiController < ActionController::Base
   end
 
   def local
-    render json: {
-      local: @shop.map_rules
-              .joins(:shipping_method)
-              .where(shipping_methods: { enabled: true })
-              .for_zip(params[:zip])
-              .select('shipping_methods.slug')
-              .first.try(:slug) || false
-    }
+    render json: { local: find_local(@shop.map_rules).first.try(:slug) || find_local(@shop.zip_rules).first.try(:slug) || false }
   end
 
   def places
@@ -157,6 +151,12 @@ class ApiController < ActionController::Base
     true
   end
 
+  def apply_aditional_deadline(quotations)
+    quotations.each do |quote|
+      quote.deadline = quote.deadline.to_i + params[:aditional_deadline].to_i
+    end
+  end
+
   def request_params
     params.permit(
       :origin_zip,
@@ -175,5 +175,9 @@ class ApiController < ActionController::Base
         :quantity
       ]
     )
+  end
+
+  def find_local(collection)
+    collection.joins(:shipping_method).where(shipping_methods: { enabled: true }).for_zip(params[:zip].gsub(/\D+/, '').to_i).select('shipping_methods.slug')
   end
 end
