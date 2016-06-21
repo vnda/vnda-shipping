@@ -57,6 +57,7 @@ class ApiController < ActionController::Base
     quotations = @shop.quote(request_params)
     quotations += forward_quote || [] if quotations.empty? || !correios_completed?(@shop, quotations)
     quotations = lower_prices(quotations) unless quotations.empty?
+    quotations = apply_aditional_deadline(quotations) if params[:aditional_deadline].present?
 
     QuoteHistory.register(@shop.id, request_params[:cart_id], {:quotations => quotations.to_json})
 
@@ -148,6 +149,12 @@ class ApiController < ActionController::Base
       return (correios_delivery_types - delivery_types_quoted).empty?
     end
     true
+  end
+
+  def apply_aditional_deadline(quotations)
+    quotations.each do |quote|
+      quote.deadline = quote.deadline.to_i + params[:aditional_deadline].to_i
+    end
   end
 
   def request_params
