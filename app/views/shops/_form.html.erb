@@ -2,13 +2,9 @@
   <%= render 'shared/error_messages', resource: @shop %>
 
   <div class="row">
-    <div class="col-md-8">
+    <div class="col-md-6">
       <%= f.label :name %>
       <%= f.text_field :name, class: 'form-control' %>
-    </div>
-    <div class="col-md-2">
-      <%= f.label :order_prefix %>
-      <%= f.text_field :order_prefix, class: 'form-control' %>
     </div>
   </div>
 
@@ -21,6 +17,12 @@
         <label>
           <%= f.check_box :forward_to_correios %>
           <%= Shop.human_attribute_name(:forward_to_correios) %>
+        </label>
+      </div>
+      <div class="checkbox">
+        <label>
+          <%= f.check_box :declare_value %>
+          <%= Shop.human_attribute_name(:declare_value) %>
         </label>
       </div>
       <div class="form-group">
@@ -67,6 +69,10 @@
           <%= f.check_box :forward_to_intelipost %>
           <%= Shop.human_attribute_name(:forward_to_intelipost) %>
         </label>
+      </div>
+      <div class="form-group">
+        <%= f.label :order_prefix %>
+        <%= f.text_field :order_prefix, class: 'form-control' %>
       </div>
       <div class="form-group">
         <%= f.label :intelipost_token %>

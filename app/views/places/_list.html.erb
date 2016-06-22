@@ -1,0 +1,20 @@
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Loja</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+  <% places.each do |place| %>
+    <tr>
+      <td><%= place.name %></td>
+      <td>
+        <a class="btn btn-default" data-method="delete" data-remote="true" href="<%= shop_shipping_method_place_url(place.shipping_method.shop, place.shipping_method, place) %>" rel="nofollow">
+          <span class="glyphicon glyphicon-remove"></span>
+        </a>
+      </td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

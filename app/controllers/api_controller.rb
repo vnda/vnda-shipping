@@ -1,5 +1,5 @@
 class ApiController < ActionController::Base
-  before_action :set_shop, only: [:quote, :delivery_date, :delivery_types, :delivery_periods]
+  before_action :set_shop, only: [:quotation_details, :quote, :delivery_date, :delivery_types, :delivery_periods, :local, :places]
   rescue_from InvalidZip && BadParams do
     head :bad_request
   end
@@ -57,6 +57,9 @@ class ApiController < ActionController::Base
     quotations = @shop.quote(request_params)
     quotations += forward_quote || [] if quotations.empty? || !correios_completed?(@shop, quotations)
     quotations = lower_prices(quotations) unless quotations.empty?
+    quotations = apply_aditional_deadline(quotations) if params[:aditional_deadline].present?
+
+    QuoteHistory.register(@shop.id, request_params[:cart_id], {:quotations => quotations.to_json})
 
     if quotations.empty?
       puts "No methods available shop: #{@shop.name} parameters: #{params}"
@@ -66,6 +69,14 @@ class ApiController < ActionController::Base
     else
       render json: quotations, status: 200
     end
+  end
+
+  def local
+    render json: { local: find_local(@shop.map_rules).first.try(:slug) || find_local(@shop.zip_rules).first.try(:slug) || false }
+  end
+
+  def places
+    render json: @shop.places_for_shipping_method(params[:shipping_method_id]).to_json(only: :name)
   end
 
   def lower_prices(quotations)
@@ -97,6 +108,15 @@ class ApiController < ActionController::Base
     res = intelipost_api.ready_for_shipment(params)
 
     render json: res, status: 200
+  end
+
+  def quotation_details
+    @quote = @shop.quotes.where(cart_id: params[:cart_id].to_i).order("updated_at desc").first
+    if @quote
+      render "quote_histories/show", :layout => false
+    else
+      render "quote_histories/not_found", :layout => false
+    end
   end
 
   private
@@ -131,6 +151,12 @@ class ApiController < ActionController::Base
     true
   end
 
+  def apply_aditional_deadline(quotations)
+    quotations.each do |quote|
+      quote.deadline = quote.deadline.to_i + params[:aditional_deadline].to_i
+    end
+  end
+
   def request_params
     params.permit(
       :origin_zip,
@@ -138,6 +164,7 @@ class ApiController < ActionController::Base
       :order_total_price,
       :aditional_deadline,
       :aditional_price,
+      :cart_id,
       products: [
         :sku,
         :price,
@@ -148,5 +175,9 @@ class ApiController < ActionController::Base
         :quantity
       ]
     )
+  end
+
+  def find_local(collection)
+    collection.joins(:shipping_method).where(shipping_methods: { enabled: true }).for_zip(params[:zip].gsub(/\D+/, '').to_i).select('shipping_methods.slug')
   end
 end

@@ -23,8 +23,10 @@ class Shop < ActiveRecord::Base
   has_many :delivery_types, dependent: :destroy
   has_many :periods, dependent: :destroy
   has_many :zip_rules, through: :methods
+  has_many :map_rules, through: :methods
   has_many :shipping_errors, class_name: 'ShippingError'
   has_many :shipping_friendly_errors
+  has_many :quotes, class_name: 'QuoteHistory'
 
   before_create { self.token = SecureRandom.hex }
   after_create :create_delivery_types, :create_correios_methods
@@ -61,7 +63,18 @@ class Shop < ActiveRecord::Base
 
     quotations.collect do |data_origin_methods|
       quotation_for(data_origin_methods.for_weigth(weight).pluck(:name, :price, :deadline, :slug, :delivery_type_id))
-    end.flatten
+    end.flatten | quotations_for_places(available_methods)
+  end
+
+  def quotations_for_places(available_methods)
+    available_methods.for_places.includes(:delivery_type).collect do |method|
+      PlaceQuotation.new(name: method.name, delivery_type: method.delivery_type.name, shipping_method_id: method.id, slug: method.slug)
+    end
+  end
+
+  def places_for_shipping_method(shipping_method_id)
+    method = methods.find(shipping_method_id)
+    method.places
   end
 
   def fallback_quote(request)
@@ -160,6 +173,7 @@ class Shop < ActiveRecord::Base
     {
       local: true,
       google_maps: true,
+      places: true,
       correios: forward_to_correios,
       axado: forward_to_axado,
       intelipost: forward_to_intelipost,

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160427171409) do
+ActiveRecord::Schema.define(version: 20160622025832) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -68,6 +68,25 @@ ActiveRecord::Schema.define(version: 20160427171409) do
     t.datetime "updated_at"
   end
 
+  create_table "places", force: true do |t|
+    t.integer  "shipping_method_id", null: false
+    t.string   "name",               null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "places", ["shipping_method_id"], :name => "index_places_on_shipping_method_id"
+
+  create_table "quote_histories", force: true do |t|
+    t.integer  "shop_id"
+    t.integer  "cart_id"
+    t.text     "external_request"
+    t.text     "external_response"
+    t.text     "quotations"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "shipping_errors", force: true do |t|
     t.string   "message"
     t.integer  "shop_id"
@@ -118,6 +137,7 @@ ActiveRecord::Schema.define(version: 20160427171409) do
     t.boolean "forward_to_intelipost",               default: false, null: false
     t.string  "correios_custom_services"
     t.string  "order_prefix",                        default: ""
+    t.boolean "declare_value",                       default: true
   end
 
   add_index "shops", ["name"], :name => "index_shops_on_name", :unique => true
@@ -135,6 +155,8 @@ ActiveRecord::Schema.define(version: 20160427171409) do
   add_foreign_key "block_rules", "shipping_methods", name: "block_rules_shipping_method_id_fk"
 
   add_foreign_key "map_rules", "shipping_methods", name: "map_rules_shipping_method_id_fk"
+
+  add_foreign_key "places", "shipping_methods", name: "places_shipping_method_id_fk"
 
   add_foreign_key "shipping_methods", "shops", name: "shipping_methods_shop_id_fk"
 
