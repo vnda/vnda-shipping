@@ -43,8 +43,8 @@ class Correios
         'nVlLargura' => box[:width],
         'nVlDiametro' => 0,
         'sCdMaoPropria' => 'N',
-        'nVlValorDeclarado' => request[:order_total_price],
         'sCdAvisoRecebimento' => 'N',
+        'nVlValorDeclarado' => @shop.declare_value ? request[:order_total_price] : 0
       )
     rescue Wasabi::Resolver::HTTPError, Excon::Errors::Timeout
       return @shop.fallback_quote(request)

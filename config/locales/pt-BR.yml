@@ -212,6 +212,7 @@ pt-BR:
     attributes:
       shop:
         name: 'Nome'
+        declare_value: Declarar Valor(Correios)
         forward_to_axado: 'Encaminhar consulta ao Axado'
         forward_to_intelipost: 'Encaminhar consulta ao Intelipost'
         axado_token: 'Token do Axado'

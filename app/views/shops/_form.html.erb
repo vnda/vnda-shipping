@@ -10,6 +10,10 @@
       <%= f.label :order_prefix %>
       <%= f.text_field :order_prefix, class: 'form-control' %>
     </div>
+    <div class="col-md-2">
+      <%= f.label :declare_value %>
+      <%= f.select(:declare_value, [["Sim", true], ["Não", false]], { include_blank: false }, { class: 'form-control' }) %>
+    </div>
   </div>
 
   <hr>
