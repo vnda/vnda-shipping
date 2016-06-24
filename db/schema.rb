@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160615194102) do
+ActiveRecord::Schema.define(version: 20160622025832) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -136,8 +136,8 @@ ActiveRecord::Schema.define(version: 20160615194102) do
     t.string  "intelipost_token"
     t.boolean "forward_to_intelipost",               default: false, null: false
     t.string  "correios_custom_services"
-    t.string  "vnda_token"
     t.string  "order_prefix",                        default: ""
+    t.boolean "declare_value",                       default: true
   end
 
   add_index "shops", ["name"], :name => "index_shops_on_name", :unique => true
