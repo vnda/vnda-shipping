@@ -127,16 +127,20 @@ class Shop < ActiveRecord::Base
 
   def available_periods(zip, date = nil)
     available_periods = []
-    unless self.zip_rules.empty?
+    unless self.zip_rules.empty? && self.map_rules.empty?
       if date.present?
-        self.zip_rules.joins(:shipping_method).where(shipping_methods: {enabled: true}).for_zip(zip).each do |z|
-          z.periods.each do |p|
-            available_periods << p.name if p.available_on?(date)
+        ['zip_rules', 'map_rules'].each do |shipping_rule|
+          self.send(shipping_rule).joins(:shipping_method).where(shipping_methods: {enabled: true}).for_zip(zip).each do |z|
+            z.periods.each do |p|
+              available_periods << p.name if p.available_on?(date)
+            end
           end
         end
       else
-        self.zip_rules.joins(:shipping_method).where(shipping_methods: {enabled: true}).for_zip(zip).order_by_limit.each do |z|
-          available_periods += z.periods.order_by_limit.pluck(:name) unless z.periods.empty?
+        ['zip_rules', 'map_rules'].each do |shipping_rule|
+          self.send(shipping_rule).joins(:shipping_method).where(shipping_methods: {enabled: true}).for_zip(zip).order_by_limit.each do |z|
+            available_periods += z.periods.order_by_limit.pluck(:name) unless z.periods.empty?
+          end
         end
       end
     end
