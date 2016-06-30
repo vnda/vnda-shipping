@@ -16,6 +16,7 @@ gem 'httparty', '0.13.5'
 gem 'kaminari'
 gem 'rest-client'
 gem 'activerecord-postgis-adapter'
+gem 'request_store'
 
 group :development, :staging, :production do
   gem "newrelic_rpm"

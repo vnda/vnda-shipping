@@ -74,7 +74,7 @@ class Correios
 
     result = []
     allowed.compact.each do |option|
-      deadline = option[:erro] == '010'? option[:prazo_entrega].to_i + 7 : option[:prazo_entrega].to_i
+      deadline = deadline_business_day(option[:erro] == '010'? option[:prazo_entrega].to_i + 7 : option[:prazo_entrega].to_i)
 
       result << Quotation.new(
         name: shipping_name(option[:codigo]),
@@ -152,6 +152,14 @@ class Correios
       methods = methods.where("id NOT IN (?)", blocked_methods.pluck(:id))
     end
     methods.any?
+  end
+
+  def deadline_business_day(deadline)
+    today = Time.current.wday
+    return deadline if deadline + today < 7
+    partial = 6 - today
+    full_weeks = (deadline - partial) / 7
+    deadline + 1 + full_weeks
   end
 
 end
