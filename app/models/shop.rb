@@ -205,13 +205,7 @@ class Shop < ActiveRecord::Base
 
   def delivery_day_status(date, zip, period_name)
     if (date >= Date.current)
-      p = zip_rules.joins(:shipping_method).where(shipping_methods: {enabled: true}).for_zip(zip).order_by_limit.map do |zip_rule|
-        periods = zip_rule.periods.where(name: period_name)
-        periods = periods.valid_on(Time.zone.now.strftime("%T")) if date == Date.current
-        periods = periods.select{|p| p.available_on?(date)}
-        periods = periods.select{|p| p.check_days_ago?(date) }
-        periods.select{|p| p.available_on?(date)}.any?
-      end
+      p = periods_for(:zip_rules, date, zip, period_name) | periods_for(:map_rules, date, zip, period_name)
       p.uniq.select{|v| v }.any? ? "yes" : "close"
     else
       "close"
@@ -225,5 +219,17 @@ class Shop < ActiveRecord::Base
       date += 1.day
     end
     list
+  end
+
+  private
+
+  def periods_for(rules_type, date, zip, period_name)
+    send(rules_type).joins(:shipping_method).where(shipping_methods: {enabled: true}).for_zip(zip).order_by_limit.map do |zip_rule|
+      periods = zip_rule.periods.where(name: period_name)
+      periods = periods.valid_on(Time.zone.now.strftime("%T")) if date == Date.current
+      periods = periods.select{|p| p.available_on?(date)}
+      periods = periods.select{|p| p.check_days_ago?(date) }
+      periods.select{|p| p.available_on?(date)}.any?
+    end
   end
 end
