@@ -205,7 +205,7 @@ class Shop < ActiveRecord::Base
 
   def delivery_day_status(date, zip, period_name)
     if (date >= Date.current)
-      p = zip_rules.for_zip(zip).order_by_limit.map do |zip_rule|
+      p = zip_rules.joins(:shipping_method).where(shipping_methods: {enabled: true}).for_zip(zip).order_by_limit.map do |zip_rule|
         periods = zip_rule.periods.where(name: period_name)
         periods = periods.valid_on(Time.zone.now.strftime("%T")) if date == Date.current
         periods = periods.select{|p| p.available_on?(date)}
