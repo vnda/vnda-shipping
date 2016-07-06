@@ -55,7 +55,10 @@ class ApiController < ActionController::Base
 
   def quote
     quotations = @shop.quote(request_params)
-    quotations += forward_quote || [] if quotations.empty? || !correios_completed?(@shop, quotations)
+    if @shop.forward_to_correios? && @shop.enabled_correios_service.any?
+      quotations += Correios.new(@shop).quote(request_params) if quotations.empty? || !correios_completed?(@shop, quotations)
+    end
+    quotations += Intelipost.quote(@shop.intelipost_token, request_params, @shop) if @shop.forward_to_intelipost?
     quotations = lower_prices(quotations) unless quotations.empty?
     quotations = apply_aditional_deadline(quotations) if params[:aditional_deadline].present?
 
@@ -127,18 +130,6 @@ class ApiController < ActionController::Base
       params[:token].present? ? Shop.find_by!(token: params[:token]) : Shop.find_by(name: (env['HTTP_X_STORE'] || "unknown-host").split(':').first)
     rescue ActiveRecord::RecordNotFound
       return head :unauthorized
-    end
-  end
-
-  def forward_quote
-    if @shop.forward_to_axado?
-      Axado.quote(@shop.axado_token, request_params, @shop)
-    elsif @shop.forward_to_intelipost?
-      Intelipost.quote(@shop.intelipost_token, request_params, @shop)
-    elsif @shop.forward_to_correios? && @shop.enabled_correios_service.any?
-      Correios.new(@shop).quote(request_params)
-    else
-
     end
   end
 
