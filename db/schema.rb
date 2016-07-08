@@ -11,11 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160622025832) do
+ActiveRecord::Schema.define(version: 20160708180033) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
+  enable_extension "hstore"
 
   create_table "block_rules", force: true do |t|
     t.integer   "shipping_method_id", null: false
@@ -136,12 +137,20 @@ ActiveRecord::Schema.define(version: 20160622025832) do
     t.string  "intelipost_token"
     t.boolean "forward_to_intelipost",               default: false, null: false
     t.string  "correios_custom_services"
+    t.string  "vnda_token"
     t.string  "order_prefix",                        default: ""
     t.boolean "declare_value",                       default: true
   end
 
   add_index "shops", ["name"], :name => "index_shops_on_name", :unique => true
   add_index "shops", ["token"], :name => "index_shops_on_token", :unique => true
+
+  create_table "zip_code_locations", force: true do |t|
+    t.string   "zip_code",                null: false
+    t.hstore   "location",   default: {}, null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "zip_rules", force: true do |t|
     t.integer   "shipping_method_id",                          null: false
