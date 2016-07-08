@@ -3,8 +3,8 @@ development: &DEVELOPMENT
   host: localhost
   encoding: unicode
   database: shipping_development
-  username: vagrant
-  password: vnda
+  username: postgres
+  password: postgres
   pool: 5
 
 test:
