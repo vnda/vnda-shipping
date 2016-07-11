@@ -63,11 +63,11 @@ class Shop < ActiveRecord::Base
 
     quotations.collect do |data_origin_methods|
       quotation_for(data_origin_methods.for_weigth(weight).pluck(:name, :price, :deadline, :slug, :delivery_type_id))
-    end.flatten | quotations_for_places(available_methods)
+    end.flatten | quotations_for_places(available_methods, zip)
   end
 
-  def quotations_for_places(available_methods)
-    available_methods.for_places.includes(:delivery_type).collect do |method|
+  def quotations_for_places(available_methods, zip)
+    available_methods.for_places_origin(zip).includes(:delivery_type).collect do |method|
       PlaceQuotation.new(name: method.name, delivery_type: method.delivery_type.name, shipping_method_id: method.id, slug: method.slug)
     end
   end

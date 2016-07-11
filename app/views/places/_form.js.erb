@@ -1,0 +1,7 @@
+$("#places-form .places-messages").html('');
+
+<% if @place.errors.empty? %>
+  $("#places-form .places-messages").append("<%= escape_javascript(render 'shared/flash_messages') %>");
+<% else %>
+  $("#places-form .places-messages").append("<%= escape_javascript(render 'shared/error_messages', :resource => @place) %>");
+<% end %>

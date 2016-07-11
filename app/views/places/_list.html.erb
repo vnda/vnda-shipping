@@ -1,20 +1,16 @@
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th>Loja</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
+<div class="row zip-codes-header">
+  <div class="col-md-6">Loja</div>
+  <div class="col-md-2 zip-code">CEP Início</div>
+  <div class="col-md-2 zip-code">CEP Fim</div>
+  <div class="col-md-2"></div>
+</div>
+
+<div id="places-container" class="row">
   <% places.each do |place| %>
-    <tr>
-      <td><%= place.name %></td>
-      <td>
-        <a class="btn btn-default" data-method="delete" data-remote="true" href="<%= shop_shipping_method_place_url(place.shipping_method.shop, place.shipping_method, place) %>" rel="nofollow">
-          <span class="glyphicon glyphicon-remove"></span>
-        </a>
-      </td>
-    </tr>
+    <%= render 'place_form', place: place %>
   <% end %>
-  </tbody>
-</table>
+</div>
+
+<div class="row">
+  <%= paginate(places, remote: true) if places.respond_to?(:total_pages) %>
+</div>

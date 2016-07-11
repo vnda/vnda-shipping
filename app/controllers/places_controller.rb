@@ -7,17 +7,27 @@ class PlacesController < ApplicationController
     @method = ShippingMethod.find(params[:shipping_method_id])
 
     begin
-      @method.check_and_update_places if @method.places.empty? || params[:force]
+      @method.check_and_update_places if params[:force]
       @places = @method.places.order('id asc')
     rescue RestClient::Unauthorized
       flash.now[:'vnda-places-error'] = 'Loja não possui cadastro no vnda-places'
     end
   end
 
+  def update
+    @place = Place.find(params[:id])
+    flash.now[:notice] = I18n.t('notices.zip_rule.update') if @place.update_attributes(place_params)
+  end
+
   def destroy
-    Place.find(params[:id]).destroy
-    @shipping_method = ShippingMethod.find(params[:shipping_method_id])
-    @places = @shipping_method.places.order('id asc')
-    render :index
+    @place = Place.find(params[:id])
+    @place.destroy
+    flash.now[:notice] = I18n.t('notices.zip_rule.destroy')
+  end
+
+  private
+
+  def place_params
+    params.require(:place).permit(:min, :max)
   end
 end
