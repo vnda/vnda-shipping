@@ -7,6 +7,14 @@ class Place < ActiveRecord::Base
 
   validates :name, presence: true
 
+  attr_writer :min, :max
+  def min; @min ||= range.try(:min) end
+  def max; @max ||= range.try(:max) end
+
+  before_validation do
+    self.range = Range.new(*[min, max].map { |v| v.to_s.gsub(/\D/, '').to_i })
+  end
+
   def self.retrieve_from_vnda_places_for(shop)
     response = RestClient.get("#{VNDA_PLACES_HOST}/places.json", {'X_STORE' => shop.name})
     JSON.parse(response)

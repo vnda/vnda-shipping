@@ -1,0 +1,3 @@
+$("#places-form .palces-messages").html('');
+$("#places-form .places-messages").append("<%= escape_javascript(render 'shared/flash_messages') %>");
+$('[data-place-id=' + <%= @place.id %> + ']').remove();
