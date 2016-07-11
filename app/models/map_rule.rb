@@ -7,13 +7,10 @@ class MapRule < ActiveRecord::Base
   validates :name, :price, :deadline, presence: true
 
   scope :for_zip, ->(zip_code) do
-    location = location_for_zip(zip_code)
+    location = ZipCodeLocation.get_geolocation_for(zip_code)
     where("ST_CONTAINS(region, ST_GeomFromText('POINT(? ?)'))", location[:lng].to_f, location[:lat].to_f)
   end
 
   scope :order_by_limit, -> { joins(:periods).order("days_ago DESC, periods.limit_time") }
 
-  def self.location_for_zip(zip_code)
-    RequestStore.store[:location] ||= ZipCodeLocation.get_geolocation_for(zip_code)
-  end
 end
