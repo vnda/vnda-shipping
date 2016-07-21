@@ -24,8 +24,8 @@ class ZipCodeLocation < ActiveRecord::Base
       nil
     else
       results = response[:results] if response
-      first_result = results.first if results
-      geometry = first_result[:geometry] if first_result
+      result_for_zipcode = select_result_for_zip(results, zip_code) if results
+      geometry = result_for_zipcode[:geometry] if result_for_zipcode
 
       if geometry
         zip_code_location = ZipCodeLocation.new(zip_code: normalize_zip_code(zip_code))
@@ -36,6 +36,13 @@ class ZipCodeLocation < ActiveRecord::Base
       end
       nil
     end
+  end
+
+  def self.select_result_for_zip(results, zip)
+    results.find do |result|
+      result['types'].include?('postal_code') &&
+      !result['types'].include?('postal_code_prefix')
+    end || results.first
   end
 
   def self.normalize_zip_code(zip_code)
