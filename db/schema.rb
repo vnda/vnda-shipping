@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160711180302) do
+ActiveRecord::Schema.define(version: 20160725195803) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -70,11 +70,12 @@ ActiveRecord::Schema.define(version: 20160711180302) do
   end
 
   create_table "places", force: true do |t|
-    t.integer   "shipping_method_id", null: false
-    t.string    "name",               null: false
+    t.integer   "shipping_method_id",             null: false
+    t.string    "name",                           null: false
     t.datetime  "created_at"
     t.datetime  "updated_at"
     t.int4range "range"
+    t.integer   "deadline",           default: 0, null: false
   end
 
   add_index "places", ["shipping_method_id"], :name => "index_places_on_shipping_method_id"

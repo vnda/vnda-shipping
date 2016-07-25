@@ -67,8 +67,8 @@ class Shop < ActiveRecord::Base
   end
 
   def quotations_for_places(available_methods, zip)
-    available_methods.for_places_origin(zip).includes(:delivery_type).collect do |method|
-      PlaceQuotation.new(name: method.name, delivery_type: method.delivery_type.name, shipping_method_id: method.id, slug: method.slug)
+    available_methods.for_places_origin(zip).pluck(:id, :name, :deadline, :slug, :delivery_type_id).collect do |id, n, d, s, dt|
+      PlaceQuotation.new(name: n, shipping_method_id: id, deadline: d, slug: s, delivery_type: set_delivery_type(dt))
     end
   end
 

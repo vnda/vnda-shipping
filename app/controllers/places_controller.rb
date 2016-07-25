@@ -28,6 +28,6 @@ class PlacesController < ApplicationController
   private
 
   def place_params
-    params.require(:place).permit(:min, :max)
+    params.require(:place).permit(:min, :max, :deadline)
   end
 end
