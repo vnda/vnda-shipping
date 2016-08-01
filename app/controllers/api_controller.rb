@@ -26,12 +26,12 @@ class ApiController < ActionController::Base
   end
 
   def delivery_periods
-    zip = params[:zip].to_s.gsub(/[^\d]/, '').to_i
+    zip = params[:zip].to_s.gsub(/[^\d]/, '')
     num_days = (params[:num_days] || 7).to_i
     start_date = Date.parse(params[:start_date]) if params[:start_date]
     start_date = Date.current unless start_date
 
-    if @shop && zip > 0
+    if @shop && zip
       periods = []
       @shop.available_periods(zip).each do |period_name|
         periods << {
@@ -169,6 +169,6 @@ class ApiController < ActionController::Base
   end
 
   def find_local(collection)
-    collection.joins(:shipping_method).where(shipping_methods: { enabled: true }).for_zip(params[:zip].gsub(/\D+/, '').to_i).select('shipping_methods.slug')
+    collection.joins(:shipping_method).where(shipping_methods: { enabled: true }).for_zip(params[:zip].gsub(/\D+/, '')).select('shipping_methods.slug')
   end
 end
