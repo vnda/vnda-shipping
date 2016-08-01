@@ -51,19 +51,20 @@ class Shop < ActiveRecord::Base
   def quote(params, backup=false)
     raise BadParams unless params[:shipping_zip] && params[:products]
 
-    zip = params[:shipping_zip].gsub(/\D+/, '').to_i
+    zip = params[:shipping_zip]
+    formatted_zip = zip.gsub(/\D+/, '').to_i
 
     weight = greater_weight(params[:products])
 
     available_methods = backup ? methods.where(id: backup_method_id) : methods.where(enabled: true).joins(:delivery_type).where(delivery_types: { enabled: true })
 
     quotations = []
-    quotations << available_methods.for_locals_origin(zip) if available_methods.where(data_origin: "local").any?
+    quotations << available_methods.for_locals_origin(formatted_zip) if available_methods.where(data_origin: "local").any?
     quotations << available_methods.for_gmaps_origin(zip) if available_methods.where(data_origin: "google_maps").any?
 
     quotations.collect do |data_origin_methods|
       quotation_for(data_origin_methods.for_weigth(weight).pluck(:name, :price, :deadline, :slug, :delivery_type_id))
-    end.flatten | quotations_for_places(available_methods, zip)
+    end.flatten | quotations_for_places(available_methods, formatted_zip)
   end
 
   def quotations_for_places(available_methods, zip)
@@ -130,7 +131,8 @@ class Shop < ActiveRecord::Base
     unless self.zip_rules.empty? && self.map_rules.empty?
       if date.present?
         ['zip_rules', 'map_rules'].each do |shipping_rule|
-          self.send(shipping_rule).joins(:shipping_method).where(shipping_methods: {enabled: true}).for_zip(zip).each do |z|
+          formatted_zip = shipping_rule == 'zip_rules' ? zip.to_i : zip
+          self.send(shipping_rule).joins(:shipping_method).where(shipping_methods: {enabled: true}).for_zip(formatted_zip).each do |z|
             z.periods.each do |p|
               available_periods << p.name if p.available_on?(date)
             end
@@ -138,7 +140,8 @@ class Shop < ActiveRecord::Base
         end
       else
         ['zip_rules', 'map_rules'].each do |shipping_rule|
-          self.send(shipping_rule).joins(:shipping_method).where(shipping_methods: {enabled: true}).for_zip(zip).order_by_limit.each do |z|
+          formatted_zip = shipping_rule == 'zip_rules' ? zip.to_i : zip
+          self.send(shipping_rule).joins(:shipping_method).where(shipping_methods: {enabled: true}).for_zip(formatted_zip).order_by_limit.each do |z|
             available_periods += z.periods.order_by_limit.pluck(:name) unless z.periods.empty?
           end
         end
@@ -224,7 +227,9 @@ class Shop < ActiveRecord::Base
   private
 
   def periods_for(rules_type, date, zip, period_name)
-    send(rules_type).joins(:shipping_method).where(shipping_methods: {enabled: true}).for_zip(zip).order_by_limit.map do |zip_rule|
+    formatted_zip = rules_type == :zip_rules ? zip.to_i : zip
+
+    send(rules_type).joins(:shipping_method).where(shipping_methods: {enabled: true}).for_zip(formatted_zip).order_by_limit.map do |zip_rule|
       periods = zip_rule.periods.where(name: period_name)
       periods = periods.valid_on(Time.zone.now.strftime("%T")) if date == Date.current
       periods = periods.select{|p| p.available_on?(date)}
