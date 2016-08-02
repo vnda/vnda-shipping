@@ -170,6 +170,7 @@ class ApiController < ActionController::Base
   end
 
   def find_local(collection)
-    collection.joins(:shipping_method).where(shipping_methods: { enabled: true }).for_zip(params[:zip].gsub(/\D+/, '')).select('shipping_methods.slug')
+    zip = collection.class.to_s.include?("ZipRule") ? params[:zip].gsub(/\D+/, '').to_i : params[:zip].gsub(/\D+/, '')
+    collection.joins(:shipping_method).where(shipping_methods: { enabled: true }).for_zip(zip).select('shipping_methods.slug')
   end
 end
