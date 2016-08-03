@@ -41,6 +41,7 @@ class ZipCodeLocation < ActiveRecord::Base
   def self.select_result_for_zip(results, zip)
     results.find do |result|
       result['types'].include?('postal_code') &&
+      !result['address_components'].first['types'].include?('postal_code_prefix') &&
       !result['types'].include?('postal_code_prefix')
     end || results.first
   end
