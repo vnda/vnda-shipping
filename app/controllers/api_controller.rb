@@ -75,7 +75,8 @@ class ApiController < ActionController::Base
   end
 
   def local
-    render json: { local: find_local(@shop.map_rules).first.try(:slug) || find_local(@shop.zip_rules).first.try(:slug) || false }
+    map_rules = MapRule.joins(:shipping_method).where(shipping_methods: {shop_id: @shop.id}).joins(:shipping_method).where(shipping_methods: { enabled: true }).for_zip(params[:zip].sub('-', '')).select('shipping_methods.slug')
+    render json: { local: map_rules.first.try(:slug) || find_local(@shop.zip_rules).first.try(:slug) || false }
   end
 
   def places
