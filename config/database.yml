@@ -1,15 +1,17 @@
-development: &DEVELOPMENT
-  adapter: postgis
-  host: localhost
+default: &default
+  adapter:  postgis
   encoding: unicode
-  database: shipping_development
-  username: postgres
-  password: postgres
   pool: 5
 
+development:
+  <<: *default
+  database: vnda_shipping_development
+
 test:
-  <<: *DEVELOPMENT
-  database: shipping_test
+  <<: *default
+  database: vnda_shipping_test
 
 production:
+  encoding: utf8
+  pool: 15
   url: <%= ENV['DATABASE_URL'].sub(/^postgres/, "postgis") if ENV['DATABASE_URL'] %>

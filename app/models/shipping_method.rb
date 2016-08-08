@@ -87,7 +87,7 @@ class ShippingMethod < ActiveRecord::Base
       region = factory.polygon(factory.line_string(points))
 
       if map_rule = self.map_rules.where(name: name).first
-        map_rule.update_attribute(:region, region)
+        map_rule.update(region: region)
       else
         map_rule = MapRule.new(name: name, price: nil, deadline: nil, region: region)
       end
