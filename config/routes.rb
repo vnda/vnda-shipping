@@ -16,6 +16,7 @@ Rails.application.routes.draw do
       resources :zip_rules
       resources :map_rules do
         get :download_kml, on: :collection
+        get :bounds, on: :collection
       end
       resources :places
     end
