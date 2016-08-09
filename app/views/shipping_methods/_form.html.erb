@@ -349,10 +349,15 @@
     $(document.body).on('change', '#shipping_method_data_origin', changeDataOrigin);
 
     maskInputs(document.body);
+  }());
 
+  $(document).ready(function () {
     $("#show-map").bind("click", function(){
-      initMap();
       $("#myModal").modal('show');
     });
-  }());
+
+    $('#myModal').on('shown.bs.modal', function (e) {
+      initMap();
+    });
+  });
 </script>
