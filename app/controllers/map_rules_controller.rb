@@ -42,19 +42,7 @@ class MapRulesController < ApplicationController
     end
   end
 
-  def bounds
-    @shop = Shop.find(params[:shop_id])
-    @method = ShippingMethod.find(params[:shipping_method_id])
-
-    open("public/kml/#{@method.mid}.kml", 'w') { |f|
-      f.puts RestClient.get 'https://www.google.com/maps/d/kml', { params: { mid: @method.mid, forcekml: '1'} }
-    }
-
-    render nothing: true
-  end
-
   private
-
   def shipping_method_params
     params.require(:shipping_method).permit(:mid)
   end
