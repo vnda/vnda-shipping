@@ -6,43 +6,7 @@
         <h4 class="modal-title" id="myModalLabel">Mapa</h4>
       </div>
       <div class="modal-body">
-        <div id="map" style="width:100%; height: 400px;"></div>
-        <script>
-
-var polygonJSON = $.getJSON("<%= bounds_shop_shipping_method_map_rules_path(@shop, @method) %>");
-
-function initMap() {
-  var triangleCoords = [];
-
-  $.each(polygonJSON.responseJSON, function(index, val){
-    var lat = this.lat;
-    var lng = this.lng;
-    triangleCoords.push({ lat: lat, lng: lng })
-  });
-
-  var map = new google.maps.Map(document.getElementById('map'), {
-    zoom: 12,
-    center: { lat: triangleCoords[0].lat, lng: triangleCoords[0].lng },
-    mapTypeId: google.maps.MapTypeId.ROADMAP
-  });
-
-  var bermudaTriangle = new google.maps.Polygon({
-    paths: triangleCoords,
-    strokeColor: '#FF0000',
-    strokeOpacity: 0.8,
-    strokeWeight: 2,
-    fillColor: '#FF0000',
-    fillOpacity: 0.35
-  });
-
-
-  bermudaTriangle.setMap(map);
-}
-
-
-    </script>
-    <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBXcwv40prjOzsjl-oeRSRWqn_IB1lMH2A&signed_in=true"></script>
+        <iframe src="https://www.google.com/maps/d/embed?mid=<%= @method.mid %>&pt-BR" width="100%" height="400"></iframe>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
