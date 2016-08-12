@@ -45,14 +45,12 @@ class MapRulesController < ApplicationController
   def bounds
     @shop = Shop.find(params[:shop_id])
     @method = ShippingMethod.find(params[:shipping_method_id])
-    @map_rule = @method.map_rules.last
-    bounds = @map_rule.region.as_text.split(' ').collect{|r| r.to_f}.reject{|r| r == 0.0}[0..-2].to_a.flatten
 
-    if bounds.any?
-      render json: bounds.each_slice(2).to_a.collect{|c| {lat: c[0], lng: c[1]}}.to_json
-    else
-      render 'error', status: 500
-    end
+    open("public/kml/#{@method.mid}.kml", 'w') { |f|
+      f.puts RestClient.get 'https://www.google.com/maps/d/kml', { params: { mid: @method.mid, forcekml: '1'} }
+    }
+
+    render nothing: true
   end
 
   private
