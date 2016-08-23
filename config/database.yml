@@ -5,10 +5,16 @@ default: &default
 
 development:
   <<: *default
+  username: postgres
+  password: root
+  host: db
   database: vnda_shipping_development
 
 test:
   <<: *default
+  username: postgres
+  password: root
+  host: db
   database: vnda_shipping_test
 
 production:
