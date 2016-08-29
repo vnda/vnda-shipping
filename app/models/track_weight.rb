@@ -1,4 +1,5 @@
 class TrackWeight < ActiveRecord::Base
+  serialize :tracks, Array
 
   def medium
     array = []

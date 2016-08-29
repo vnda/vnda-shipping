@@ -1,0 +1,23 @@
+pt-BR:
+  activemodel:
+    models:
+      correios/calculate: "Calculador"
+    attributes:
+      correios/calculate:
+        shop: "Loja"
+        delivery_type: "Tipo de entrega"
+        zipcode_start: "CEP de origem"
+        service_code: "Código do serviço"
+        enterprise_code: "Código administrativo"
+        enterprise_pass: "Senha"
+        track_ceps: "Faixa de ceps"
+        weight_tracks: "Faixa de pesos"
+        safety_margin: "Margem de segurança"
+        response: "Requisição"
+  services:
+    correios:
+      calculate:
+        invalid_service_code: "inválido"
+        delivery_type_not_found: "não encontrado"
+        invalid_zipcode_start: "inválido"
+        invalid_safety_margin: "não está na lista"

@@ -29,7 +29,7 @@ Vagrant.configure(2) do |config|
 
   config.vm.provider :virtualbox do |virtualbox|
     virtualbox.cpus   = 2
-    virtualbox.memory = 2048
+    virtualbox.memory = 1024
     virtualbox.name   = "shipping"
   end
 end
