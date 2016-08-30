@@ -56,6 +56,7 @@ class Correios
     services = [services] unless services.is_a?(Array)
 
     success, error = services.partition { |s| s[:erro] == '0' || s[:erro] == "010"}
+    return @shop.fallback_quote(request) if success.empty? && error.any?
 
     error.each do |e|
       if e[:erro] == '-3'
