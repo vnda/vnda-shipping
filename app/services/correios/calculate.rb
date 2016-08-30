@@ -3,19 +3,18 @@ class Correios::Calculate
   include ActiveModel::Model
 
   attr_accessor :shop, :delivery_type, :service_code, :enterprise_code, :enterprise_pass, :zipcode_start, :track_ceps,
-    :weight_tracks, :safety_margin, :response
+    :weight_tracks, :safety_margin, :log
 
   def initialize shop_id, options={}
     self.shop            = Shop.find(shop_id) rescue nil
     self.delivery_type   = DeliveryType.find(options[:delivery_type]) rescue nil
-    self.service_code    = options[:service_code]
+    self.service_code    = options[:service_code] || 41106
     self.enterprise_code = options[:enterprise_code]
     self.enterprise_pass = options[:enterprise_pass]
     self.zipcode_start   = options[:zipcode_start]
     self.track_ceps      = TrackCep.where(service_code: 0)
     self.weight_tracks   = TrackWeight.where(service_code: 0)
     self.safety_margin   = options[:safety_margin].to_f
-    self.response        = nil
   end
 
   validates :shop, :zipcode_start, :delivery_type, :service_code, presence: true
@@ -29,18 +28,29 @@ class Correios::Calculate
   end
 
   def calculate
-    ActiveRecord::Base.transaction do
-      @track_ceps.each do |cep|
-        @weight_tracks.each do |weight|
+    @track_ceps.each do |cep|
+      @weight_tracks.each do |weight|
+        weight.tracks.each do |w|
           weight.tracks.each do |w|
-            weight.tracks.each do |w|
+            begin
               @response = HTTParty.get(url(@service_code, @enterprise_code, @enterprise_pass, unmask_cep(@zipcode_start), unmask_cep(cep.tracks[2]), medium_track(w)))
+
               if medium_track(w) > 0.0 and parse_price(parse_xml(@response.body)['Valor']) > 0.0
-                method = create_method(name: @delivery_type.name, description: description(correios_weight(w[0]), correios_weight(w[1])), min_weigth: correios_weight(w[0]), max_weigth: correios_weight(w[1]), data_origin: "local", delivery_type_id: delivery_type.id)
-                create_rule(method, min: correios_weight(w[0]), max: correios_weight(w[1]), price: price_with_safety_margin(@safety_margin, parse_xml(@response.body)['Valor']), deadline: parse_xml(@response.body)['PrazoEntrega'])
+                ActiveRecord::Base.transaction do
+                  method = create_method(name: @delivery_type.name, description: description(correios_weight(w[0]), correios_weight(w[1])), min_weigth: correios_weight(w[0]), max_weigth: correios_weight(w[1]), data_origin: "local", delivery_type_id: delivery_type.id)
+                  create_rule(method, min: correios_weight(w[0]), max: correios_weight(w[1]), price: price_with_safety_margin(@safety_margin, parse_xml(@response.body)['Valor']), deadline: parse_xml(@response.body)['PrazoEntrega'])
+                  create_shop_zipcode_spreadsheet(
+                    zipcode_start: unmask_cep(cep.tracks[0]), zipcode_end: unmask_cep(cep.tracks[1]),
+                    weight_start: correios_weight(w[0]), weight_end: correios_weight(w[1]),
+                    absolute_money_cost: price_with_safety_margin(@safety_margin, parse_xml(@response.body)['Valor']),
+                    price_percent: 0, price_by_extra_weight: 0, max_volume: 10000000,
+                    time_cost: parse_xml(@response.body)['PrazoEntrega'], country: 'BRA', minimum_value_insurance: 0
+                  )
+                end
               end
-              #puts @response.body, @response.code, @response.message, @response.headers.inspect
-              #puts "{ service_code: #{@service_code}, delivery_type: #{@delivery_type}, zipcode_start: #{unmask_cep(cep.tracks[0])}, zipcode_end: #{unmask_cep(cep.tracks[1])}, weight_start: #{correios_weight(w[0])}, weight_end: #{correios_weight(w[1])}, absolute_money_cost: #{price_with_safety_margin(@safety_margin, parse_xml(@response.body)['Valor'])}, price_percent: 0, price_by_extra_weight: 0, max_volume: 10000000, time_cost: #{parse_xml(@response.body)['PrazoEntrega']}, country: 'BRA', minimum_value_insurance: 0 }"
+            rescue Exception => e
+              puts "#{@response.body}, #{@response.code}, #{@response.message}, #{@response.headers.inspect}"
+              puts e
             end
           end
         end
@@ -57,6 +67,18 @@ class Correios::Calculate
   def create_rule method, options={}
     rule = method.zip_rules.for_zip(options[:min].to_i).for_zip(options[:max].to_i).first_or_initialize
     rule.update_attributes(min: options[:min].to_i, max: options[:max].to_i, price: options[:price].to_f, deadline: options[:deadline].to_i)
+  end
+
+  def create_shop_zipcode_spreadsheet options={}
+    @shop.zipcode_spreadsheets.create!(
+      service_name: @delivery_type.name, service_code: @service_code, delivery_type_id: @delivery_type.id,
+      zipcode_start: options[:zipcode_start], zipcode_end: options[:zipcode_end],
+      weight_start: options[:weight_start], weight_end: options[:weight_end],
+      absolute_money_cost: options[:absolute_money_cost], price_percent: options[:price_percent],
+      price_by_extra_weight: options[:price_by_extra_weight], max_volume: options[:max_volume],
+      time_cost: options[:time_cost], country: options[:country],
+      minimum_value_insurance: options[:minimum_value_insurance]
+    )
   end
 
   def description min_weigth, max_weigth

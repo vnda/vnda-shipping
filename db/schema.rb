@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160824124338) do
+ActiveRecord::Schema.define(version: 20160829172004) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -176,6 +176,27 @@ ActiveRecord::Schema.define(version: 20160824124338) do
   end
 
   add_index "zip_rules", ["shipping_method_id"], :name => "index_zip_rules_on_shipping_method_id"
+
+  create_table "zipcode_spreadsheets", force: true do |t|
+    t.integer "shop_id",                                                               null: false
+    t.integer "delivery_type_id",                                                      null: false
+    t.string  "service_name"
+    t.integer "service_code"
+    t.string  "zipcode_start",           limit: 8
+    t.string  "zipcode_end",             limit: 8
+    t.float   "weight_start"
+    t.float   "weight_end"
+    t.decimal "absolute_money_cost",               precision: 8, scale: 2
+    t.decimal "price_percent",                     precision: 8, scale: 2
+    t.decimal "price_by_extra_weight",             precision: 8, scale: 2
+    t.integer "max_volume",                                                default: 0
+    t.integer "time_cost"
+    t.string  "country",                 limit: 3
+    t.decimal "minimum_value_insurance",           precision: 8, scale: 2
+  end
+
+  add_index "zipcode_spreadsheets", ["delivery_type_id"], :name => "index_zipcode_spreadsheets_on_delivery_type_id"
+  add_index "zipcode_spreadsheets", ["shop_id"], :name => "index_zipcode_spreadsheets_on_shop_id"
 
   add_foreign_key "block_rules", "shipping_methods", name: "block_rules_shipping_method_id_fk"
 
