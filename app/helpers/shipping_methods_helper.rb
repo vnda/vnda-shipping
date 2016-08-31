@@ -1,18 +1,17 @@
 module ShippingMethodsHelper
-  def input_shop_correios_code shop
+  def input_shop_correios_code shop, builder
     if shop.correios_code.present?
-      text_field_tag :correios_code, @shop.correios_code, class: 'form-control', disabled: true
-      text_field_tag :correios_code, nil, class: 'form-control'
+      builder.text_field :enterprise_code, @shop.correios_code, class: 'form-control', disabled: true
     else
-      text_field_tag :correios_code, nil, class: 'form-control'
+      builder.text_field :enterprise_code, class: 'form-control'
     end
   end
 
-  def input_shop_correios_pass shop
+  def input_shop_correios_pass shop, builder
     if shop.correios_password.present?
-      text_field_tag :correios_pass, @shop.correios_password, class: 'form-control', disabled: true
+      builder.text_field :enterprise_pass, @shop.correios_password, class: 'form-control', disabled: true
     else
-      text_field_tag :correios_pass, nil, class: 'form-control'
+      builder.text_field :enterprise_pass, class: 'form-control'
     end
   end
 

@@ -45,3 +45,32 @@ nginx:
     - "80:80"
   links:
     - app
+
+redis:
+  container_name: redis
+  image: redis:latest
+  volumes:
+    - ".:/usr/src/app"
+    - "~/.docker-volumes/app/redis:/data"
+    - "./vendor/docker/app/redis/redis.conf:/usr/local/etc/redis/redis.conf"
+  command: redis-server /usr/local/etc/redis/redis.conf
+  expose:
+    - "6379"
+
+worker:
+  container_name: worker
+  image: shipping_app
+  command: "bundle exec sidekiq -c 2 -q default -L ./log/sidekiq.log --verbose"
+  volumes:
+    - ".:/usr/src/app"
+    - "./log/sidekiq.log:/usr/src/app/log/sidekiq.log"
+  volumes_from:
+    - storage
+  environment:
+    RAILS_ENV: development
+    RACK_ENV: development
+    DISABLE_SPRING: 1
+  links:
+    - db
+    - redis
+  env_file: .env

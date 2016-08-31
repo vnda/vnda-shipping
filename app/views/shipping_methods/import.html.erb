@@ -1,46 +1,51 @@
 <% content_for :title, 'Importar planilhas' %>
 
-<div class="progress">
-  <div class="progress-bar progress-bar-warning progress-bar-striped" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
-    <span class="sr-only">60% Complete</span>
-  </div>
-</div>
+<%= form_for @import, url: execute_shop_shipping_methods_url(@shop.id), method: :post do |f| %>
+
+<% if @import.errors.full_messages.any? %>
+  <ul>
+    <% @import.errors.full_messages.each do |message| %>
+      <li><%= message %></li>
+    <% end %>
+  </ul>
+<% end %>
 
 <div class="selectbox correios-services">
   <label>
-    <%= label_tag :service_code %>
-    <%= select_tag :service, options_for_select(@correios_services.map {|k,v| [v,k]}), {prompt: "Selecione o serviço", class: "form-control"} %>
+    <%= f.label :service_code %>
+    <%= f.select :service_code, options_for_select(@correios_services.map {|k,v| [v,k]}), { prompt: "Selecione o serviço", class: "form-control", include_blank: true } %>
   </label>
 </div>
 
 <div class="selectbox correios-services">
   <label>
-    <%= label_tag :type %>
-    <%= select_tag :delivery_type, options_for_select(@delivery_types.map {|t| [t.name,t.id]}), { prompt: "Selecione o tipo de entrega", class: "form-control" } %>
+    <%= f.label :delivery_type %>
+    <%= f.select :delivery_type, options_for_select(@delivery_types.map {|t| [t.name,t.id]}), { prompt: "Selecione o tipo de entrega", class: "form-control" } %>
   </label>
 </div>
 
 <div class="form-group">
-  <%= label_tag "Cep origem" %>
-  <%= text_field_tag :zipcode, nil, class: 'form-control' %>
+  <%= f.label :zipcode_start, "Cep origem" %>
+  <%= f.text_field :zipcode_start, class: 'form-control' %>
 </div>
 
 <div class="form-group">
-  <%= label_tag "Margem de segurança" %>
-  <%= select_tag :safety_margin, options_for_select(safety_margin_select), { prompt: "Selecione uma margem de segurança", include_blank: true } %>
-  <%= text_field_tag :safety_margin, nil, class: 'form-control' %>
+  <%= f.label :safety_margin, "Margem de segurança" %>
+  <%= f.select :safety_margin, options_for_select(safety_margin_select), { prompt: "Selecione uma margem de segurança", include_blank: true } %>
 </div>
 
 <div class="form-group">
-  <%= label_tag "Código administrativo" %>
-  <%= input_shop_correios_code(@shop) %>
+  <%= f.label :password_code, "Código administrativo" %>
+  <%= input_shop_correios_code(@shop, f) %>
 </div>
 
 <div class="form-group">
-  <%= label_tag "Senha" %>
-  <%= input_shop_correios_pass(@shop) %>
+  <%= f.label :password_pass, "Senha" %>
+  <%= input_shop_correios_pass(@shop, f) %>
 </div>
 
 <div>
-  <button id="import_now">Importar</button>
+  <%= f.submit "Importar", class: 'btn btn-default' %>
 </div>
+
+<% end %>

@@ -1,4 +1,4 @@
-FROM ruby:2.1.5-slim
+FROM ruby:2.2.5-slim
 
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get install -y \
