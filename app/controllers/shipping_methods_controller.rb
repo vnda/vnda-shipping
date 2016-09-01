@@ -7,7 +7,7 @@ class ShippingMethodsController < ApplicationController
   before_filter :set_correios_services, only: [:edit, :new, :create, :update, :duplicate, :import, :execute]
 
   def index
-    @methods = @shop.methods.order(:id).per(50).page(params[:page])
+    @methods = @shop.methods.order(:id).page(params[:page]).per(50)
   end
 
   def new
