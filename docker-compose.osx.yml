@@ -1,0 +1,76 @@
+storage:
+  container_name: storage
+  image: alpine:latest
+  command: tail -f /dev/null # For some reason is needed start a daemon, process or something
+  volumes:
+    - "~/.docker-volumes/app/cache:/cache"
+
+db:
+  container_name: db
+  image: mdillon/postgis:latest
+  volumes:
+    - ".:/usr/src/app"
+    - "~/.docker-volumes/app/db/:/var/lib/postgresql/data/"
+    - "~/.docker-volumes/app/db/postgresql.conf:/var/lib/postgresql/data/postgresql.conf"
+  ports:
+    - "5432:5432"
+
+app:
+  container_name: app
+  build: .
+  environment:
+    RAILS_ENV: development
+    RACK_ENV: development
+  command: /bin/bash ./vendor/docker/development/app/start.sh
+  volumes:
+    - ".:/usr/src/app"
+  volumes_from:
+    - storage
+  ports:
+    - "9000"
+  links:
+    - db
+  stdin_open: true
+
+nginx:
+  container_name: nginx
+  image: nginx
+  volumes:
+    - "./vendor/docker/app/nginx/nginx.conf:/etc/nginx/nginx.conf"
+    - "./vendor/docker/app/nginx/app.conf:/etc/nginx/conf.d/app.conf"
+  volumes_from:
+    - storage
+    - app
+  ports:
+    - "80:80"
+  links:
+    - app
+
+redis:
+  container_name: redis
+  image: redis:latest
+  volumes:
+    - ".:/usr/src/app"
+    - "~/.docker-volumes/app/redis:/data"
+    - "./vendor/docker/app/redis/redis.conf:/usr/local/etc/redis/redis.conf"
+  command: redis-server /usr/local/etc/redis/redis.conf
+  expose:
+    - "6379"
+
+worker:
+  container_name: worker
+  image: shipping_app
+  command: "bundle exec sidekiq -c 2 -q default -L ./log/sidekiq.log --verbose"
+  volumes:
+    - ".:/usr/src/app"
+    - "./log/sidekiq.log:/usr/src/app/log/sidekiq.log"
+  volumes_from:
+    - storage
+  environment:
+    RAILS_ENV: development
+    RACK_ENV: development
+    DISABLE_SPRING: 1
+  links:
+    - db
+    - redis
+  env_file: .env

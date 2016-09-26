@@ -43,7 +43,6 @@ class MapRulesController < ApplicationController
   end
 
   private
-
   def shipping_method_params
     params.require(:shipping_method).permit(:mid)
   end

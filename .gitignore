@@ -18,7 +18,10 @@
 /db/schema.rb
 
 .env
+/public/kml
 
 /coverage
 
 .DS_Store
+.docker-compose.yml
+.vagrant/*

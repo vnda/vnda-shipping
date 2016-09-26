@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  require 'sidekiq/web'
+  mount Sidekiq::Web => '/sidekiq'
 
   get :status, to: 'application#status'
 
@@ -13,6 +15,7 @@ Rails.application.routes.draw do
       get :copy_to_all_shops, on: :member
       get :import, on: :collection
       post :import_line, on: :collection
+      post :execute, on: :collection
       resources :zip_rules
       resources :map_rules do
         get :download_kml, on: :collection

@@ -1,0 +1,27 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  zipcode_start: MyString
+  zipcode_end: MyString
+  weight_start: 1.5
+  weight_end: 1.5
+  absolute_money_cost: 9.99
+  price_percent: 9.99
+  price_by_extra_weight: 9.99
+  max_volume: 1
+  time_cost: 1
+  country: MyString
+  minimum_value_insurance: 9.99
+
+two:
+  zipcode_start: MyString
+  zipcode_end: MyString
+  weight_start: 1.5
+  weight_end: 1.5
+  absolute_money_cost: 9.99
+  price_percent: 9.99
+  price_by_extra_weight: 9.99
+  max_volume: 1
+  time_cost: 1
+  country: MyString
+  minimum_value_insurance: 9.99
