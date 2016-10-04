@@ -3,8 +3,8 @@ class ShippingMethodsController < ApplicationController
   before_filter only: [:edit, :update, :toggle, :duplicate, :copy_to_all_shops] do
     @method = @shop.methods.find_by!(id: params[:id])
   end
-  before_filter :set_delivery_types, only: [:edit, :new, :create, :update, :duplicate, :import]
-  before_filter :set_correios_services, only: [:edit, :new, :create, :update, :duplicate, :import]
+  before_filter :set_delivery_types, only: [:edit, :new, :create, :update, :duplicate, :import, :execute]
+  before_filter :set_correios_services, only: [:edit, :new, :create, :update, :duplicate, :import, :execute]
 
   def index
     @methods = @shop.methods.order(:id)
@@ -14,39 +14,18 @@ class ShippingMethodsController < ApplicationController
     @method = @shop.methods.new
   end
 
-  def import_line
-    args = params[:line].gsub('"', '').split(",")
-    service_name = DeliveryType.find(params[:delivery_type_id]).name
-    min_weigth = (args[3] == 0 ? 0 : args[3].to_i / 1000.0).round(3).to_s
-    max_weigth = (args[4] == 0 ? 0 : args[4].to_i / 1000.0).round(3).to_s
-    description = "#{params[:service_name]} CSV #{min_weigth} até #{max_weigth}"
+  def import
+    @import = Correios::Calculate.new(@shop.id, {})
+  end
 
-    if args[4].to_i > 0 && args[5].to_f > 0
-      unless method = @shop.methods.find_by(name: service_name, description: description)
-        method = @shop.methods.create(
-          name: service_name,
-          description: description,
-          min_weigth: min_weigth,
-          max_weigth: max_weigth,
-          data_origin: "local",
-          delivery_type_id: params[:delivery_type_id]
-        )
-      end
+  def execute
+    @import = Correios::Calculate.new(@shop.id, import_params)
 
-      rule = method.zip_rules.for_zip(args[0].to_i).for_zip(args[1].to_i).first_or_initialize
-      rule.update_attributes(
-        min: args[0].to_i,
-        max: args[1].to_i,
-        price: args[5].to_f,
-        deadline: args[9].to_i
-      )
-      if rule.errors.empty?
-        render text: "ok"
-      else
-        render text: rule.errors, status: 422
-      end
+    if @import.valid?
+      AddMultipleCorreiosZipcodeJob.perform_async(@shop.id, import_params)
+      redirect_to import_shop_shipping_methods_path(@shop), notice: "Processo de importacao iniciado. Acompanhe pelo sidekiq."
     else
-      render text: "error", status: 422
+      render :import
     end
 
   end
@@ -105,6 +84,12 @@ class ShippingMethodsController < ApplicationController
       :delivery_type_id, :name, :description, :enabled, :min_weigth, :max_weigth, :data_origin,
       :service, block_rules_attributes: [:id, :min, :max, :_destroy],
       zip_rules_attributes: [:id, :min, :max, :price, :deadline, :_destroy, period_ids: [] ]
+    )
+  end
+
+  def import_params
+    params.require(:correios_calculate).permit(
+      :service_code, :delivery_type, :sender_zipcode, :safety_margin, :enterprise_code, :enterprise_pass
     )
   end
 end

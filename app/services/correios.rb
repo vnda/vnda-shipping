@@ -8,6 +8,12 @@ class Correios
     40215 => 'SEDEX 10 Varejo',
     40290 => 'SEDEX Hoje Varejo',
     41106 => 'PAC Varejo',
+
+    40096 => 'SEDEX - Código Serviço 40096',
+    40436 => 'SEDEX - Código Serviço 40436',
+    40444 => 'SEDEX - Código Serviço 40444',
+    81019 => 'e-SEDEX - Código Serviço 81019',
+    41068 => 'PAC - Código Serviço 41068'
   }
 
   #deprecated
