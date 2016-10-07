@@ -50,7 +50,7 @@ class Correios
         'nVlDiametro' => 0,
         'sCdMaoPropria' => 'N',
         'sCdAvisoRecebimento' => 'N',
-        'nVlValorDeclarado' => @shop.declare_value ? request[:order_total_price] : 0
+        'nVlValorDeclarado' => declared_value(request)
       )
     rescue Wasabi::Resolver::HTTPError, Excon::Errors::Timeout
       return @shop.fallback_quote(request)
@@ -94,6 +94,13 @@ class Correios
       )
     end
     result
+  end
+
+  def declared_value(request)
+    return 0 unless @shop.declare_value
+    order_total_price = request[:order_total_price].to_f
+
+    order_total_price >= 10000.0 ? 9999.99 : order_total_price
   end
 
   private
