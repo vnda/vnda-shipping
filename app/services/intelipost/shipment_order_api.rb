@@ -29,7 +29,10 @@ class Intelipost::ShipmentOrderApi
   end
 
   def shipped(params)
-    post("https://#{@base_uri}/api/v1/shipment_order/multi/shipped/with_date", [params["code"]])
+    content = {}
+    content[:order_number] = [@shop.order_prefix, params["code"]].join("")
+    content[:event_date] = params["shipped_at"].to_date.strftime("%Y-%m-%d")
+    post("https://#{@base_uri}/api/v1/shipment_order/multi/shipped/with_date", [JSON.parse(content.to_json)])
   end
 
   def mount_intelipost_order(json)
@@ -37,9 +40,13 @@ class Intelipost::ShipmentOrderApi
     if json["extra"] and json["extra"]["cotation_id"]
       params[:quote_id] = json["extra"]["cotation_id"].to_i
 
-      quote = read_quote(params[:quote_id])["content"]["delivery_options"]
-      quote = quote.select{|d| d if d["delivery_method_name"].downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '') == json["shipping_method"]}.last
-      params[:delivery_method_id] = quote["delivery_method_id"].to_i
+      quote = read_quote(params[:quote_id])
+
+      unless quote["status"] == "ERROR"
+        quote = read_quote(params[:quote_id])["content"]["delivery_options"]
+        quote = quote.select{|d| d if d["delivery_method_name"].downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '') == json["shipping_method"]}.last
+        params[:delivery_method_id] = quote["delivery_method_id"].to_i
+      end
     end
 
     params[:estimated_delivery_date] = (Date.current + json["delivery_days"].days).strftime("%Y-%m-%d") if json["delivery_days"].to_i > 0

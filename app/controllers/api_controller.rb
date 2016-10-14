@@ -109,7 +109,7 @@ class ApiController < ActionController::Base
   def shipped
     shop = Shop.find_by(token: params[:shop_token])
     intelipost_api = Intelipost::ShipmentOrderApi.new(shop)
-    res = intelipost_api.ready_for_shipment(params)
+    res = intelipost_api.shipped(params)
 
     render json: res, status: 200
   end
