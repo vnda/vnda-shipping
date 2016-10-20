@@ -8,6 +8,12 @@ class Correios
     40215 => 'SEDEX 10 Varejo',
     40290 => 'SEDEX Hoje Varejo',
     41106 => 'PAC Varejo',
+
+    40096 => 'SEDEX - Código Serviço 40096',
+    40436 => 'SEDEX - Código Serviço 40436',
+    40444 => 'SEDEX - Código Serviço 40444',
+    81019 => 'e-SEDEX - Código Serviço 81019',
+    41068 => 'PAC - Código Serviço 41068'
   }
 
   #deprecated
@@ -44,7 +50,7 @@ class Correios
         'nVlDiametro' => 0,
         'sCdMaoPropria' => 'N',
         'sCdAvisoRecebimento' => 'N',
-        'nVlValorDeclarado' => @shop.declare_value ? request[:order_total_price] : 0
+        'nVlValorDeclarado' => declared_value(request)
       )
     rescue Wasabi::Resolver::HTTPError, Excon::Errors::Timeout
       return @shop.fallback_quote(request)
@@ -56,6 +62,7 @@ class Correios
     services = [services] unless services.is_a?(Array)
 
     success, error = services.partition { |s| s[:erro] == '0' || s[:erro] == "010"}
+    return @shop.fallback_quote(request) if success.empty? && error.any?
 
     error.each do |e|
       if e[:erro] == '-3'
@@ -87,6 +94,13 @@ class Correios
       )
     end
     result
+  end
+
+  def declared_value(request)
+    return 0 unless @shop.declare_value
+    order_total_price = request[:order_total_price].to_f
+
+    order_total_price >= 10000.0 ? 9999.99 : order_total_price
   end
 
   private
