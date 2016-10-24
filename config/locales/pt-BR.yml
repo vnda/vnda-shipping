@@ -233,6 +233,7 @@ pt-BR:
         enabled: 'Habilitar'
         min_weigth: 'Peso Mínimo'
         max_weigth: 'Peso Máximo'
+        notice: 'Mensagem de aviso'
       period:
         name: 'Nome'
         limit_time: 'Horário Limite'

@@ -33,7 +33,6 @@
           </div>
         </div>
       </div>
-
       <div class="col-md-4">
         <div class="form-group">
           <div class="selectbox">
@@ -61,8 +60,16 @@
         </div>
       </div>
     </div>
-
-
+  
+    <div class="row">
+      <div class="col-md-4">
+        <div class="form-group">
+          <%= f.label :notice %>
+          <%= f.text_area :notice, class: 'form-control' %>
+        </div>
+      </div>
+    </div>
+    <br>
     <table class="table table-form block-rules items-container">
       <thead>
         <tr>
