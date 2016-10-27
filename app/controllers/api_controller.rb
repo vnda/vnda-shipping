@@ -83,6 +83,10 @@ class ApiController < ActionController::Base
     render json: @shop.places_for_shipping_method(params[:shipping_method_id]).to_json(only: :name)
   end
 
+  def shipping_methods
+    render json: @shop.shipping_methods
+  end
+
   def lower_prices(quotations)
     quotations_group = quotations.group_by { |quote| quote[:delivery_type_slug] }
     lower = []
