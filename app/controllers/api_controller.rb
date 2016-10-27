@@ -1,5 +1,5 @@
 class ApiController < ActionController::Base
-  before_action :set_shop, only: [:quotation_details, :quote, :delivery_date, :delivery_types, :delivery_periods, :local, :places]
+  before_action :set_shop, only: [:quotation_details, :quote, :delivery_date, :delivery_types, :delivery_periods, :local, :places, :shipping_methods]
   rescue_from InvalidZip && BadParams do
     head :bad_request
   end
