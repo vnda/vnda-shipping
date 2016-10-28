@@ -84,7 +84,7 @@ class ApiController < ActionController::Base
   end
 
   def shipping_methods
-    render json: @shop.shipping_methods
+    render json: @shop.methods
   end
 
   def lower_prices(quotations)
