@@ -1,5 +1,5 @@
 Quotation = Struct.new(:cotation_id, :name, :price, :deadline, :slug, :delivery_type, :delivery_type_slug, :deliver_company, :notice) do
-  def initialize(name:, price:, deadline:, slug:, delivery_type:, deliver_company:, cotation_id:, notice:)
+  def initialize(name:, price:, deadline:, slug:, delivery_type:, deliver_company:, cotation_id:, notice: nil)
     self.name = name
     self.price = price
     self.deadline = deadline
