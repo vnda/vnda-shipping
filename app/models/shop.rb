@@ -64,13 +64,20 @@ class Shop < ActiveRecord::Base
     quotations << available_methods.for_gmaps_origin(zip) if available_methods.where(data_origin: "google_maps").any?
 
     quotations.collect do |data_origin_methods|
-      quotation_for(data_origin_methods.for_weigth(weight).pluck(:name, :price, :deadline, :slug, :delivery_type_id))
+      quotation_for(data_origin_methods.for_weigth(weight).pluck(:name, :price, :deadline, :slug, :delivery_type_id, :notice))
     end.flatten | quotations_for_places(available_methods, formatted_zip)
   end
 
   def quotations_for_places(available_methods, zip)
-    available_methods.for_places_origin(zip).pluck(:id, :name, :deadline, :slug, :delivery_type_id).collect do |id, n, d, s, dt|
-      PlaceQuotation.new(name: n, shipping_method_id: id, deadline: d, slug: s, delivery_type: set_delivery_type(dt))
+    available_methods.for_places_origin(zip).pluck(:id, :name, :deadline, :slug, :delivery_type_id, :notice).collect do |id, n, d, s, dt, notice|
+      PlaceQuotation.new(
+        name: n, 
+        shipping_method_id: id, 
+        deadline: d, 
+        slug: s, 
+        delivery_type: set_delivery_type(dt), 
+        notice: notice || ''
+      )
     end
   end
 
@@ -87,8 +94,17 @@ class Shop < ActiveRecord::Base
   end
 
   def quotation_for(shipping_methods)
-    shipping_methods.map do |n, p, d, s, dt|
-      Quotation.new(name: n, price: p.to_f, deadline: d, slug: s, delivery_type: set_delivery_type(dt), deliver_company: "", cotation_id: "")
+    shipping_methods.map do |n, p, d, s, dt, notice|
+      Quotation.new(
+        name: n, 
+        price: p.to_f, 
+        deadline: d, 
+        slug: s, 
+        delivery_type: set_delivery_type(dt), 
+        deliver_company: "", 
+        cotation_id: "",
+        notice: notice || ''
+      )
     end
   end
 
