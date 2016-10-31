@@ -20,13 +20,13 @@
 
 class Shop < ActiveRecord::Base
   has_many :methods, class_name: 'ShippingMethod', dependent: :destroy
-  has_many :delivery_types, dependent: :destroy
-  has_many :periods, dependent: :destroy
   has_many :zip_rules, through: :methods
   has_many :map_rules, through: :methods
-  has_many :shipping_errors, class_name: 'ShippingError'
-  has_many :shipping_friendly_errors
-  has_many :quotes, class_name: 'QuoteHistory'
+  has_many :delivery_types, dependent: :destroy
+  has_many :periods, dependent: :destroy
+  has_many :shipping_errors, class_name: 'ShippingError', dependent: :destroy
+  has_many :shipping_friendly_errors, dependent: :destroy
+  has_many :quotes, class_name: 'QuoteHistory', dependent: :destroy
   has_many :zipcode_spreadsheets
 
   before_create { self.token = SecureRandom.hex }
