@@ -7,7 +7,7 @@
     <div class="col-md-2 price">
       <div class="input-group">
         <span class="input-group-addon">R$</span>
-        <%= f.text_field :price, data: { mask_money: true }, class: 'text-right form-control' %>
+        <%= f.text_field :price, value: number_with_precision(f.object.price, precision: 2) data: { mask_money: true }, class: 'text-right form-control' %>
       </div>
     </div>
     <div class="col-md-2 deadline">
