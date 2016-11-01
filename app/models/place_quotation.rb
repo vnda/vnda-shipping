@@ -6,7 +6,7 @@ PlaceQuotation = Struct.new(:name, :delivery_type, :deadline, :delivery_type_slu
     self.price = 0
     self.deadline = deadline
     self.shipping_method_id = shipping_method_id
-    self.slug = slug,
+    self.slug = slug
     self.notice = notice || ''
   end
 end
