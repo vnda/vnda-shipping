@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161024170923) do
+ActiveRecord::Schema.define(version: 20161122112406) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -122,26 +122,28 @@ ActiveRecord::Schema.define(version: 20161024170923) do
     t.string   "service"
     t.string   "mid"
     t.text     "notice"
+    t.integer  "norder"
   end
 
   add_index "shipping_methods", ["shop_id"], name: "index_shipping_methods_on_shop_id", using: :btree
 
   create_table "shops", force: :cascade do |t|
-    t.string  "name",                                                null: false
-    t.string  "token",                    limit: 32,                 null: false
+    t.string  "name",                                                 null: false
+    t.string  "token",                    limit: 255,                 null: false
     t.string  "axado_token",              limit: 32
-    t.boolean "forward_to_axado",                    default: false, null: false
+    t.boolean "forward_to_axado",                     default: false, null: false
     t.string  "correios_code"
     t.string  "correios_password"
-    t.boolean "forward_to_correios",                 default: false, null: false
+    t.boolean "forward_to_correios",                  default: false, null: false
     t.string  "normal_shipping_name"
     t.string  "express_shipping_name"
     t.integer "backup_method_id"
     t.string  "intelipost_token"
-    t.boolean "forward_to_intelipost",               default: false, null: false
-    t.string  "correios_custom_services"
-    t.string  "order_prefix",                        default: ""
-    t.boolean "declare_value",                       default: true
+    t.boolean "forward_to_intelipost",                default: false, null: false
+    t.text    "correios_custom_services"
+    t.string  "order_prefix",                         default: ""
+    t.boolean "declare_value",                        default: true
+    t.boolean "order_by_price",                       default: true
   end
 
   add_index "shops", ["name"], name: "index_shops_on_name", unique: true, using: :btree

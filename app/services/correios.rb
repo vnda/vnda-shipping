@@ -35,6 +35,8 @@ class Correios
     if cubic_weight > 10.0 and cubic_weight < weight
       weight = cubic_weight
     end
+    return [] if weight > 30
+
     begin
       response = send_message(:calc_preco_prazo,
         'nCdEmpresa' => @shop.correios_code,
