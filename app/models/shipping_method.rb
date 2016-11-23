@@ -27,7 +27,7 @@ class ShippingMethod < ActiveRecord::Base
   accepts_nested_attributes_for :map_rules, allow_destroy: true, reject_if: :all_blank
   accepts_nested_attributes_for :block_rules, allow_destroy: true, reject_if: :all_blank
 
-  validates :name, :delivery_type_id, presence: true
+  validates :name, :delivery_type_id, :description, presence: true
 
   before_save :generate_slug, if: :description_changed?
 
