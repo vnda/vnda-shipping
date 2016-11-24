@@ -107,6 +107,22 @@ class ShippingMethodsController < ApplicationController
     @method.copy_to_all_shops
     success_redirect shop_shipping_methods_path(@shop)
   end
+
+  def norder
+    ids = params[:norder]
+    ids.each_with_index do |id, index|
+      ShippingMethod.find(id).update(norder: index)
+    end
+
+    render json: { success: true }
+  end
+  
+  def set_shipping_order
+    @shop = Shop.find(params[:id])
+    @shop.update!(order_by_price: params[:enabled])
+    head :ok
+  end
+
   private
 
   def set_delivery_types

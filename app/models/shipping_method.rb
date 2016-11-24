@@ -52,6 +52,10 @@ class ShippingMethod < ActiveRecord::Base
     )
   end
 
+  def self.default_scope 
+    order(norder: :asc)
+  end
+
   def generate_slug
     self.slug = description.to_s.split("CSV").first.to_s.strip.parameterize
   end

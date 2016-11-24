@@ -6,6 +6,7 @@ Rails.application.routes.draw do
 
   root to: 'shops#index'
   resources :shops, only: [:index, :new, :create, :edit, :update, :destroy] do
+    patch :set_shipping_order, on: :member
     resources :shipping_friendly_errors, only: [:index, :new, :create, :edit, :update, :destroy] do
       get :affected, on: :member
     end
@@ -17,6 +18,7 @@ Rails.application.routes.draw do
       get :import2, on: :collection
       post :import_line, on: :collection
       post :execute, on: :collection
+      post :norder, on: :collection
       resources :zip_rules
       resources :map_rules do
         get :download_kml, on: :collection

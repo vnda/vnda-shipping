@@ -41,6 +41,12 @@ class ShopsController < ApplicationController
     success_redirect shops_path
   end
 
+  def set_shipping_order
+    @shop = Shop.find(params[:id])
+    @shop.update!(order_by_price: params[:enabled])
+    head :ok
+  end
+
   private
 
   def shop_params

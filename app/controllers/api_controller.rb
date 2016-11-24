@@ -55,12 +55,22 @@ class ApiController < ActionController::Base
 
   def quote
     quotations = @shop.quote(request_params)
+    
     if @shop.forward_to_correios? && @shop.enabled_correios_service.any?
       quotations += Correios.new(@shop).quote(request_params) if quotations.empty? || !correios_completed?(@shop, quotations)
     end
-    quotations += Intelipost.quote(@shop.intelipost_token, request_params, @shop) if @shop.forward_to_intelipost?
-    quotations = lower_prices(quotations) unless quotations.empty?
-    quotations = apply_aditional_deadline(quotations) if params[:aditional_deadline].present?
+
+    if @shop.forward_to_intelipost?
+      quotations += Intelipost.quote(@shop.intelipost_token, request_params, @shop) 
+    end
+    
+    unless quotations.empty?      
+      quotations = group_lower_prices(quotations) 
+    end
+    
+    if params[:aditional_deadline].present?
+      quotations = apply_aditional_deadline(quotations) 
+    end
 
     QuoteHistory.register(@shop.id, request_params[:cart_id], {:quotations => quotations.to_json})
 
@@ -87,8 +97,9 @@ class ApiController < ActionController::Base
     render json: @shop.methods
   end
 
-  def lower_prices(quotations)
+  def group_lower_prices(quotations)
     quotations_group = quotations.group_by { |quote| quote[:delivery_type_slug] }
+    
     lower = []
     quotations_group.each do |delivery_type|
       delivery_types = quotations_group[delivery_type[0]]
@@ -113,7 +124,7 @@ class ApiController < ActionController::Base
   def shipped
     shop = Shop.find_by(token: params[:shop_token])
     intelipost_api = Intelipost::ShipmentOrderApi.new(shop)
-    res = intelipost_api.shipped(params)
+    res = intelipost_api.ready_for_shipment(params)
 
     render json: res, status: 200
   end
