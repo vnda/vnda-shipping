@@ -44,6 +44,7 @@ GEM
       nokogiri
     arel (6.0.3)
     builder (3.2.2)
+    byebug (9.0.6)
     coderay (1.1.1)
     concurrent-ruby (1.0.2)
     connection_pool (2.2.1)
@@ -196,6 +197,7 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord-postgis-adapter
+  byebug
   dotenv-rails
   excon
   httparty (= 0.13.5)

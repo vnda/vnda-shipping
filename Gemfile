@@ -22,6 +22,7 @@ gem 'sinatra', require: false
 
 group :development, :staging, :production do
   gem "newrelic_rpm"
+  gem "byebug"
 end
 
 group :test do

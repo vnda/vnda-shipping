@@ -54,6 +54,7 @@ class ApiController < ActionController::Base
   end
 
   def quote
+    puts request_params.inspect
     quotations = @shop.quote(request_params)
     
     if @shop.forward_to_correios? && @shop.enabled_correios_service.any?
