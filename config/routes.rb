@@ -14,6 +14,7 @@ Rails.application.routes.draw do
       get :duplicate, on: :member
       get :copy_to_all_shops, on: :member
       get :import, on: :collection
+      get :import2, on: :collection
       post :import_line, on: :collection
       post :execute, on: :collection
       resources :zip_rules
