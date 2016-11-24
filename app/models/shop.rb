@@ -51,15 +51,11 @@ class Shop < ActiveRecord::Base
 
   def quote(params, backup=false)
     raise BadParams unless params[:shipping_zip] && params[:products]
-
+    
     zip = params[:shipping_zip]
     formatted_zip = zip.gsub(/\D+/, '').to_i
-
     weight = greater_weight(params[:products])
-
-    available_methods = backup ? methods.where(id: backup_method_id) : methods.where(enabled: true).joins(:delivery_type).where(delivery_types: { enabled: true })
-    puts "available_methods: #{available_methods.inspect}"
-    
+    available_methods = backup ? methods.where(id: backup_method_id) : methods.where(enabled: true).joins(:delivery_type).where(delivery_types: { enabled: true })    
     quotations = []
     quotations << available_methods.for_locals_origin(formatted_zip) if available_methods.where(data_origin: "local").any?
     quotations << available_methods.for_gmaps_origin(zip) if available_methods.where(data_origin: "google_maps").any?

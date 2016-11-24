@@ -54,11 +54,12 @@ class ApiController < ActionController::Base
   end
 
   def quote
-    puts request_params.inspect
     quotations = @shop.quote(request_params)
-    
+
     if @shop.forward_to_correios? && @shop.enabled_correios_service.any?
-      quotations += Correios.new(@shop).quote(request_params) if quotations.empty? || !correios_completed?(@shop, quotations)
+      if quotations.empty? || !correios_completed?(@shop, quotations)
+        quotations += Correios.new(@shop).quote(request_params) 
+      end
     end
 
     if @shop.forward_to_intelipost?
@@ -66,8 +67,6 @@ class ApiController < ActionController::Base
     end
 
     unless quotations.empty?
-      puts "Group lower prices:"
-      puts "Group lower prices: #{quotations.inspect}"
       quotations = group_lower_prices(quotations) 
     end
 
@@ -83,6 +82,11 @@ class ApiController < ActionController::Base
       @shop.add_shipping_error(message)
       render json: {error: @shop.friendly_message_for(message)}, status: 400
     else
+      # order shipping by price
+      if @shop.order_by_price
+        quotations = quotations.sort_by { |quote| quote['price'] }
+      end
+
       render json: quotations, status: 200
     end
   end
@@ -102,17 +106,12 @@ class ApiController < ActionController::Base
 
   def group_lower_prices(quotations)
     quotations_group = quotations.group_by { |quote| quote[:delivery_type_slug] }
-
-    puts "Group group: #{quotations_group.inspect}"
-
     lower = []
+    
     quotations_group.each do |delivery_type|
       delivery_types = quotations_group[delivery_type[0]]
-      puts "delivery_types: #{delivery_types.inspect}"
       lower << delivery_types.sort_by{|v| v.price}.first
     end
-
-    puts "Lower: #{lower.inspect}"
 
     return lower || []
   end

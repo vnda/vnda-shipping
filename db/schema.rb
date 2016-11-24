@@ -15,8 +15,8 @@ ActiveRecord::Schema.define(version: 20161124150936) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "postgis"
   enable_extension "hstore"
+  enable_extension "postgis"
 
   create_table "block_rules", force: :cascade do |t|
     t.integer   "shipping_method_id", null: false
@@ -26,7 +26,7 @@ ActiveRecord::Schema.define(version: 20161124150936) do
   add_index "block_rules", ["shipping_method_id"], name: "index_block_rules_on_shipping_method_id", using: :btree
 
   create_table "delivery_types", force: :cascade do |t|
-    t.string   "name"
+    t.string   "name",       limit: 255
     t.boolean  "enabled"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -37,7 +37,7 @@ ActiveRecord::Schema.define(version: 20161124150936) do
     t.integer  "shipping_method_id",                                                               null: false
     t.decimal  "price",                                                   precision: 10, scale: 2
     t.integer  "deadline",                                                                         null: false
-    t.string   "name",                                                                             null: false
+    t.string   "name",               limit: 255,                                                   null: false
     t.geometry "region",             limit: {:srid=>0, :type=>"polygon"}
   end
 
@@ -51,7 +51,7 @@ ActiveRecord::Schema.define(version: 20161124150936) do
   end
 
   create_table "periods", force: :cascade do |t|
-    t.string   "name"
+    t.string   "name",           limit: 255
     t.time     "limit_time"
     t.text     "days_off"
     t.datetime "created_at"
@@ -59,7 +59,7 @@ ActiveRecord::Schema.define(version: 20161124150936) do
     t.integer  "shop_id"
     t.text     "exception_date"
     t.text     "closed_date"
-    t.integer  "days_ago",       default: 0
+    t.integer  "days_ago",                   default: 0
   end
 
   create_table "periods_zip_rules", force: :cascade do |t|
@@ -70,12 +70,12 @@ ActiveRecord::Schema.define(version: 20161124150936) do
   end
 
   create_table "places", force: :cascade do |t|
-    t.integer   "shipping_method_id",             null: false
-    t.string    "name",                           null: false
+    t.integer   "shipping_method_id",                         null: false
+    t.string    "name",               limit: 255,             null: false
     t.datetime  "created_at"
     t.datetime  "updated_at"
     t.int4range "range"
-    t.integer   "deadline",           default: 0, null: false
+    t.integer   "deadline",                       default: 0, null: false
   end
 
   add_index "places", ["shipping_method_id"], name: "index_places_on_shipping_method_id", using: :btree
@@ -91,7 +91,7 @@ ActiveRecord::Schema.define(version: 20161124150936) do
   end
 
   create_table "shipping_errors", force: :cascade do |t|
-    t.string   "message"
+    t.string   "message",    limit: 255
     t.integer  "shop_id"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -100,8 +100,8 @@ ActiveRecord::Schema.define(version: 20161124150936) do
   add_index "shipping_errors", ["shop_id"], name: "index_shipping_errors_on_shop_id", using: :btree
 
   create_table "shipping_friendly_errors", force: :cascade do |t|
-    t.string   "message"
-    t.string   "rule"
+    t.string   "message",    limit: 255
+    t.string   "rule",       limit: 255
     t.integer  "shop_id"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -110,17 +110,17 @@ ActiveRecord::Schema.define(version: 20161124150936) do
   add_index "shipping_friendly_errors", ["shop_id"], name: "index_shipping_friendly_errors_on_shop_id", using: :btree
 
   create_table "shipping_methods", force: :cascade do |t|
-    t.integer  "shop_id",                                                                                   null: false
-    t.string   "name",                                                                                      null: false
-    t.string   "description",      default: "",                                                             null: false
-    t.string   "slug",                                                                                      null: false
-    t.boolean  "express",          default: false,                                                          null: false
-    t.boolean  "enabled",          default: false,                                                          null: false
-    t.numrange "weigth_range",     default: BigDecimal(-::Float::INFINITY)...BigDecimal(::Float::INFINITY), null: false
+    t.integer  "shop_id",                                                                                               null: false
+    t.string   "name",             limit: 255,                                                                          null: false
+    t.string   "description",      limit: 255, default: "",                                                             null: false
+    t.string   "slug",             limit: 255,                                                                          null: false
+    t.boolean  "express",                      default: false,                                                          null: false
+    t.boolean  "enabled",                      default: false,                                                          null: false
+    t.numrange "weigth_range",                 default: BigDecimal(-::Float::INFINITY)...BigDecimal(::Float::INFINITY), null: false
     t.integer  "delivery_type_id"
-    t.string   "data_origin",      default: "local",                                                        null: false
-    t.string   "service"
-    t.string   "mid"
+    t.string   "data_origin",      limit: 255, default: "local",                                                        null: false
+    t.string   "service",          limit: 255
+    t.string   "mid",              limit: 255
     t.text     "notice"
     t.integer  "norder"
   end
@@ -128,20 +128,20 @@ ActiveRecord::Schema.define(version: 20161124150936) do
   add_index "shipping_methods", ["shop_id"], name: "index_shipping_methods_on_shop_id", using: :btree
 
   create_table "shops", force: :cascade do |t|
-    t.string  "name",                                                 null: false
+    t.string  "name",                     limit: 255,                 null: false
     t.string  "token",                    limit: 255,                 null: false
     t.string  "axado_token",              limit: 32
     t.boolean "forward_to_axado",                     default: false, null: false
-    t.string  "correios_code"
-    t.string  "correios_password"
+    t.string  "correios_code",            limit: 255
+    t.string  "correios_password",        limit: 255
     t.boolean "forward_to_correios",                  default: false, null: false
-    t.string  "normal_shipping_name"
-    t.string  "express_shipping_name"
+    t.string  "normal_shipping_name",     limit: 255
+    t.string  "express_shipping_name",    limit: 255
     t.integer "backup_method_id"
-    t.string  "intelipost_token"
+    t.string  "intelipost_token",         limit: 255
     t.boolean "forward_to_intelipost",                default: false, null: false
     t.text    "correios_custom_services"
-    t.string  "order_prefix",                         default: ""
+    t.string  "order_prefix",             limit: 255, default: ""
     t.boolean "declare_value",                        default: true
     t.boolean "order_by_price",                       default: true
   end
@@ -171,8 +171,8 @@ ActiveRecord::Schema.define(version: 20161124150936) do
   add_index "track_weights", ["service_name"], name: "index_track_weights_on_service_name", using: :btree
 
   create_table "zip_code_locations", force: :cascade do |t|
-    t.string   "zip_code",                null: false
-    t.hstore   "location",   default: {}, null: false
+    t.string   "zip_code",   limit: 255,              null: false
+    t.hstore   "location",               default: {}, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -211,9 +211,9 @@ ActiveRecord::Schema.define(version: 20161124150936) do
   add_index "zipcode_spreadsheets", ["zipcode_end"], name: "index_zipcode_spreadsheets_on_zipcode_end", using: :btree
   add_index "zipcode_spreadsheets", ["zipcode_start"], name: "index_zipcode_spreadsheets_on_zipcode_start", using: :btree
 
-  add_foreign_key "block_rules", "shipping_methods"
-  add_foreign_key "map_rules", "shipping_methods"
-  add_foreign_key "places", "shipping_methods"
-  add_foreign_key "shipping_methods", "shops"
-  add_foreign_key "zip_rules", "shipping_methods"
+  add_foreign_key "block_rules", "shipping_methods", name: "block_rules_shipping_method_id_fk"
+  add_foreign_key "map_rules", "shipping_methods", name: "map_rules_shipping_method_id_fk"
+  add_foreign_key "places", "shipping_methods", name: "places_shipping_method_id_fk"
+  add_foreign_key "shipping_methods", "shops", name: "shipping_methods_shop_id_fk"
+  add_foreign_key "zip_rules", "shipping_methods", name: "zip_rules_shipping_method_id_fk"
 end

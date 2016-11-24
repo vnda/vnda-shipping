@@ -43,6 +43,7 @@ GEM
       gyoku (>= 0.4.0)
       nokogiri
     arel (6.0.3)
+    awesome_print (1.7.0)
     builder (3.2.2)
     byebug (9.0.6)
     coderay (1.1.1)
@@ -197,6 +198,7 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord-postgis-adapter
+  awesome_print
   byebug
   dotenv-rails
   excon
@@ -222,4 +224,4 @@ RUBY VERSION
    ruby 2.3.0p0
 
 BUNDLED WITH
-   1.13.1
+   1.13.6
