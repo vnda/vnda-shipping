@@ -63,11 +63,13 @@ class ApiController < ActionController::Base
     if @shop.forward_to_intelipost?
       quotations += Intelipost.quote(@shop.intelipost_token, request_params, @shop) 
     end
-    
-    unless quotations.empty?      
+
+    unless quotations.empty?
+      puts "Group lower prices:"
+      puts "Group lower prices: #{quotations.inspect}"
       quotations = group_lower_prices(quotations) 
     end
-    
+
     if params[:aditional_deadline].present?
       quotations = apply_aditional_deadline(quotations) 
     end
@@ -99,12 +101,18 @@ class ApiController < ActionController::Base
 
   def group_lower_prices(quotations)
     quotations_group = quotations.group_by { |quote| quote[:delivery_type_slug] }
-    
+
+    puts "Group group: #{quotations_group.inspect}"
+
     lower = []
     quotations_group.each do |delivery_type|
       delivery_types = quotations_group[delivery_type[0]]
+      puts "delivery_types: #{delivery_types.inspect}"
       lower << delivery_types.sort_by{|v| v.price}.first
     end
+
+    puts "Lower: #{lower.inspect}"
+
     return lower || []
   end
 
@@ -124,7 +132,7 @@ class ApiController < ActionController::Base
   def shipped
     shop = Shop.find_by(token: params[:shop_token])
     intelipost_api = Intelipost::ShipmentOrderApi.new(shop)
-    res = intelipost_api.ready_for_shipment(params)
+    res = intelipost_api.shipped(params)
 
     render json: res, status: 200
   end
