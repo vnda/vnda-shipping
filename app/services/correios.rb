@@ -101,8 +101,9 @@ class Correios
   def declared_value(request)
     return 0 unless @shop.declare_value
     order_total_price = request[:order_total_price].to_f
-
-    order_total_price >= 10000.0 ? 9999.99 : order_total_price
+    return 17.0 if order_total_price < 17.0
+    return 9999.99 if order_total_price > 9999.99
+    order_total_price
   end
 
   private
