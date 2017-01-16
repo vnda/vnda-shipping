@@ -17,6 +17,8 @@
 
 /db/schema.rb
 
+/db/*.dump
+
 .env
 /public/kml
 
