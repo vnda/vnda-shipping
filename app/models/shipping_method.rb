@@ -52,7 +52,7 @@ class ShippingMethod < ActiveRecord::Base
     )
   end
 
-  def self.default_scope 
+  def self.default_scope
     order(norder: :asc)
   end
 
@@ -91,9 +91,9 @@ class ShippingMethod < ActiveRecord::Base
       region = factory.polygon(factory.line_string(points))
 
       if map_rule = self.map_rules.where(name: name).first
-        map_rule.update(region: region)
+        map_rule.update(region: region) if region
       else
-        map_rule = MapRule.new(name: name, price: nil, deadline: nil, region: region)
+        map_rule = self.map_rules.create!(name: name, price: nil, deadline: 0, region: region) if region
       end
 
       map_rule
