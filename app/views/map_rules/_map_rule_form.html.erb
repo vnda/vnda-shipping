@@ -1,3 +1,5 @@
-<div class="zip-code-row col-md-12" data-map-rule-id="<%= map_rule.try(:id) %>">
-  <%= render 'map_rules/data_form', map_rule: map_rule %>
-</div>
+<% if map_rule.try(:id) %>
+  <div class="zip-code-row col-md-12" data-map-rule-id="<%= map_rule.try(:id) %>">
+    <%= render 'map_rules/data_form', map_rule: map_rule %>
+  </div>
+<% end %>

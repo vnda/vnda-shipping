@@ -5,8 +5,7 @@ class MapRulesController < ApplicationController
   def index
     @shop = Shop.includes(:periods).find(params[:shop_id])
     @method = @shop.methods.find(params[:shipping_method_id])
-
-    @map_rules = @method.map_rules.order('id asc')
+    @map_rules = @method.map_rules.order('id asc').paginate(page: params[:page], per_page: 8)
   end
 
   def create

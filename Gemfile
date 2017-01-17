@@ -17,7 +17,9 @@ gem 'activerecord-postgis-adapter'
 gem 'nokogiri', '1.6.7.2'
 gem 'sidekiq'
 gem 'sinatra', require: false
-gem 'rack-timeout'
+
+gem 'will_paginate', '~> 3.1.0'
+gem 'will_paginate-bootstrap'
 
 group :development do
   gem "byebug"
