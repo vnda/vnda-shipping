@@ -22,10 +22,11 @@ group :development do
   gem "byebug"
   gem "awesome_print"
   gem 'pry'
+  gem "bullet"
 end
 
 group :development, :staging, :production do
-  gem "newrelic_rpm"  
+  gem "newrelic_rpm"
 end
 
 group :test do

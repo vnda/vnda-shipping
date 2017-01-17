@@ -116,7 +116,7 @@ class ShippingMethodsController < ApplicationController
 
     render json: { success: true }
   end
-  
+
   def set_shipping_order
     @shop = Shop.find(params[:id])
     @shop.update!(order_by_price: params[:enabled])

@@ -10,10 +10,10 @@
 
 <div id="map-rules-container" class="row">
 <% @map_rules.each do |map_rule| %>
-  <%= render 'map_rule_form', map_rule: map_rule %>
+  <%= render 'map_rules/map_rule_form', map_rule: map_rule %>
 <% end %>
 </div>
-  
+
 
 <script type="text/javascript">
   $(function(){
@@ -22,10 +22,9 @@
       $.ajax({
         type: "GET",
         dataType: 'script',
-        url: '<%= download_kml_shop_shipping_method_map_rules_path(@shop, @method) %>'      
+        url: '<%= download_kml_shop_shipping_method_map_rules_path(@shop, @method) %>'
       });
     });
 
   });
 </script>
-

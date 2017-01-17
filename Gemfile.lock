@@ -45,6 +45,9 @@ GEM
     arel (6.0.3)
     awesome_print (1.7.0)
     builder (3.2.2)
+    bullet (5.4.0)
+      activesupport (>= 3.0.0)
+      uniform_notifier (~> 1.10.0)
     byebug (9.0.6)
     coderay (1.1.1)
     concurrent-ruby (1.0.2)
@@ -189,6 +192,7 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.2)
+    uniform_notifier (1.10.0)
     wasabi (3.5.0)
       httpi (~> 2.0)
       nokogiri (>= 1.4.2)
@@ -199,6 +203,7 @@ PLATFORMS
 DEPENDENCIES
   activerecord-postgis-adapter
   awesome_print
+  bullet
   byebug
   dotenv-rails
   excon
