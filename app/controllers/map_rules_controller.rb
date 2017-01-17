@@ -3,7 +3,7 @@ require 'rest_client'
 class MapRulesController < ApplicationController
 
   def index
-    @shop = Shop.find(params[:shop_id])
+    @shop = Shop.includes(:periods).find(params[:shop_id])
     @method = @shop.methods.find(params[:shipping_method_id])
 
     @map_rules = @method.map_rules.order('id asc')

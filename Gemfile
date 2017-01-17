@@ -17,6 +17,7 @@ gem 'activerecord-postgis-adapter'
 gem 'nokogiri', '1.6.7.2'
 gem 'sidekiq'
 gem 'sinatra', require: false
+gem 'rack-timeout'
 
 group :development do
   gem "byebug"
