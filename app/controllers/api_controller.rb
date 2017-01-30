@@ -77,7 +77,7 @@ class ApiController < ActionController::Base
     QuoteHistory.register(@shop.id, request_params[:cart_id], {:quotations => quotations.to_json})
 
     if quotations.empty?
-      puts "No methods available shop: #{@shop.name} parameters: #{params}"
+      logger.warn("No methods available; shop: #{@shop.name} parameters: #{params}")
       message = "Não existem opções de entrega para este endereço."
       @shop.add_shipping_error(message)
       render json: {error: @shop.friendly_message_for(message)}, status: 400

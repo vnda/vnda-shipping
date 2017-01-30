@@ -20,7 +20,7 @@ class ZipCodeLocation < ActiveRecord::Base
     response = JSON.parse(response).with_indifferent_access
 
     if response[:status].eql?('ZERO_RESULTS')
-      puts "Google Maps API response: [ZERO_RESULTS] #{response}"
+      Rails.logger.info("Google Maps API response: [ZERO_RESULTS] #{response}")
       nil
     else
       results = response[:results] if response
