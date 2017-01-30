@@ -20,8 +20,8 @@ describe ShippingMethod do
     @shipping_method = shipping_methods(:one)
   end
 
-  let(:shipping_method_params) { { id: 1, name: "Metodo Teste", shop: @shop, delivery_type_id: @shipping_method.delivery_type_id} }
-  let(:shipping_method) { ShippingMethod.new shipping_method_params }
+  let(:shipping_method_params) { { id: 1, name: "Metodo Teste", shop: @shop, delivery_type_id: @shipping_method.delivery_type_id, description: "Método Teste" } }
+  let(:shipping_method) { ShippingMethod.new(shipping_method_params) }
 
   it "is valid with valid params" do
     shipping_method.must_be :valid?
@@ -57,14 +57,14 @@ describe ShippingMethod do
   end
 
   describe '#build_or_update_map_rules_from(xml_doc)' do
-    
+
     it 'creates all the map rules based on Placemark in KML file' do
-      map_rules = @shipping_method.build_or_update_map_rules_from(Nokogiri::XML(File.open('./test/fixtures/regions.kml'))) 
+      map_rules = @shipping_method.build_or_update_map_rules_from(Nokogiri::XML(File.open('./test/fixtures/regions.kml')))
       assert_not_empty(map_rules)
       assert_includes(map_rules.collect(&:name), 'itacorubi')
       assert_includes(map_rules.collect(&:name), 'Santa Monica')
       assert_includes(map_rules.collect(&:name), 'parque')
     end
-    
+
   end
 end

@@ -7,12 +7,11 @@ class ZipCodeLocation < ActiveRecord::Base
   store_accessor :location
 
   def self.get_geolocation_for(zip_code)
-    zip_code_location = ZipCodeLocation.find_by_zip_code(normalize_zip_code(zip_code)) ||
-                        ZipCodeLocation.try_to_create_new_location(zip_code)
+    zip_code_location = ZipCodeLocation.find_by_zip_code(normalize_zip_code(zip_code))
+    zip_code_location ||= ZipCodeLocation.try_to_create_new_location(zip_code)
 
-    zip_code_location ?
-      zip_code_location.location.with_indifferent_access :
-      {lng: 0, lat: 0}
+    return { lng: 0, lat: 0 } unless zip_code_location
+    zip_code_location.location.symbolize_keys
   end
 
   def self.try_to_create_new_location(zip_code)
@@ -28,13 +27,12 @@ class ZipCodeLocation < ActiveRecord::Base
       geometry = result_for_zipcode[:geometry] if result_for_zipcode
 
       if geometry
-        zip_code_location = ZipCodeLocation.new(zip_code: normalize_zip_code(zip_code))
+        zip_code_location = new(zip_code: normalize_zip_code(zip_code))
         zip_code_location.location = geometry[:location]
         zip_code_location.save
 
-        return zip_code_location
+        zip_code_location
       end
-      nil
     end
   end
 

@@ -19,7 +19,7 @@ require 'test_helper'
 describe Shop do
 
   let(:shop_params) { { id: 1, name: "Loja Teste"} }
-  let(:shop) { Shop.new shop_params }
+  let(:shop) { Shop.new(shop_params) }
 
   it "is valid with valid params" do
     shop.must_be :valid?
@@ -61,16 +61,15 @@ describe Shop do
 
   it "creates default delivery types" do
     shop.delivery_types.count.must_equal 0
-    shop.create_delivery_types
+    shop.save!
     shop.delivery_types.count.must_equal 2
   end
 
   describe "before creating" do
-      it "generates a token" do
-        shop.token.must_be :nil?
-        shop.save!
-        shop.token.wont_be :nil?
-      end
+    it "generates a token" do
+      shop.token.must_be :nil?
+      shop.save!
+      shop.token.wont_be :nil?
     end
-
+  end
  end

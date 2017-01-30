@@ -68,11 +68,11 @@ class Shop < ActiveRecord::Base
   def quotations_for_places(available_methods, zip)
     available_methods.for_places_origin(zip).pluck(:id, :name, :deadline, :slug, :delivery_type_id, :notice).collect do |id, n, d, s, dt, notice|
       PlaceQuotation.new(
-        name: n, 
-        shipping_method_id: id, 
-        deadline: d, 
-        slug: s, 
-        delivery_type: set_delivery_type(dt), 
+        name: n,
+        shipping_method_id: id,
+        deadline: d,
+        slug: s,
+        delivery_type: set_delivery_type(dt),
         notice: notice || ''
       )
     end
@@ -93,12 +93,12 @@ class Shop < ActiveRecord::Base
   def quotation_for(shipping_methods)
     shipping_methods.map do |n, p, d, s, dt, notice|
       Quotation.new(
-        name: n, 
-        price: p.to_f, 
-        deadline: d, 
-        slug: s, 
-        delivery_type: set_delivery_type(dt), 
-        deliver_company: "", 
+        name: n,
+        price: p.to_f,
+        deadline: d,
+        slug: s,
+        delivery_type: set_delivery_type(dt),
+        deliver_company: "",
         cotation_id: "",
         notice: notice || ''
       )
@@ -107,37 +107,6 @@ class Shop < ActiveRecord::Base
 
   def set_delivery_type(id)
     self.delivery_types.find(id).name || ''
-  end
-
-  def create_delivery_types
-    self.delivery_types.where(name: "Normal").first_or_create(enabled: true)
-    self.delivery_types.where(name: "Expressa").first_or_create(enabled: true)
-  end
-
-  def create_correios_methods
-    if forward_to_correios
-      self.methods.create(
-        name: "Normal",
-        enabled: true,
-        description: "PAC",
-        min_weigth: 0,
-        max_weigth: 30,
-        delivery_type_id: self.delivery_types.where(name: "Normal").first.id,
-        data_origin: "correios",
-        service: "41106"
-      )
-
-      self.methods.create(
-        name: "Expressa",
-        enabled: true,
-        description: "SEDEX",
-        min_weigth: 0,
-        max_weigth: 30,
-        delivery_type_id: self.delivery_types.where(name: "Expressa").first.id,
-        data_origin: "correios",
-        service: "40010"
-      )
-    end
   end
 
   def available_periods(zip, date = nil)
@@ -239,6 +208,37 @@ class Shop < ActiveRecord::Base
   end
 
   private
+
+  def create_delivery_types
+    delivery_types.where(name: "Normal").first_or_create(enabled: true)
+    delivery_types.where(name: "Expressa").first_or_create(enabled: true)
+  end
+
+  def create_correios_methods
+    if forward_to_correios
+      methods.create(
+        name: "Normal",
+        enabled: true,
+        description: "PAC",
+        min_weigth: 0,
+        max_weigth: 30,
+        delivery_type_id: self.delivery_types.where(name: "Normal").first.id,
+        data_origin: "correios",
+        service: "41106"
+      )
+
+      methods.create(
+        name: "Expressa",
+        enabled: true,
+        description: "SEDEX",
+        min_weigth: 0,
+        max_weigth: 30,
+        delivery_type_id: self.delivery_types.where(name: "Expressa").first.id,
+        data_origin: "correios",
+        service: "40010"
+      )
+    end
+  end
 
   def periods_for(rules_type, date, zip, period_name)
     formatted_zip = rules_type == :zip_rules ? zip.to_i : zip

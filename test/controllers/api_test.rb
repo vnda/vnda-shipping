@@ -35,18 +35,18 @@ class ApiSpec < ActionDispatch::IntegrationTest
       post "/quote?token=#{@shop.token}", params
 
       response.status.must_equal 200
-      response.body.must_equal '[{"cotation_id":"","name":"Metodo 2","price":10.0,"deadline":2,"slug":"metodo-2","delivery_type":"Tipo de envio 1","delivery_type_slug":"tipo-de-envio-1","deliver_company":""}]'
+      response.body.must_equal '[{"cotation_id":"","name":"Metodo 2","price":10.0,"deadline":2,"slug":"metodo-2","delivery_type":"Tipo de envio 1","delivery_type_slug":"tipo-de-envio-1","deliver_company":"","notice":""}]'
     end
 
-    describe "when shipping method has data_origin=local" do      
-      
+    describe "when shipping method has data_origin=local" do
+
       describe "and there are no regions for the zip code" do
         it "returns nothing" do
           params = JSON.parse('{"origin_zip":"12946636","shipping_zip":"99999999","order_total_price":10.0,"aditional_deadline":null,"aditional_price":null,"products":[{"sku":"CSMT-1","price":10.0,"height":2,"length":16,"width":11,"weight":10, "quantity":1}]}')
           post "/quote?token=#{@shop.token}", params
 
           response.status.must_equal 400
-        end  
+        end
       end
 
       describe "and there are regions for the zip code" do
@@ -55,13 +55,13 @@ class ApiSpec < ActionDispatch::IntegrationTest
           post "/quote?token=#{@shop.token}", params
 
           response.status.must_equal 200
-          response.body.must_equal '[{"cotation_id":"","name":"Metodo 1","price":15.0,"deadline":2,"slug":"metodo-1","delivery_type":"Tipo de envio 1","delivery_type_slug":"tipo-de-envio-1","deliver_company":""}]'
+          response.body.must_equal '[{"cotation_id":"","name":"Metodo 1","price":15.0,"deadline":2,"slug":"metodo-1","delivery_type":"Tipo de envio 1","delivery_type_slug":"tipo-de-envio-1","deliver_company":"","notice":""}]'
         end
       end
 
     end
 
-    describe "when shipping method has data_origin=google_maps" do      
+    describe "when shipping method has data_origin=google_maps" do
 
       describe "and there are no regions for the zip code" do
         it "returns nothing" do
@@ -69,7 +69,7 @@ class ApiSpec < ActionDispatch::IntegrationTest
           post "/quote?token=#{@shop.token}", params
 
           response.status.must_equal 400
-        end  
+        end
       end
 
       describe "and there are regions for the zip code" do
@@ -78,15 +78,15 @@ class ApiSpec < ActionDispatch::IntegrationTest
           @map_rules = @shipping_method_maps.build_or_update_map_rules_from(Nokogiri::XML(File.open('test/fixtures/regions.kml').read))
           @map_rules.each_with_index{|map_rule, index| map_rule.price = index + 10; map_rule.deadline = index + 1}
           @shipping_method_maps.map_rules << @map_rules
-          
+
           params = JSON.parse('{"origin_zip":"12946636","shipping_zip":"88034100","order_total_price":10.0,"aditional_deadline":null,"aditional_price":null,"products":[{"sku":"CSMT-1","price":10.0,"height":2,"length":16,"width":11,"weight":10, "quantity":1}]}')
           post "/quote?token=#{@shop.token}", params
 
           response.status.must_equal 200
-          response.body.must_equal '[{"cotation_id":"","name":"Metodo Maps","price":10.0,"deadline":1,"slug":"metodo-maps","delivery_type":"Tipo de envio 1","delivery_type_slug":"tipo-de-envio-1","deliver_company":""}]'
+          response.body.must_equal '[{"cotation_id":"","name":"Metodo Maps","price":10.0,"deadline":1,"slug":"metodo-maps","delivery_type":"Tipo de envio 1","delivery_type_slug":"tipo-de-envio-1","deliver_company":"","notice":""}]'
         end
       end
-      
+
     end
 
   end
