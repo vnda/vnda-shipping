@@ -122,7 +122,6 @@ ActiveRecord::Schema.define(version: 20161124150936) do
     t.string   "service",          limit: 255
     t.string   "mid",              limit: 255
     t.text     "notice"
-    t.integer  "norder"
   end
 
   add_index "shipping_methods", ["shop_id"], name: "index_shipping_methods_on_shop_id", using: :btree
@@ -131,15 +130,15 @@ ActiveRecord::Schema.define(version: 20161124150936) do
     t.string  "name",                     limit: 255,                 null: false
     t.string  "token",                    limit: 255,                 null: false
     t.string  "axado_token",              limit: 32
-    t.boolean "forward_to_axado",                     default: false, null: false
+    t.boolean "forward_to_axado",                    default: false, null: false
     t.string  "correios_code",            limit: 255
     t.string  "correios_password",        limit: 255
-    t.boolean "forward_to_correios",                  default: false, null: false
+    t.boolean "forward_to_correios",                 default: false, null: false
     t.string  "normal_shipping_name",     limit: 255
     t.string  "express_shipping_name",    limit: 255
     t.integer "backup_method_id"
     t.string  "intelipost_token",         limit: 255
-    t.boolean "forward_to_intelipost",                default: false, null: false
+    t.boolean "forward_to_intelipost",               default: false, null: false
     t.text    "correios_custom_services"
     t.string  "order_prefix",             limit: 255, default: ""
     t.boolean "declare_value",                        default: true
