@@ -122,6 +122,7 @@ ActiveRecord::Schema.define(version: 20161124150936) do
     t.string   "service",          limit: 255
     t.string   "mid",              limit: 255
     t.text     "notice"
+    t.integer  "norder"
   end
 
   add_index "shipping_methods", ["shop_id"], name: "index_shipping_methods_on_shop_id", using: :btree
