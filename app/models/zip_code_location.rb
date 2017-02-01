@@ -1,21 +1,21 @@
 class ZipCodeLocation < ActiveRecord::Base
-
   GMAPS_GEOCODING_API_URL = 'https://maps.googleapis.com/maps/api/geocode/json'
+  GMAPS_GEOCODING_API_KEY = ENV['GMAPS_GEOCODING_API_KEY']
 
   validates_presence_of :zip_code, :location
 
   store_accessor :location
 
   def self.get_geolocation_for(zip_code)
-    zip_code_location = ZipCodeLocation.find_by_zip_code(normalize_zip_code(zip_code))
-    zip_code_location ||= ZipCodeLocation.try_to_create_new_location(zip_code)
+    zip_code_location = find_by_zip_code(normalize_zip_code(zip_code))
+    zip_code_location ||= try_to_create_new_location(zip_code)
 
     return { lng: 0, lat: 0 } unless zip_code_location
     zip_code_location.location.symbolize_keys
   end
 
   def self.try_to_create_new_location(zip_code)
-    response = RestClient.get( GMAPS_GEOCODING_API_URL, {params: {address: zip_code, region: 'br', key: ENV['GMAPS_GEOCODING_API_KEY']}} )
+    response = RestClient.get(GMAPS_GEOCODING_API_URL, { params: { address: zip_code, region: 'br', key: GMAPS_GEOCODING_API_KEY } })
     response = JSON.parse(response).with_indifferent_access
 
     if response[:status].eql?('ZERO_RESULTS')

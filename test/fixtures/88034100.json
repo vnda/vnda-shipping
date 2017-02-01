@@ -1,0 +1,64 @@
+{
+   "results" : [
+      {
+         "address_components" : [
+            {
+               "long_name" : "88034-100",
+               "short_name" : "88034-100",
+               "types" : [ "postal_code" ]
+            },
+            {
+               "long_name" : "Itacorubi",
+               "short_name" : "Itacorubi",
+               "types" : [ "political", "sublocality", "sublocality_level_1" ]
+            },
+            {
+               "long_name" : "Florianópolis",
+               "short_name" : "Florianópolis",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "Santa Catarina",
+               "short_name" : "SC",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "Brazil",
+               "short_name" : "BR",
+               "types" : [ "country", "political" ]
+            }
+         ],
+         "formatted_address" : "Itacorubi, Florianópolis - SC, 88034-100, Brazil",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : -27.5737494,
+                  "lng" : -48.4937213
+               },
+               "southwest" : {
+                  "lat" : -27.592427,
+                  "lng" : -48.514972
+               }
+            },
+            "location" : {
+               "lat" : -27.5759124,
+               "lng" : -48.5082472
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : -27.5737494,
+                  "lng" : -48.5037205
+               },
+               "southwest" : {
+                  "lat" : -27.5803783,
+                  "lng" : -48.514972
+               }
+            }
+         },
+         "place_id" : "ChIJCYpKLfM4J5UR5JKbQ7cRyzE",
+         "types" : [ "postal_code" ]
+      }
+   ],
+   "status" : "OK"
+}

@@ -26,6 +26,11 @@ class ApiSpec < ActionDispatch::IntegrationTest
     end
 
     it "get the lowers prices" do
+      stub_request(:get, "https://maps.googleapis.com/maps/api/geocode/json?address=44444444&key&region=br").
+        to_return(status: 200,
+          body: Rails.root.join("test/fixtures/44444444.json").read,
+          headers: { "Content-Type" => "application/json" })
+
       shipping_method_two = shipping_methods(:two)
       zip_rule = shipping_method_two.zip_rules.create!([
             { range: 0..55555555, price: 10.0, deadline: 2 }
@@ -42,6 +47,11 @@ class ApiSpec < ActionDispatch::IntegrationTest
 
       describe "and there are no regions for the zip code" do
         it "returns nothing" do
+          stub_request(:get, "https://maps.googleapis.com/maps/api/geocode/json?address=99999999&key&region=br").
+            to_return(status: 200,
+              body: Rails.root.join("test/fixtures/99999999.json").read,
+              headers: { "Content-Type" => "application/json" })
+
           params = JSON.parse('{"origin_zip":"12946636","shipping_zip":"99999999","order_total_price":10.0,"aditional_deadline":null,"aditional_price":null,"products":[{"sku":"CSMT-1","price":10.0,"height":2,"length":16,"width":11,"weight":10, "quantity":1}]}')
           post "/quote?token=#{@shop.token}", params
 
@@ -51,6 +61,11 @@ class ApiSpec < ActionDispatch::IntegrationTest
 
       describe "and there are regions for the zip code" do
         it "returns available methods" do
+          stub_request(:get, "https://maps.googleapis.com/maps/api/geocode/json?address=44444444&key&region=br").
+            to_return(status: 200,
+              body: Rails.root.join("test/fixtures/44444444.json").read,
+              headers: { "Content-Type" => "application/json" })
+
           params = JSON.parse('{"origin_zip":"12946636","shipping_zip":"44444444","order_total_price":10.0,"aditional_deadline":null,"aditional_price":null,"products":[{"sku":"CSMT-1","price":10.0,"height":2,"length":16,"width":11,"weight":10, "quantity":1}]}')
           post "/quote?token=#{@shop.token}", params
 
@@ -65,6 +80,11 @@ class ApiSpec < ActionDispatch::IntegrationTest
 
       describe "and there are no regions for the zip code" do
         it "returns nothing" do
+          stub_request(:get, "https://maps.googleapis.com/maps/api/geocode/json?address=66623123&key&region=br").
+            to_return(status: 200,
+              body: Rails.root.join("test/fixtures/66623123.json").read,
+              headers: { "Content-Type" => "application/json" })
+
           params = JSON.parse('{"origin_zip":"12946636","shipping_zip":"66623123","order_total_price":10.0,"aditional_deadline":null,"aditional_price":null,"products":[{"sku":"CSMT-1","price":10.0,"height":2,"length":16,"width":11,"weight":10, "quantity":1}]}')
           post "/quote?token=#{@shop.token}", params
 
@@ -74,6 +94,11 @@ class ApiSpec < ActionDispatch::IntegrationTest
 
       describe "and there are regions for the zip code" do
         it "returns available methods" do
+          stub_request(:get, "https://maps.googleapis.com/maps/api/geocode/json?address=88034100&key&region=br").
+            to_return(status: 200,
+              body: Rails.root.join("test/fixtures/88034100.json").read,
+              headers: { "Content-Type" => "application/json" })
+
           @shipping_method_maps = shipping_methods(:maps)
           @map_rules = @shipping_method_maps.build_or_update_map_rules_from(Nokogiri::XML(File.open('test/fixtures/regions.kml').read))
           @map_rules.each_with_index{|map_rule, index| map_rule.price = index + 10; map_rule.deadline = index + 1}
@@ -116,14 +141,18 @@ class ApiSpec < ActionDispatch::IntegrationTest
 
 
   describe "delivery_dates" do
-
     it "find shop by host if token is missing" do
-      post "/delivery_date?"
+      post "/delivery_date", {}, { "HTTP_X_STORE" => "shop" }
 
       response.status.must_equal 200
     end
 
     it "returns available zip periods " do
+      stub_request(:get, "https://maps.googleapis.com/maps/api/geocode/json?address=12946636&key&region=br").
+        to_return(status: 200,
+          body: Rails.root.join("test/fixtures/12946636.json").read,
+          headers: { "Content-Type" => "application/json" })
+
       post "/delivery_date?token=#{@shop.token}&zip=12946636"
 
       response.status.must_equal 200
@@ -139,7 +168,6 @@ class ApiSpec < ActionDispatch::IntegrationTest
       response.status.must_equal 200
       ActiveSupport::JSON.decode(response.body).must_equal parsed_date
     end
-
   end
 
   describe "delivery_types" do

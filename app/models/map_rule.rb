@@ -1,5 +1,4 @@
 class MapRule < ActiveRecord::Base
-
   belongs_to :shipping_method
   has_one :shop, through: :shipping_method
   has_and_belongs_to_many :periods
@@ -13,5 +12,4 @@ class MapRule < ActiveRecord::Base
   end
 
   scope :order_by_limit, -> { joins(:periods).order("days_ago DESC, periods.limit_time") }
-
 end

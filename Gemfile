@@ -23,17 +23,22 @@ gem 'will_paginate-bootstrap'
 
 group :development do
   gem "byebug"
-  gem "awesome_print"
   gem 'pry'
   gem "bullet"
 end
 
-group :development, :staging, :production do
-  gem "newrelic_rpm"
-end
-
 group :test do
   gem 'minitest-spec-rails'
-  gem 'simplecov', :require => false
   gem 'mocha'
+  gem 'webmock', '2.3.2'
+
+  gem 'simplecov', require: false
+end
+
+group :development, :test do
+  gem 'awesome_print', '1.7.0'
+end
+
+group :development, :staging, :production do
+  gem "newrelic_rpm"
 end

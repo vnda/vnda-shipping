@@ -1,0 +1,64 @@
+{
+   "results" : [
+      {
+         "address_components" : [
+            {
+               "long_name" : "12946-636",
+               "short_name" : "12946-636",
+               "types" : [ "postal_code" ]
+            },
+            {
+               "long_name" : "Recreio Maristela",
+               "short_name" : "Recreio Maristela",
+               "types" : [ "political", "sublocality", "sublocality_level_1" ]
+            },
+            {
+               "long_name" : "Atibaia",
+               "short_name" : "Atibaia",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "São Paulo",
+               "short_name" : "SP",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "Brazil",
+               "short_name" : "BR",
+               "types" : [ "country", "political" ]
+            }
+         ],
+         "formatted_address" : "Recreio Maristela, Atibaia - SP, 12946-636, Brazil",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : -23.1475959,
+                  "lng" : -46.549968
+               },
+               "southwest" : {
+                  "lat" : -23.1536404,
+                  "lng" : -46.5571938
+               }
+            },
+            "location" : {
+               "lat" : -23.1505276,
+               "lng" : -46.5544461
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : -23.150023,
+                  "lng" : -46.55358080000001
+               },
+               "southwest" : {
+                  "lat" : -23.1536404,
+                  "lng" : -46.5571938
+               }
+            }
+         },
+         "place_id" : "ChIJZynB4ULAzpQRR4vDXYOxfdE",
+         "types" : [ "postal_code" ]
+      }
+   ],
+   "status" : "OK"
+}

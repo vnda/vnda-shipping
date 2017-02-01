@@ -1,5 +1,7 @@
 class ApiController < ActionController::Base
-  before_action :set_shop, only: [:quotation_details, :quote, :delivery_date, :delivery_types, :delivery_periods, :local, :places, :shipping_methods]
+  before_action :set_shop, only: [:quotation_details, :quote, :delivery_date,
+    :delivery_types, :delivery_periods, :local, :places, :shipping_methods]
+
   rescue_from InvalidZip && BadParams do
     head :bad_request
   end
@@ -14,12 +16,14 @@ class ApiController < ActionController::Base
   end
 
   def delivery_date
-    period = params[:period]
-    zip = params[:zip].to_i
-    date = Date.parse(params[:date]) if params[:date]
-
-    if @shop && zip
-      delivery_dates = period.present? ? @shop.check_period_rules(period) : @shop.available_periods(zip, date)
+    if @shop && params[:zip].present?
+      delivery_dates =
+        if params[:period].present?
+          @shop.check_period_rules(params[:period])
+        else
+          date = Date.parse(params[:date]) if params[:date]
+          @shop.available_periods(params[:zip].to_i, date)
+        end
     end
 
     render json: delivery_dates || [], status: 200
@@ -58,29 +62,29 @@ class ApiController < ActionController::Base
 
     if @shop.forward_to_correios? && @shop.enabled_correios_service.any?
       if quotations.empty? || !correios_completed?(@shop, quotations)
-        quotations += Correios.new(@shop).quote(request_params) 
+        quotations += Correios.new(@shop).quote(request_params)
       end
     end
 
     if @shop.forward_to_intelipost?
-      quotations += Intelipost.quote(@shop.intelipost_token, request_params, @shop) 
+      quotations += Intelipost.quote(@shop.intelipost_token, request_params, @shop)
     end
 
     unless quotations.empty?
-      quotations = group_lower_prices(quotations) 
+      quotations = group_lower_prices(quotations)
     end
 
     if params[:aditional_deadline].present?
-      quotations = apply_aditional_deadline(quotations) 
+      quotations = apply_aditional_deadline(quotations)
     end
 
-    QuoteHistory.register(@shop.id, request_params[:cart_id], {:quotations => quotations.to_json})
+    QuoteHistory.register(@shop.id, request_params[:cart_id], quotations: quotations.to_json)
 
     if quotations.empty?
       logger.warn("No methods available; shop: #{@shop.name} parameters: #{params}")
       message = "Não existem opções de entrega para este endereço."
       @shop.add_shipping_error(message)
-      render json: {error: @shop.friendly_message_for(message)}, status: 400
+      render json: { error: @shop.friendly_message_for(message) }, status: 400
     else
       # order shipping by price
       if @shop.order_by_price
@@ -107,7 +111,7 @@ class ApiController < ActionController::Base
   def group_lower_prices(quotations)
     quotations_group = quotations.group_by { |quote| quote[:delivery_type_slug] }
     lower = []
-    
+
     quotations_group.each do |delivery_type|
       delivery_types = quotations_group[delivery_type[0]]
       lower << delivery_types.sort_by{|v| v.price}.first
@@ -150,11 +154,15 @@ class ApiController < ActionController::Base
 
   def set_shop
     logger.debug "Shop: #{env['HTTP_X_STORE']}"
-    @shop = begin
-      params[:token].present? ? Shop.find_by!(token: params[:token]) : Shop.find_by(name: (env['HTTP_X_STORE'] || "unknown-host").split(':').first)
-    rescue ActiveRecord::RecordNotFound
-      return head :unauthorized
+
+    if params[:token].present?
+      @shop = Shop.find_by!(token: params[:token])
+    else
+      name = (env["HTTP_X_STORE"] || "unknown-host").split(':').first
+      @shop = Shop.find_by!(name: name) if name.present?
     end
+  rescue ActiveRecord::RecordNotFound
+    head :unauthorized
   end
 
   def correios_completed?(shop, quotations)
