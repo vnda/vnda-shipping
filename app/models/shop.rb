@@ -1,23 +1,3 @@
-# == Schema Information
-#
-# Table name: shops
-#
-#  id                    :integer          not null, primary key
-#  name                  :string(255)      not null
-#  token                 :string(32)       not null
-#  axado_token           :string(32)
-#  forward_to_axado      :boolean          default(FALSE), not null
-#  correios_code         :string(255)
-#  correios_password     :string(255)
-#  forward_to_correios   :boolean          default(FALSE), not null
-#  correios_services     :integer          default([]), not null
-#  normal_shipping_name  :string(255)
-#  express_shipping_name :string(255)
-#  backup_method_id      :integer
-#  intelipost_token      :string(255)
-#  forward_to_intelipost :boolean          default(FALSE), not null
-#
-
 class Shop < ActiveRecord::Base
   has_many :methods, class_name: 'ShippingMethod', dependent: :destroy
   has_many :zip_rules, through: :methods
@@ -30,11 +10,12 @@ class Shop < ActiveRecord::Base
   has_many :zipcode_spreadsheets
 
   before_create { self.token = SecureRandom.hex }
-  after_create :create_delivery_types, :create_correios_methods
+  after_create :create_delivery_types
+  after_create :create_correios_methods, if: :forward_to_correios?
 
   validates :name, presence: true, uniqueness: true
-  validates  :axado_token, presence: true, if: 'forward_to_axado.present?'
-  validates  :correios_code, :correios_password, presence: true, if: 'forward_to_correios.present?'
+  validates :axado_token, presence: true, if: :forward_to_axado?
+  validates :correios_code, :correios_password, presence: true, if: :forward_to_correios?
 
   def friendly_message_for(message)
     self.shipping_friendly_errors.order(:created_at).each do |friendly_message|
@@ -148,16 +129,9 @@ class Shop < ActiveRecord::Base
   end
 
   def volume_for(items)
-    volumes = items.map{ |i| i.values_at(:width, :height, :length, :quantity)}
-    volumes.map{|i| i.collect(&:to_f).reduce(:*)}.reduce(:+)
+    items.map { |item| item.values_at(:width, :height, :length, :quantity).
+      map(&:to_f).reduce(:*) }.sum
   end
-
-  def greater_weight(products)
-    cubic_capacity = volume_for(products) / 6000
-    total_weight = products.sum { |i| i[:weight].to_f * i[:quantity].to_i }
-    return cubic_capacity > total_weight ? cubic_capacity : total_weight
-  end
-
 
   def data_origin
     {
@@ -175,7 +149,7 @@ class Shop < ActiveRecord::Base
   end
 
   def shipping_methods_correios
-    methods.where(data_origin:"correios").where(enabled: true)
+    methods.where(data_origin: "correios").where(enabled: true)
   end
 
   def enabled_correios_service
@@ -207,7 +181,13 @@ class Shop < ActiveRecord::Base
     list
   end
 
-  private
+  protected
+
+  def greater_weight(products)
+    cubic_capacity = volume_for(products) / 6000
+    total_weight = products.sum { |i| i[:weight].to_f * i[:quantity].to_i }
+    cubic_capacity > total_weight ? cubic_capacity : total_weight
+  end
 
   def create_delivery_types
     delivery_types.where(name: "Normal").first_or_create(enabled: true)
@@ -215,29 +195,27 @@ class Shop < ActiveRecord::Base
   end
 
   def create_correios_methods
-    if forward_to_correios
-      methods.create(
-        name: "Normal",
-        enabled: true,
-        description: "PAC",
-        min_weigth: 0,
-        max_weigth: 30,
-        delivery_type_id: self.delivery_types.where(name: "Normal").first.id,
-        data_origin: "correios",
-        service: "41106"
-      )
+    methods.create!(
+      name: "Normal",
+      enabled: true,
+      description: "PAC",
+      min_weigth: 0,
+      max_weigth: 30,
+      delivery_type_id: self.delivery_types.where(name: "Normal").first.id,
+      data_origin: "correios",
+      service: "41106"
+    )
 
-      methods.create(
-        name: "Expressa",
-        enabled: true,
-        description: "SEDEX",
-        min_weigth: 0,
-        max_weigth: 30,
-        delivery_type_id: self.delivery_types.where(name: "Expressa").first.id,
-        data_origin: "correios",
-        service: "40010"
-      )
-    end
+    methods.create!(
+      name: "Expressa",
+      enabled: true,
+      description: "SEDEX",
+      min_weigth: 0,
+      max_weigth: 30,
+      delivery_type_id: self.delivery_types.where(name: "Expressa").first.id,
+      data_origin: "correios",
+      service: "40010"
+    )
   end
 
   def periods_for(rules_type, date, zip, period_name)
@@ -252,3 +230,23 @@ class Shop < ActiveRecord::Base
     end
   end
 end
+
+# == Schema Information
+#
+# Table name: shops
+#
+#  id                    :integer          not null, primary key
+#  name                  :string(255)      not null
+#  token                 :string(32)       not null
+#  axado_token           :string(32)
+#  forward_to_axado      :boolean          default(FALSE), not null
+#  correios_code         :string(255)
+#  correios_password     :string(255)
+#  forward_to_correios   :boolean          default(FALSE), not null
+#  correios_services     :integer          default([]), not null
+#  normal_shipping_name  :string(255)
+#  express_shipping_name :string(255)
+#  backup_method_id      :integer
+#  intelipost_token      :string(255)
+#  forward_to_intelipost :boolean          default(FALSE), not null
+#
