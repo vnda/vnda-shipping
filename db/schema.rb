@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161124150936) do
+ActiveRecord::Schema.define(version: 20170201180418) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -36,7 +36,7 @@ ActiveRecord::Schema.define(version: 20161124150936) do
   create_table "map_rules", force: :cascade do |t|
     t.integer  "shipping_method_id",                                                               null: false
     t.decimal  "price",                                                   precision: 10, scale: 2
-    t.integer  "deadline",                                                                         null: false
+    t.integer  "deadline",                                                                         default: 0, null: false
     t.string   "name",               limit: 255,                                                   null: false
     t.geometry "region",             limit: {:srid=>0, :type=>"polygon"}
   end
