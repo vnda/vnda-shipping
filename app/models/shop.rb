@@ -30,20 +30,37 @@ class Shop < ActiveRecord::Base
     end
   end
 
-  def quote(params, backup=false)
+  def quote(params, backup = false)
     raise BadParams unless params[:shipping_zip] && params[:products]
-    
-    zip = params[:shipping_zip]
-    formatted_zip = zip.gsub(/\D+/, '').to_i
-    weight = greater_weight(params[:products])
-    available_methods = backup ? methods.where(id: backup_method_id) : methods.where(enabled: true).joins(:delivery_type).where(delivery_types: { enabled: true })    
-    quotations = []
-    quotations << available_methods.for_locals_origin(formatted_zip) if available_methods.where(data_origin: "local").any?
-    quotations << available_methods.for_gmaps_origin(zip) if available_methods.where(data_origin: "google_maps").any?
 
-    quotations.collect do |data_origin_methods|
-      quotation_for(data_origin_methods.for_weigth(weight).pluck(:name, :price, :deadline, :slug, :delivery_type_id, :notice))
-    end.flatten | quotations_for_places(available_methods, formatted_zip)
+    available_methods = if backup
+      methods.where(id: backup_method_id)
+    else
+      methods.joins(:delivery_type).
+        where(enabled: true, delivery_types: { enabled: true })
+    end
+
+    quotations = []
+
+    formatted_zip = params[:shipping_zip].gsub(/\D+/, '').to_i
+    if available_methods.where(data_origin: "local").any?
+      quotations << available_methods.for_locals_origin(formatted_zip)
+    end
+
+    if available_methods.where(data_origin: "google_maps").any?
+      quotations << available_methods.for_gmaps_origin(params[:shipping_zip])
+    end
+
+    weight = greater_weight(params[:products])
+    quotations = quotations.flat_map do |data_origin_methods|
+      shipping_methods = data_origin_methods.
+        for_weigth(weight).
+        pluck(:name, :price, :deadline, :slug, :delivery_type_id, :notice)
+
+      quotation_for(shipping_methods)
+    end
+
+    quotations | quotations_for_places(available_methods, formatted_zip)
   end
 
   def quotations_for_places(available_methods, zip)

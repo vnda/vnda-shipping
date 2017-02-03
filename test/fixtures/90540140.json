@@ -1,0 +1,64 @@
+{
+   "results" : [
+      {
+         "address_components" : [
+            {
+               "long_name" : "90540-140",
+               "short_name" : "90540-140",
+               "types" : [ "postal_code" ]
+            },
+            {
+               "long_name" : "Auxiliadora",
+               "short_name" : "Auxiliadora",
+               "types" : [ "political", "sublocality", "sublocality_level_1" ]
+            },
+            {
+               "long_name" : "Porto Alegre",
+               "short_name" : "Porto Alegre",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "State of Rio Grande do Sul",
+               "short_name" : "RS",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "Brazil",
+               "short_name" : "BR",
+               "types" : [ "country", "political" ]
+            }
+         ],
+         "formatted_address" : "Auxiliadora, Porto Alegre - RS, 90540-140, Brazil",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : -30.01535879999999,
+                  "lng" : -51.188607
+               },
+               "southwest" : {
+                  "lat" : -30.0380897,
+                  "lng" : -51.2252291
+               }
+            },
+            "location" : {
+               "lat" : -30.0186823,
+               "lng" : -51.1905916
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : -30.01535879999999,
+                  "lng" : -51.1885656197085
+               },
+               "southwest" : {
+                  "lat" : -30.0231513,
+                  "lng" : -51.1912635802915
+               }
+            }
+         },
+         "place_id" : "ChIJJ3b4-M95GZUR6QV5mEQ3N1g",
+         "types" : [ "postal_code" ]
+      }
+   ],
+   "status" : "OK"
+}
