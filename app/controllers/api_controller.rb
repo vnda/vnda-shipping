@@ -74,8 +74,8 @@ class ApiController < ActionController::Base
       quotations = group_lower_prices(quotations)
     end
 
-    if params[:aditional_deadline].present?
-      quotations = apply_aditional_deadline(quotations)
+    if params[:additional_deadline].present?
+      quotations = apply_additional_deadline(quotations)
     end
 
     QuoteHistory.register(@shop.id, request_params[:cart_id], quotations: quotations.to_json)
@@ -174,9 +174,9 @@ class ApiController < ActionController::Base
     true
   end
 
-  def apply_aditional_deadline(quotations)
+  def apply_additional_deadline(quotations)
     quotations.each do |quote|
-      quote.deadline = quote.deadline.to_i + params[:aditional_deadline].to_i
+      quote.deadline = quote.deadline.to_i + params[:additional_deadline].to_i
     end
   end
 
@@ -185,8 +185,8 @@ class ApiController < ActionController::Base
       :origin_zip,
       :shipping_zip,
       :order_total_price,
-      :aditional_deadline,
-      :aditional_price,
+      :additional_deadline,
+      :additional_price,
       :cart_id,
       products: [
         :sku,

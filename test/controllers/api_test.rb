@@ -36,7 +36,7 @@ class ApiSpec < ActionDispatch::IntegrationTest
             { range: 0..55555555, price: 10.0, deadline: 2 }
           ])
 
-      params = JSON.parse('{"origin_zip":"12946636","shipping_zip":"44444444","order_total_price":10.0,"aditional_deadline":null,"aditional_price":null,"products":[{"sku":"CSMT-1","price":10.0,"height":2,"length":16,"width":11,"weight":10}]}')
+      params = JSON.parse('{"origin_zip":"12946636","shipping_zip":"44444444","order_total_price":10.0,"additional_deadline":null,"additional_price":null,"products":[{"sku":"CSMT-1","price":10.0,"height":2,"length":16,"width":11,"weight":10}]}')
       post "/quote?token=#{@shop.token}", params
 
       response.status.must_equal 200
@@ -52,7 +52,7 @@ class ApiSpec < ActionDispatch::IntegrationTest
               body: Rails.root.join("test/fixtures/99999999.json").read,
               headers: { "Content-Type" => "application/json" })
 
-          params = JSON.parse('{"origin_zip":"12946636","shipping_zip":"99999999","order_total_price":10.0,"aditional_deadline":null,"aditional_price":null,"products":[{"sku":"CSMT-1","price":10.0,"height":2,"length":16,"width":11,"weight":10, "quantity":1}]}')
+          params = JSON.parse('{"origin_zip":"12946636","shipping_zip":"99999999","order_total_price":10.0,"additional_deadline":null,"additional_price":null,"products":[{"sku":"CSMT-1","price":10.0,"height":2,"length":16,"width":11,"weight":10, "quantity":1}]}')
           post "/quote?token=#{@shop.token}", params
 
           response.status.must_equal 400
@@ -66,7 +66,7 @@ class ApiSpec < ActionDispatch::IntegrationTest
               body: Rails.root.join("test/fixtures/44444444.json").read,
               headers: { "Content-Type" => "application/json" })
 
-          params = JSON.parse('{"origin_zip":"12946636","shipping_zip":"44444444","order_total_price":10.0,"aditional_deadline":null,"aditional_price":null,"products":[{"sku":"CSMT-1","price":10.0,"height":2,"length":16,"width":11,"weight":10, "quantity":1}]}')
+          params = JSON.parse('{"origin_zip":"12946636","shipping_zip":"44444444","order_total_price":10.0,"additional_deadline":null,"additional_price":null,"products":[{"sku":"CSMT-1","price":10.0,"height":2,"length":16,"width":11,"weight":10, "quantity":1}]}')
           post "/quote?token=#{@shop.token}", params
 
           response.status.must_equal 200
@@ -85,7 +85,7 @@ class ApiSpec < ActionDispatch::IntegrationTest
               body: Rails.root.join("test/fixtures/66623123.json").read,
               headers: { "Content-Type" => "application/json" })
 
-          params = JSON.parse('{"origin_zip":"12946636","shipping_zip":"66623123","order_total_price":10.0,"aditional_deadline":null,"aditional_price":null,"products":[{"sku":"CSMT-1","price":10.0,"height":2,"length":16,"width":11,"weight":10, "quantity":1}]}')
+          params = JSON.parse('{"origin_zip":"12946636","shipping_zip":"66623123","order_total_price":10.0,"additional_deadline":null,"additional_price":null,"products":[{"sku":"CSMT-1","price":10.0,"height":2,"length":16,"width":11,"weight":10, "quantity":1}]}')
           post "/quote?token=#{@shop.token}", params
 
           response.status.must_equal 400
@@ -104,7 +104,7 @@ class ApiSpec < ActionDispatch::IntegrationTest
           @map_rules.each_with_index{|map_rule, index| map_rule.price = index + 10; map_rule.deadline = index + 1}
           @shipping_method_maps.map_rules << @map_rules
 
-          params = JSON.parse('{"origin_zip":"12946636","shipping_zip":"88034100","order_total_price":10.0,"aditional_deadline":null,"aditional_price":null,"products":[{"sku":"CSMT-1","price":10.0,"height":2,"length":16,"width":11,"weight":10, "quantity":1}]}')
+          params = JSON.parse('{"origin_zip":"12946636","shipping_zip":"88034100","order_total_price":10.0,"additional_deadline":null,"additional_price":null,"products":[{"sku":"CSMT-1","price":10.0,"height":2,"length":16,"width":11,"weight":10, "quantity":1}]}')
           post "/quote?token=#{@shop.token}", params
 
           response.status.must_equal 200
@@ -117,7 +117,7 @@ class ApiSpec < ActionDispatch::IntegrationTest
   end
 
   describe "axado quote" do
-    body = '{"origin_zip":"90540140","shipping_zip":"58135000","order_total_price":10.0,"aditional_deadline":null,"aditional_price":null,"products":[{"sku":"CSMT-1","price":10.0,"height":2,"length":16,"width":11,"weight":0.001}]}'
+    body = '{"origin_zip":"90540140","shipping_zip":"58135000","order_total_price":10.0,"additional_deadline":null,"additional_price":null,"products":[{"sku":"CSMT-1","price":10.0,"height":2,"length":16,"width":11,"weight":0.001}]}'
 
     it "returns axado quotation" do
       @axado_shop.stubs(:quote)

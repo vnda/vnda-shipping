@@ -3,8 +3,8 @@ params = {
   "origin_zip" => "03320000",
   "shipping_zip" => "80035120",
   "order_total_price" => 186.0,
-  "aditional_deadline" => nil,
-  "aditional_price" => nil,
+  "additional_deadline" => nil,
+  "additional_price" => nil,
   "products" => [
     {
       "sku" => "1510",
@@ -30,8 +30,8 @@ params = {
     "origin_zip" => "90570070",
     "shipping_zip" => "34000000",
     "order_total_price" => 186.0,
-    "aditional_deadline" => nil,
-    "aditional_price" => nil,
+    "additional_deadline" => nil,
+    "additional_price" => nil,
     "products" => [
       {
         "sku" => "1510",
