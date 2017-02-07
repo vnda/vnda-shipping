@@ -22,15 +22,14 @@ describe ShippingMethod do
 
   describe "when validating" do
     it "set weigth_range" do
-      shipping_method.weigth_range.must_equal (-BigDecimal::INFINITY...BigDecimal::INFINITY)
+      shipping_method.weigth_range.must_equal(0..1000)
       shipping_method.min_weigth = 10
       shipping_method.max_weigth = 100
 
       shipping_method.must_be :valid?
       shipping_method.save!
 
-      shipping_method.weigth_range.must_equal (10..100)
-
+      shipping_method.weigth_range.must_equal(10..100)
     end
   end
 

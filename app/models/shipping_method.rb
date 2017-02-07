@@ -1,17 +1,20 @@
 class ShippingMethod < ActiveRecord::Base
-
   belongs_to :shop
   belongs_to :delivery_type
   has_many :zip_rules, dependent: :destroy
   has_many :map_rules, dependent: :destroy
   has_many :places, dependent: :destroy
   has_many :block_rules, dependent: :destroy
+
   accepts_nested_attributes_for :zip_rules, allow_destroy: true, reject_if: :all_blank
   accepts_nested_attributes_for :map_rules, allow_destroy: true, reject_if: :all_blank
   accepts_nested_attributes_for :block_rules, allow_destroy: true, reject_if: :all_blank
 
   validates :name, :delivery_type_id, :description, presence: true
+  validates_numericality_of :min_weigth, less_than_or_equal_to: :max_weigth
+  validates_numericality_of :max_weigth, less_than_or_equal_to: 1000, greater_than_or_equal_to: :min_weigth
 
+  before_validation :set_weight
   before_save :generate_slug, if: :description_changed?
 
   scope :for_weigth, -> weigth { where('shipping_methods.weigth_range @> ?', weigth.to_f) }
@@ -21,18 +24,13 @@ class ShippingMethod < ActiveRecord::Base
   scope :for_places, -> { where(data_origin: 'places') }
 
   attr_writer :min_weigth, :max_weigth
+
   def min_weigth
-    @min_weigth ||= weigth_range.try { |r| r.begin.infinite? ? nil : r.begin }
-  end
-  def max_weigth
-    @max_weigth ||= weigth_range.try { |r| r.end.infinite? ? nil : r.end }
+    (@min_weigth || weigth_range.begin).to_f
   end
 
-  before_validation do
-    self.weigth_range = Range.new(
-      BigDecimal(min_weigth.blank? ? '-Infinity' : min_weigth),
-      BigDecimal(max_weigth.blank? ? '+Infinity' : max_weigth)
-    )
+  def max_weigth
+    (@max_weigth || weigth_range.end).to_f
   end
 
   def self.default_scope
@@ -90,6 +88,14 @@ class ShippingMethod < ActiveRecord::Base
     Place.retrieve_from_vnda_places_for(shop).each do |place_json|
       places.create(name: place_json['name']) unless places.find_by_name(place_json['name'])
     end
+  end
+
+  protected
+
+  def set_weight
+    self.min_weigth = min_weigth.blank? ? 0.0 : min_weigth.to_f
+    self.max_weigth = max_weigth.blank? ? 1000.0 : max_weigth.to_f
+    self.weigth_range = Range.new(min_weigth, max_weigth)
   end
 end
 
