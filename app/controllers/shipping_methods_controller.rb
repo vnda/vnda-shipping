@@ -12,6 +12,7 @@ class ShippingMethodsController < ApplicationController
 
   def new
     @method = @shop.methods.new
+    @method.max_weigth ||= 1000
   end
 
   def import

@@ -11,10 +11,10 @@ class ShippingMethod < ActiveRecord::Base
   accepts_nested_attributes_for :block_rules, allow_destroy: true, reject_if: :all_blank
 
   validates :name, :delivery_type_id, :description, presence: true
-  validates_numericality_of :min_weigth, less_than_or_equal_to: :max_weigth
-  validates_numericality_of :max_weigth, less_than_or_equal_to: 1000, greater_than_or_equal_to: :min_weigth
+  validates_numericality_of :min_weigth, less_than_or_equal_to: :max_weigth, allow_blank: true
+  validates_numericality_of :max_weigth, less_than_or_equal_to: 1000, greater_than_or_equal_to: :min_weigth, allow_blank: true
 
-  before_validation :set_weight
+  before_save :set_weight
   before_save :generate_slug, if: :description_changed?
 
   scope :for_weigth, -> weigth { where('shipping_methods.weigth_range @> ?', weigth.to_f) }
@@ -93,8 +93,8 @@ class ShippingMethod < ActiveRecord::Base
   protected
 
   def set_weight
-    self.min_weigth = min_weigth.blank? ? 0.0 : min_weigth.to_f
-    self.max_weigth = max_weigth.blank? ? 1000.0 : max_weigth.to_f
+    self.min_weigth = @min_weigth.blank? ? 0.0 : @min_weigth.to_f
+    self.max_weigth = @max_weigth.blank? ? 1000.0 : @max_weigth.to_f
     self.weigth_range = Range.new(min_weigth, max_weigth)
   end
 end
