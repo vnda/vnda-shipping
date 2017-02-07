@@ -93,7 +93,7 @@ GEM
       mime-types-data (~> 3.2015)
     mime-types-data (3.2016.0521)
     mini_portile2 (2.0.0)
-    minitest (5.9.1)
+    minitest (5.10.1)
     minitest-spec-rails (5.4.0)
       minitest (~> 5.0)
       rails (>= 4.1)
