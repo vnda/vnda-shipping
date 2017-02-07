@@ -2,7 +2,7 @@ class ApiController < ActionController::Base
   before_action :set_shop, only: [:quotation_details, :quote, :delivery_date,
     :delivery_types, :delivery_periods, :local, :places, :shipping_methods]
 
-  rescue_from InvalidZip && BadParams do
+  rescue_from InvalidZip, Quotations::BadParams do
     head :bad_request
   end
 
@@ -43,11 +43,6 @@ class ApiController < ActionController::Base
           delivery: @shop.delivery_days_list(num_days, start_date, zip, period_name)
         }
       end
-# expected return
-#[
-#  {name: "Manhã", delivery: ["no", "close", "close", "close", "close", "yes", "yes"]},
-#  {name: "Tarde", delivery: ["no", "close", "close", "close", "yes", "yes", "no"]}
-#]
     end
 
     if periods.nil? or periods.empty?
