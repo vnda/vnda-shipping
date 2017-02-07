@@ -116,7 +116,7 @@ ActiveRecord::Schema.define(version: 20170201180418) do
     t.string   "slug",             limit: 255,                                                                          null: false
     t.boolean  "express",                      default: false,                                                          null: false
     t.boolean  "enabled",                      default: false,                                                          null: false
-    t.numrange "weigth_range",                 default: BigDecimal(-::Float::INFINITY)...BigDecimal(::Float::INFINITY), null: false
+    t.numrange "weigth_range",                 default: BigDecimal(0.0)..BigDecimal(1000.0),                            null: false
     t.integer  "delivery_type_id"
     t.string   "data_origin",      limit: 255, default: "local",                                                        null: false
     t.string   "service",          limit: 255
