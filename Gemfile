@@ -7,7 +7,7 @@ gem 'pg'
 gem 'excon'
 gem 'savon'
 gem 'dotenv-rails'
-gem 'rollbar', '~> 1.0.0'
+gem 'rollbar', '2.14.0'
 gem 'puma', '3.5.2'
 gem 'httparty', '0.13.5'
 gem 'kaminari'
@@ -39,7 +39,7 @@ group :development, :test do
 end
 
 group :development, :staging, :production do
-  gem "newrelic_rpm"
+  gem 'newrelic_rpm', '3.18.0.329'
 end
 
 group :production do
