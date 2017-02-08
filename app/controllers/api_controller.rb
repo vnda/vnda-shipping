@@ -2,7 +2,7 @@ class ApiController < ActionController::Base
   before_action :set_shop, only: [:quotation_details, :quote, :delivery_date,
     :delivery_types, :delivery_periods, :local, :places, :shipping_methods]
 
-  rescue_from InvalidZip, BadParams do
+  rescue_from InvalidZip, Quotations::BadParams do
     head :bad_request
   end
 
@@ -53,39 +53,15 @@ class ApiController < ActionController::Base
   end
 
   def quote
-    quotations = @shop.quote(request_params)
+    quotations = PackageQuotations.new(@shop, request_params).to_a
 
-    if @shop.forward_to_correios? && @shop.enabled_correios_service.any?
-      if quotations.empty? || !correios_completed?(@shop, quotations)
-        quotations += Correios.new(@shop).quote(request_params)
-      end
-    end
-
-    if @shop.forward_to_intelipost?
-      quotations += Intelipost.quote(@shop.intelipost_token, request_params, @shop)
-    end
-
-    unless quotations.empty?
-      quotations = group_lower_prices(quotations)
-    end
-
-    if params[:additional_deadline].present?
-      quotations = apply_additional_deadline(quotations)
-    end
-
-    QuoteHistory.register(@shop.id, request_params[:cart_id], quotations: quotations.to_json)
-
-    if quotations.empty?
+    if quotations.blank?
       logger.warn("No methods available; shop: #{@shop.name} parameters: #{params}")
+
       message = "Não existem opções de entrega para este endereço."
       @shop.add_shipping_error(message)
       render json: { error: @shop.friendly_message_for(message) }, status: 400
     else
-      # order shipping by price
-      if @shop.order_by_price
-        quotations = quotations.sort_by { |quote| quote['price'] }
-      end
-
       render json: quotations, status: 200
     end
   end
@@ -101,18 +77,6 @@ class ApiController < ActionController::Base
 
   def shipping_methods
     render json: @shop.methods
-  end
-
-  def group_lower_prices(quotations)
-    quotations_group = quotations.group_by { |quote| quote[:delivery_type_slug] }
-    lower = []
-
-    quotations_group.each do |delivery_type|
-      delivery_types = quotations_group[delivery_type[0]]
-      lower << delivery_types.sort_by{|v| v.price}.first
-    end
-
-    return lower || []
   end
 
   def create_intelipost
@@ -160,21 +124,6 @@ class ApiController < ActionController::Base
     head :unauthorized
   end
 
-  def correios_completed?(shop, quotations)
-    correios_delivery_types = @shop.methods.where(enabled: true, data_origin: "correios").map{|m| m.delivery_type.name }.uniq
-    if correios_delivery_types.any?
-      delivery_types_quoted = quotations.map{|q| q.delivery_type}
-      return (correios_delivery_types - delivery_types_quoted).empty?
-    end
-    true
-  end
-
-  def apply_additional_deadline(quotations)
-    quotations.each do |quote|
-      quote.deadline = quote.deadline.to_i + params[:additional_deadline].to_i
-    end
-  end
-
   def request_params
     params.permit(
       :origin_zip,
@@ -190,7 +139,8 @@ class ApiController < ActionController::Base
         :length,
         :width,
         :weight,
-        :quantity
+        :quantity,
+        tags: []
       ]
     )
   end

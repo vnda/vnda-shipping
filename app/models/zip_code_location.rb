@@ -15,7 +15,7 @@ class ZipCodeLocation < ActiveRecord::Base
   end
 
   def self.try_to_create_new_location(zip_code)
-    response = RestClient.get(GMAPS_GEOCODING_API_URL, { params: { address: zip_code, region: 'br', key: GMAPS_GEOCODING_API_KEY } })
+    response = RestClient.get(GMAPS_GEOCODING_API_URL, { params: { components: "postal_code:#{zip_code}", region: 'br', key: GMAPS_GEOCODING_API_KEY } })
     response = JSON.parse(response).with_indifferent_access
 
     if response[:status].eql?('ZERO_RESULTS')

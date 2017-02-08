@@ -7,7 +7,6 @@ gem 'pg'
 gem 'excon'
 gem 'savon'
 gem 'dotenv-rails'
-gem 'rails_12factor', group: :production
 gem 'rollbar', '~> 1.0.0'
 gem 'puma', '3.5.2'
 gem 'httparty', '0.13.5'
@@ -16,10 +15,11 @@ gem 'rest-client'
 gem 'activerecord-postgis-adapter'
 gem 'nokogiri', '1.6.7.2'
 gem 'sidekiq'
-gem 'sinatra', require: false
-
+gem 'jb', '0.4.1'
 gem 'will_paginate', '~> 3.1.0'
 gem 'will_paginate-bootstrap'
+
+gem 'sinatra', require: false
 
 group :development do
   gem "byebug"
@@ -29,7 +29,6 @@ end
 
 group :test do
   gem 'minitest-spec-rails'
-  gem 'mocha'
   gem 'webmock', '2.3.2'
 
   gem 'simplecov', require: false
@@ -41,4 +40,8 @@ end
 
 group :development, :staging, :production do
   gem "newrelic_rpm"
+end
+
+group :production do
+  gem 'rails_12factor'
 end

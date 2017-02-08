@@ -5,7 +5,7 @@ Rails.application.routes.draw do
   get :status, to: 'application#status'
 
   root to: 'shops#index'
-  resources :shops, only: [:index, :new, :create, :edit, :update, :destroy] do
+  resources :shops do
     patch :set_shipping_order, on: :member
     resources :shipping_friendly_errors, only: [:index, :new, :create, :edit, :update, :destroy] do
       get :affected, on: :member

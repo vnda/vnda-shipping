@@ -1,144 +1,9 @@
 require 'test_helper'
-require 'pry'
 
 class ApiSpec < ActionDispatch::IntegrationTest
-
   setup do
     @shop = shops(:one)
-    @axado_shop = shops(:axado)
-    @correios_shop = shops(:correios)
-    @shipping_method = shipping_methods(:one)
-    @zip_rule = @shipping_method.zip_rules.create!([
-         { range: 0..55555555, price: 15.0, deadline: 2 }
-       ])
-    @period = periods(:one)
-    ZipRule.first.periods << @period
   end
-
-
-  describe "api quote" do
-
-    it "returns nothing when params is not ok" do
-      params = JSON.parse('{"origin_zip":"12946636"}')
-      post "/quote?token=#{@shop.token}", params
-
-      response.status.must_equal 400
-    end
-
-    it "get the lowers prices" do
-      stub_request(:get, "https://maps.googleapis.com/maps/api/geocode/json?address=44444444&key&region=br").
-        to_return(status: 200,
-          body: Rails.root.join("test/fixtures/44444444.json").read,
-          headers: { "Content-Type" => "application/json" })
-
-      shipping_method_two = shipping_methods(:two)
-      zip_rule = shipping_method_two.zip_rules.create!([
-            { range: 0..55555555, price: 10.0, deadline: 2 }
-          ])
-
-      params = JSON.parse('{"origin_zip":"12946636","shipping_zip":"44444444","order_total_price":10.0,"additional_deadline":null,"additional_price":null,"products":[{"sku":"CSMT-1","price":10.0,"height":2,"length":16,"width":11,"weight":10}]}')
-      post "/quote?token=#{@shop.token}", params
-
-      response.status.must_equal 200
-      response.body.must_equal '[{"cotation_id":"","name":"Metodo 2","price":10.0,"deadline":2,"slug":"metodo-2","delivery_type":"Tipo de envio 1","delivery_type_slug":"tipo-de-envio-1","deliver_company":"","notice":""}]'
-    end
-
-    describe "when shipping method has data_origin=local" do
-
-      describe "and there are no regions for the zip code" do
-        it "returns nothing" do
-          stub_request(:get, "https://maps.googleapis.com/maps/api/geocode/json?address=99999999&key&region=br").
-            to_return(status: 200,
-              body: Rails.root.join("test/fixtures/99999999.json").read,
-              headers: { "Content-Type" => "application/json" })
-
-          params = JSON.parse('{"origin_zip":"12946636","shipping_zip":"99999999","order_total_price":10.0,"additional_deadline":null,"additional_price":null,"products":[{"sku":"CSMT-1","price":10.0,"height":2,"length":16,"width":11,"weight":10, "quantity":1}]}')
-          post "/quote?token=#{@shop.token}", params
-
-          response.status.must_equal 400
-        end
-      end
-
-      describe "and there are regions for the zip code" do
-        it "returns available methods" do
-          stub_request(:get, "https://maps.googleapis.com/maps/api/geocode/json?address=44444444&key&region=br").
-            to_return(status: 200,
-              body: Rails.root.join("test/fixtures/44444444.json").read,
-              headers: { "Content-Type" => "application/json" })
-
-          params = JSON.parse('{"origin_zip":"12946636","shipping_zip":"44444444","order_total_price":10.0,"additional_deadline":null,"additional_price":null,"products":[{"sku":"CSMT-1","price":10.0,"height":2,"length":16,"width":11,"weight":10, "quantity":1}]}')
-          post "/quote?token=#{@shop.token}", params
-
-          response.status.must_equal 200
-          response.body.must_equal '[{"cotation_id":"","name":"Metodo 1","price":15.0,"deadline":2,"slug":"metodo-1","delivery_type":"Tipo de envio 1","delivery_type_slug":"tipo-de-envio-1","deliver_company":"","notice":""}]'
-        end
-      end
-
-    end
-
-    describe "when shipping method has data_origin=google_maps" do
-
-      describe "and there are no regions for the zip code" do
-        it "returns nothing" do
-          stub_request(:get, "https://maps.googleapis.com/maps/api/geocode/json?address=66623123&key&region=br").
-            to_return(status: 200,
-              body: Rails.root.join("test/fixtures/66623123.json").read,
-              headers: { "Content-Type" => "application/json" })
-
-          params = JSON.parse('{"origin_zip":"12946636","shipping_zip":"66623123","order_total_price":10.0,"additional_deadline":null,"additional_price":null,"products":[{"sku":"CSMT-1","price":10.0,"height":2,"length":16,"width":11,"weight":10, "quantity":1}]}')
-          post "/quote?token=#{@shop.token}", params
-
-          response.status.must_equal 400
-        end
-      end
-
-      describe "and there are regions for the zip code" do
-        it "returns available methods" do
-          stub_request(:get, "https://maps.googleapis.com/maps/api/geocode/json?address=88034100&key&region=br").
-            to_return(status: 200,
-              body: Rails.root.join("test/fixtures/88034100.json").read,
-              headers: { "Content-Type" => "application/json" })
-
-          @shipping_method_maps = shipping_methods(:maps)
-          @map_rules = @shipping_method_maps.build_or_update_map_rules_from(Nokogiri::XML(File.open('test/fixtures/regions.kml').read))
-          @map_rules.each_with_index{|map_rule, index| map_rule.price = index + 10; map_rule.deadline = index + 1}
-          @shipping_method_maps.map_rules << @map_rules
-
-          params = JSON.parse('{"origin_zip":"12946636","shipping_zip":"88034100","order_total_price":10.0,"additional_deadline":null,"additional_price":null,"products":[{"sku":"CSMT-1","price":10.0,"height":2,"length":16,"width":11,"weight":10, "quantity":1}]}')
-          post "/quote?token=#{@shop.token}", params
-
-          response.status.must_equal 200
-          response.body.must_equal '[{"cotation_id":"","name":"Metodo Maps","price":10.0,"deadline":1,"slug":"metodo-maps","delivery_type":"Tipo de envio 1","delivery_type_slug":"tipo-de-envio-1","deliver_company":"","notice":""}]'
-        end
-      end
-
-    end
-
-  end
-
-  describe "axado quote" do
-    body = '{"origin_zip":"90540140","shipping_zip":"58135000","order_total_price":10.0,"additional_deadline":null,"additional_price":null,"products":[{"sku":"CSMT-1","price":10.0,"height":2,"length":16,"width":11,"weight":0.001}]}'
-
-    it "returns axado quotation" do
-      @axado_shop.stubs(:quote)
-        .with(body: body)
-        .returns('[{"name":"Sedex","price":15.0,"deadline":3,"express":true,"slug":"sedex"}]')
-
-      @axado_shop.quote(body: body).must_equal '[{"name":"Sedex","price":15.0,"deadline":3,"express":true,"slug":"sedex"}]'
-    end
-  end
-
-  describe "correios quote" do
-
-    it "returns correios quotation" do
-      @correios_shop.stubs(:quote)
-        .with(body: body)
-        .returns('[{"name":"Pac","price":15.0,"deadline":6,"express":false,"slug":"pac"}]')
-
-      @correios_shop.quote(body: body).must_equal '[{"name":"Pac","price":15.0,"deadline":6,"express":false,"slug":"pac"}]'
-    end
-  end
-
 
   describe "delivery_dates" do
     it "find shop by host if token is missing" do
@@ -148,7 +13,11 @@ class ApiSpec < ActionDispatch::IntegrationTest
     end
 
     it "returns available zip periods " do
-      stub_request(:get, "https://maps.googleapis.com/maps/api/geocode/json?address=12946636&key&region=br").
+      shipping_method = shipping_methods(:one)
+      zip_rule = shipping_method.zip_rules.create!(range: 0..55555555, price: 15.0, deadline: 2)
+      zip_rule.periods << periods(:one)
+
+      stub_request(:get, "https://maps.googleapis.com/maps/api/geocode/json?components=postal_code:12946636&key&region=br").
         to_return(status: 200,
           body: Rails.root.join("test/fixtures/12946636.json").read,
           headers: { "Content-Type" => "application/json" })
@@ -177,7 +46,5 @@ class ApiSpec < ActionDispatch::IntegrationTest
       response.status.must_equal 200
       response.body.must_equal "[\"Tipo de envio 1\",\"Normal\"]"
     end
-
   end
-
 end

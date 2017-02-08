@@ -1,0 +1,14 @@
+json = {
+  id: @shop.id,
+  name: @shop.name
+}
+
+json[:shops] = @shop.shops.map do |shop|
+  {
+    name: shop.name,
+    token: shop.token,
+    marketplace_tag: shop.marketplace_tag
+  }
+end
+
+json

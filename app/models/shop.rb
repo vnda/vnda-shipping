@@ -1,4 +1,6 @@
 class Shop < ActiveRecord::Base
+  belongs_to :marketplace, class_name: "Shop"
+  has_many :shops, foreign_key: "marketplace_id"
   has_many :methods, class_name: 'ShippingMethod', dependent: :destroy
   has_many :zip_rules, through: :methods
   has_many :map_rules, through: :methods
@@ -18,61 +20,15 @@ class Shop < ActiveRecord::Base
   validates :correios_code, :correios_password, presence: true, if: :forward_to_correios?
 
   def friendly_message_for(message)
-    self.shipping_friendly_errors.order(:created_at).each do |friendly_message|
+    shipping_friendly_errors.order(:created_at).each do |friendly_message|
       return friendly_message.message if message.include?(friendly_message.rule)
     end
     message
   end
 
   def add_shipping_error(message)
-    unless self.shipping_errors.where(message: message).size > 0
-      self.shipping_errors << ShippingError.new(message: message)
-    end
-  end
-
-  def quote(params, backup = false)
-    raise BadParams unless params[:shipping_zip] && params[:products]
-
-    available_methods = if backup
-      methods.where(id: backup_method_id)
-    else
-      methods.joins(:delivery_type).
-        where(enabled: true, delivery_types: { enabled: true })
-    end
-
-    quotations = []
-
-    formatted_zip = params[:shipping_zip].gsub(/\D+/, '').to_i
-    if available_methods.where(data_origin: "local").any?
-      quotations << available_methods.for_locals_origin(formatted_zip)
-    end
-
-    if available_methods.where(data_origin: "google_maps").any?
-      quotations << available_methods.for_gmaps_origin(params[:shipping_zip])
-    end
-
-    weight = greater_weight(params[:products])
-    quotations = quotations.flat_map do |data_origin_methods|
-      shipping_methods = data_origin_methods.
-        for_weigth(weight).
-        pluck(:name, :price, :deadline, :slug, :delivery_type_id, :notice)
-
-      quotation_for(shipping_methods)
-    end
-
-    quotations | quotations_for_places(available_methods, formatted_zip)
-  end
-
-  def quotations_for_places(available_methods, zip)
-    available_methods.for_places_origin(zip).pluck(:id, :name, :deadline, :slug, :delivery_type_id, :notice).collect do |id, n, d, s, dt, notice|
-      PlaceQuotation.new(
-        name: n,
-        shipping_method_id: id,
-        deadline: d,
-        slug: s,
-        delivery_type: set_delivery_type(dt),
-        notice: notice || ''
-      )
+    unless shipping_errors.where(message: message).size > 0
+      shipping_errors << ShippingError.new(message: message)
     end
   end
 
@@ -86,25 +42,6 @@ class Shop < ActiveRecord::Base
     fallback_shop = Shop.where(name: "fallback").first
     return [] unless fallback_shop
     fallback_shop.quote(request)
-  end
-
-  def quotation_for(shipping_methods)
-    shipping_methods.map do |n, p, d, s, dt, notice|
-      Quotation.new(
-        name: n,
-        price: p.to_f,
-        deadline: d,
-        slug: s,
-        delivery_type: set_delivery_type(dt),
-        deliver_company: "",
-        cotation_id: "",
-        notice: notice || ''
-      )
-    end
-  end
-
-  def set_delivery_type(id)
-    self.delivery_types.find(id).name || ''
   end
 
   def available_periods(zip, date = nil)
@@ -199,12 +136,6 @@ class Shop < ActiveRecord::Base
   end
 
   protected
-
-  def greater_weight(products)
-    cubic_capacity = volume_for(products) / 6000
-    total_weight = products.sum { |i| i[:weight].to_f * i[:quantity].to_i }
-    cubic_capacity > total_weight ? cubic_capacity : total_weight
-  end
 
   def create_delivery_types
     delivery_types.where(name: "Normal").first_or_create(enabled: true)
