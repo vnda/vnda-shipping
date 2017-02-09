@@ -23,30 +23,16 @@ class ShopsController < ApplicationController
     end
   end
 
-  def show
-    @shop = Shop.includes(:shops).find_by!(token: params[:id])
-  end
-
   def edit
     @shop = Shop.find(params[:id])
   end
 
   def update
-    @shop =
-      if params[:id] !~ /\D/
-        Shop.find(params[:id])
-      else
-        Shop.find_by!(token: params[:id])
-      end
-
-    respond_to do |format|
-      if @shop.update(shop_params)
-        format.html { success_redirect shops_path }
-        format.json { head :ok }
-      else
-        format.html { render :edit }
-        format.json { render json: @shop.errors, status: 422 }
-      end
+    @shop = Shop.find(params[:id])
+    if @shop.update(shop_params)
+      success_redirect shops_path
+    else
+      render :edit
     end
   end
 
@@ -69,7 +55,7 @@ class ShopsController < ApplicationController
       permit(:name, :intelipost_token, :forward_to_intelipost, :axado_token,
         :forward_to_axado, :order_prefix, :declare_value, :forward_to_correios,
         :correios_code, :correios_password, :normal_shipping_name,
-        :express_shipping_name, :backup_method_id, :marketplace_id, :marketplace_tag).
+        :express_shipping_name, :backup_method_id, :marketplace_id).
       merge(correios_custom_services: (params[:shop][:correios_custom_services] || []).map { |i| JSON.parse(i) }.to_json)
   end
 end

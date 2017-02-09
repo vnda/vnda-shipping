@@ -45,4 +45,7 @@ Rails.application.routes.draw do
 
   post '/intelipost/:shop_token/create', to: 'api#create_intelipost'
   post '/intelipost/:shop_token/shipped', to: 'api#shipped'
+
+  get "/shops/:token/sellers", to: "api#sellers", defaults: { format: :json }
+  patch "/shops/:token/sellers", to: "api#update_seller", defaults: { format: :json }
 end

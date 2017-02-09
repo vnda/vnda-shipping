@@ -1,6 +1,7 @@
 class ApiController < ActionController::Base
   before_action :set_shop, only: [:quotation_details, :quote, :delivery_date,
-    :delivery_types, :delivery_periods, :local, :places, :shipping_methods]
+    :delivery_types, :delivery_periods, :local, :places, :shipping_methods,
+    :sellers, :update_seller]
 
   rescue_from InvalidZip, Quotations::BadParams do
     head :bad_request
@@ -106,6 +107,18 @@ class ApiController < ActionController::Base
       render "quote_histories/show", :layout => false
     else
       render "quote_histories/not_found", :layout => false
+    end
+  end
+
+  def sellers
+    @sellers = @shop.shops.order(:name)
+  end
+
+  def update_seller
+    if @shop.update(params.permit(:marketplace_tag))
+      head :ok
+    else
+      render json: @shop.errors, status: 422
     end
   end
 
