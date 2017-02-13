@@ -1,3 +1,7 @@
+class ShippingMethodForMigration < ActiveRecord::Base
+  self.table_name = "shipping_methods"
+end
+
 class AddSlugAndExpressToShippingMethods < ActiveRecord::Migration
   def change
     change_table :shipping_methods do |t|
@@ -6,12 +10,9 @@ class AddSlugAndExpressToShippingMethods < ActiveRecord::Migration
       t.index :slug, unique: true
     end
 
-    unless reverting?
-      ShippingMethod.all.each do |m|
-        m.generate_slug
-        m.save
-      end
-    end
+    ShippingMethodForMigration.find_each do |m|
+      m.update(slug: m.name.try(:parameterize))
+    end unless reverting?
 
     change_column_null(:shipping_methods, :slug, false)
   end

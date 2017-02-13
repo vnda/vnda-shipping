@@ -1,0 +1,7 @@
+@sellers.map do |shop|
+  {
+    name: shop.name,
+    token: shop.token,
+    marketplace_tag: shop.marketplace_tag
+  }
+end

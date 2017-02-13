@@ -1,27 +1,14 @@
-module Intelipost
-  extend self
-  class InvalidZip < StandardError; end
+class Intelipost
+  InvalidZip = Class.new(StandardError)
 
-  def quote(api_token, request, shop = nil)
-    begin
-      req = build_request(request, shop)
-      puts req
-      response = Excon.post(
-        'https://api.intelipost.com.br/api/v1/quote_by_product',
-        headers: { 'Content-Type' => 'application/json',
-        'Accept' => 'application/json',
-        'api_key' => api_token },
-        body: req.to_json
-      )
-    rescue Excon::Errors::BadRequest
-      puts "Intelipost request: #{build_request(request, shop).to_json}"
-      puts "Intelipost response #{response[:body]}"
+  URL = 'https://api.intelipost.com.br/api/v1/quote_by_product'.freeze
 
-      json = JSON.parse(response[:body])
+  def initialize(shop)
+    @shop = shop
+  end
 
-      @shop.add_shipping_error(json['messages']['text'])
-      raise ShippingProblem, json['messages']['text']
-    end
+  def quote(params)
+    response = request(params)
 
     if response.status == 503
       return @shop.fallback_quote(request)
@@ -32,7 +19,7 @@ module Intelipost
     rescue Zlib::GzipFile::Error
       data = JSON.parse(response[:body])
     end
-    puts "Intelipost response data #{data}"
+    Rails.logger.info("Intelipost response data #{data}")
 
     cotation_id = data['content']['id']
     deliveries = data['content']['delivery_options'].map do |o|
@@ -48,18 +35,6 @@ module Intelipost
     end
     deliveries.compact!
     deliveries
-
-  #rescue Excon::Errors::BadRequest, Zlib::GzipFile::Error
-  #  if response[:body].include?('quote.destinationZipCode.invalid')
-  #    raise InvalidZip
-  #  elsif response[:body].include?('quote.no.delivery.options')
-  #    []
-  #  else
-  #    puts "Intelipost request: #{build_request(request).to_json}"
-  #    puts "Intelipost response #{response[:body]}"
-  #    raise e
-  #  end
-  #end
   end
 
   private
@@ -87,29 +62,48 @@ module Intelipost
     !!(metaname =~ /EXPRESS/)
   end
 
-  def build_request(r, shop)
-    request = {
-      origin_zip_code:      r[:origin_zip][0..4] + '-' + r[:origin_zip][5..7],
-      destination_zip_code: r[:shipping_zip][0..4] + '-' + r[:shipping_zip][5..7],
+  def normalize_params(params)
+    normalized_params = {
+      origin_zip_code: params[:origin_zip].insert(5, "-"),
+      destination_zip_code: params[:shipping_zip].insert(5, "-"),
       additional_information: {},
-      products: r[:products].map do |i|
+      products: params[:products].map do |product|
         {
-          sku:            i[:sku],
-          cost_of_goods:  i[:price],
-          height:         i[:height],
-          length:         i[:length],
-          width:          i[:width],
-          weight:         i[:weight],
-          description:    '',
-          quantity:       i[:quantity]
+          sku: product[:sku],
+          cost_of_goods: product[:price],
+          height: product[:height],
+          length: product[:length],
+          width: product[:width],
+          weight: product[:weight],
+          description: "",
+          quantity: product[:quantity]
         }
       end
     }
 
-    request[:additional_information] = {
-      sales_channel: shop.name
-    } if shop
+    if @shop
+      normalized_params[:additional_information] = { sales_channel: @shop.name }
+    end
 
-    request
+    normalized_params
+  end
+
+  def request(params)
+    response = Excon.post(URL,
+      headers: {
+        "Content-Type" => "application/json",
+        "Accept" => "application/json",
+        "Api-Key" => @shop.intelipost_token
+      },
+      body: normalize_params(params).to_json
+    )
+  rescue Excon::Errors::BadRequest => ex
+    Rails.logger.info("Intelipost request: #{params.to_json}")
+    Rails.logger.info("Intelipost response #{ex.response[:body]}")
+
+    json = JSON.parse(ex.response[:body])
+
+    @shop.add_shipping_error(json['messages']['text'])
+    raise ShippingProblem, json['messages']['text']
   end
 end

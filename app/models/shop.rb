@@ -1,24 +1,6 @@
-# == Schema Information
-#
-# Table name: shops
-#
-#  id                    :integer          not null, primary key
-#  name                  :string(255)      not null
-#  token                 :string(32)       not null
-#  axado_token           :string(32)
-#  forward_to_axado      :boolean          default(FALSE), not null
-#  correios_code         :string(255)
-#  correios_password     :string(255)
-#  forward_to_correios   :boolean          default(FALSE), not null
-#  correios_services     :integer          default([]), not null
-#  normal_shipping_name  :string(255)
-#  express_shipping_name :string(255)
-#  backup_method_id      :integer
-#  intelipost_token      :string(255)
-#  forward_to_intelipost :boolean          default(FALSE), not null
-#
-
 class Shop < ActiveRecord::Base
+  belongs_to :marketplace, class_name: "Shop"
+  has_many :shops, foreign_key: "marketplace_id"
   has_many :methods, class_name: 'ShippingMethod', dependent: :destroy
   has_many :zip_rules, through: :methods
   has_many :map_rules, through: :methods
@@ -30,54 +12,23 @@ class Shop < ActiveRecord::Base
   has_many :zipcode_spreadsheets
 
   before_create { self.token = SecureRandom.hex }
-  after_create :create_delivery_types, :create_correios_methods
+  after_create :create_delivery_types
+  after_create :create_correios_methods, if: :forward_to_correios?
 
   validates :name, presence: true, uniqueness: true
-  validates  :axado_token, presence: true, if: 'forward_to_axado.present?'
-  validates  :correios_code, :correios_password, presence: true, if: 'forward_to_correios.present?'
+  validates :axado_token, presence: true, if: :forward_to_axado?
+  validates :correios_code, :correios_password, presence: true, if: :forward_to_correios?
 
   def friendly_message_for(message)
-    self.shipping_friendly_errors.order(:created_at).each do |friendly_message|
+    shipping_friendly_errors.order(:created_at).each do |friendly_message|
       return friendly_message.message if message.include?(friendly_message.rule)
     end
     message
   end
 
   def add_shipping_error(message)
-    unless self.shipping_errors.where(message: message).size > 0
-      self.shipping_errors << ShippingError.new(message: message)
-    end
-  end
-
-  def quote(params, backup=false)
-    raise BadParams unless params[:shipping_zip] && params[:products]
-
-    zip = params[:shipping_zip]
-    formatted_zip = zip.gsub(/\D+/, '').to_i
-
-    weight = greater_weight(params[:products])
-
-    available_methods = backup ? methods.where(id: backup_method_id) : methods.where(enabled: true).joins(:delivery_type).where(delivery_types: { enabled: true })
-
-    quotations = []
-    quotations << available_methods.for_locals_origin(formatted_zip) if available_methods.where(data_origin: "local").any?
-    quotations << available_methods.for_gmaps_origin(zip) if available_methods.where(data_origin: "google_maps").any?
-
-    quotations.collect do |data_origin_methods|
-      quotation_for(data_origin_methods.for_weigth(weight).pluck(:name, :price, :deadline, :slug, :delivery_type_id, :notice))
-    end.flatten | quotations_for_places(available_methods, formatted_zip)
-  end
-
-  def quotations_for_places(available_methods, zip)
-    available_methods.for_places_origin(zip).pluck(:id, :name, :deadline, :slug, :delivery_type_id, :notice).collect do |id, n, d, s, dt, notice|
-      PlaceQuotation.new(
-        name: n, 
-        shipping_method_id: id, 
-        deadline: d, 
-        slug: s, 
-        delivery_type: set_delivery_type(dt), 
-        notice: notice || ''
-      )
+    unless shipping_errors.where(message: message).size > 0
+      shipping_errors << ShippingError.new(message: message)
     end
   end
 
@@ -91,56 +42,6 @@ class Shop < ActiveRecord::Base
     fallback_shop = Shop.where(name: "fallback").first
     return [] unless fallback_shop
     fallback_shop.quote(request)
-  end
-
-  def quotation_for(shipping_methods)
-    shipping_methods.map do |n, p, d, s, dt, notice|
-      Quotation.new(
-        name: n, 
-        price: p.to_f, 
-        deadline: d, 
-        slug: s, 
-        delivery_type: set_delivery_type(dt), 
-        deliver_company: "", 
-        cotation_id: "",
-        notice: notice || ''
-      )
-    end
-  end
-
-  def set_delivery_type(id)
-    self.delivery_types.find(id).name || ''
-  end
-
-  def create_delivery_types
-    self.delivery_types.where(name: "Normal").first_or_create(enabled: true)
-    self.delivery_types.where(name: "Expressa").first_or_create(enabled: true)
-  end
-
-  def create_correios_methods
-    if forward_to_correios
-      self.methods.create(
-        name: "Normal",
-        enabled: true,
-        description: "PAC",
-        min_weigth: 0,
-        max_weigth: 30,
-        delivery_type_id: self.delivery_types.where(name: "Normal").first.id,
-        data_origin: "correios",
-        service: "41106"
-      )
-
-      self.methods.create(
-        name: "Expressa",
-        enabled: true,
-        description: "SEDEX",
-        min_weigth: 0,
-        max_weigth: 30,
-        delivery_type_id: self.delivery_types.where(name: "Expressa").first.id,
-        data_origin: "correios",
-        service: "40010"
-      )
-    end
   end
 
   def available_periods(zip, date = nil)
@@ -182,16 +83,9 @@ class Shop < ActiveRecord::Base
   end
 
   def volume_for(items)
-    volumes = items.map{ |i| i.values_at(:width, :height, :length, :quantity)}
-    volumes.map{|i| i.collect(&:to_f).reduce(:*)}.reduce(:+)
+    items.map { |item| item.values_at(:width, :height, :length, :quantity).
+      map(&:to_f).reduce(:*) }.sum
   end
-
-  def greater_weight(products)
-    cubic_capacity = volume_for(products) / 6000
-    total_weight = products.sum { |i| i[:weight].to_f * i[:quantity].to_i }
-    return cubic_capacity > total_weight ? cubic_capacity : total_weight
-  end
-
 
   def data_origin
     {
@@ -209,7 +103,7 @@ class Shop < ActiveRecord::Base
   end
 
   def shipping_methods_correios
-    methods.where(data_origin:"correios").where(enabled: true)
+    methods.where(data_origin: "correios").where(enabled: true)
   end
 
   def enabled_correios_service
@@ -241,7 +135,36 @@ class Shop < ActiveRecord::Base
     list
   end
 
-  private
+  protected
+
+  def create_delivery_types
+    delivery_types.where(name: "Normal").first_or_create(enabled: true)
+    delivery_types.where(name: "Expressa").first_or_create(enabled: true)
+  end
+
+  def create_correios_methods
+    methods.create!(
+      name: "Normal",
+      enabled: true,
+      description: "PAC",
+      min_weigth: 0,
+      max_weigth: 30,
+      delivery_type_id: self.delivery_types.where(name: "Normal").first.id,
+      data_origin: "correios",
+      service: "41106"
+    )
+
+    methods.create!(
+      name: "Expressa",
+      enabled: true,
+      description: "SEDEX",
+      min_weigth: 0,
+      max_weigth: 30,
+      delivery_type_id: self.delivery_types.where(name: "Expressa").first.id,
+      data_origin: "correios",
+      service: "40010"
+    )
+  end
 
   def periods_for(rules_type, date, zip, period_name)
     formatted_zip = rules_type == :zip_rules ? zip.to_i : zip
@@ -255,3 +178,23 @@ class Shop < ActiveRecord::Base
     end
   end
 end
+
+# == Schema Information
+#
+# Table name: shops
+#
+#  id                    :integer          not null, primary key
+#  name                  :string(255)      not null
+#  token                 :string(32)       not null
+#  axado_token           :string(32)
+#  forward_to_axado      :boolean          default(FALSE), not null
+#  correios_code         :string(255)
+#  correios_password     :string(255)
+#  forward_to_correios   :boolean          default(FALSE), not null
+#  correios_services     :integer          default([]), not null
+#  normal_shipping_name  :string(255)
+#  express_shipping_name :string(255)
+#  backup_method_id      :integer
+#  intelipost_token      :string(255)
+#  forward_to_intelipost :boolean          default(FALSE), not null
+#

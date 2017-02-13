@@ -5,6 +5,7 @@ one:
   enabled: true
   delivery_type: :one
   slug: 'metodo-1'
+  description: "Método Um"
 
 two:
   shop: :one
@@ -13,6 +14,7 @@ two:
   enabled: true
   delivery_type: :one
   slug: 'metodo-2'
+  description: "Método Dois"
 
 maps:
   shop: :one
@@ -21,3 +23,4 @@ maps:
   enabled: true
   delivery_type: :one
   slug: 'metodo-maps'
+  description: "Método Maps"

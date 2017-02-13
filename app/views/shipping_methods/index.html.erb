@@ -1,4 +1,4 @@
-<% content_for :title, 'Formas de Entrega' %>
+<% content_for :title, @shop.name %>
 
 <% content_for :actions do %>
   <%= link_to 'Nova Forma de Entrega', new_shop_shipping_method_path(@shop), class: 'btn btn-success' %>
@@ -6,9 +6,23 @@
   <%= link_to 'Importar Correio', import2_shop_shipping_methods_path(@shop), class: 'btn btn-success' %>
 <% end %>
 
+<h4>Formas de Entrega</h4>
+
+<p>
+  Ordenar pelo menor preço no checkout?
+
+  <%= check_box_tag :enabled, 
+    1, 
+    @shop.order_by_price,
+    class: 'switch ajax-switcher',
+    data: { size: 'mini', ajax_path: set_shipping_order_shop_path(@shop) } 
+  %>  
+</p>
+
 <table class="table">
   <thead>
     <tr>
+      <th class="sortable-handler-container">::</th>
       <th style="width: 70px"></th>
       <th>Nome</th>
       <th>Descrição</th>
@@ -17,33 +31,38 @@
       <th></th>
     </tr>
   </thead>
-  <tbody>
+  <tbody id="sortable-rows">
     <% if @methods.empty? %>
       <tr><td colspan="4" class="text-center text-muted">Nenhuma Forma de Entrega cadastrada</td></tr>
     <% end %>
-    <%= content_tag_for :tr, @methods do |method| %>
-      <td>
-        <%= check_box_tag :enabled, 1, method.enabled?,
-                          class: 'switch enable-shipping-method',
-                          data: { size: 'mini', ajax_path: toggle_shop_shipping_method_path(@shop, method) } %>
-      </td>
-      <td><%= link_to method.name, edit_shop_shipping_method_path(@shop, method) %></td>
-      <td><%= method.description %></td>
-      <td><%= method.min_weigth %></td>
-      <td><%= method.max_weigth %></td>
-      <td class="text-right">
-        <%= link_to duplicate_shop_shipping_method_path(@shop, method) do %>
-          <span class="glyphicon glyphicon-retweet"></span>
-        <% end %>
-        <%= link_to_destroy shop_shipping_method_path(@shop, method) %>
-      </td>
+    <% @methods.each do |method| %>
+      <tr data-id="<%= method.id %>">
+        <td class="sortable-handler-container">
+          <span class="sortable-handler">::</span>
+        </td>
+        <td>
+          <%= check_box_tag :enabled, 1, method.enabled?,
+                            class: 'switch ajax-switcher enable-shipping-method',
+                            data: { size: 'mini', ajax_path: toggle_shop_shipping_method_path(@shop, method) } %>
+        </td>
+        <td><%= link_to method.name, edit_shop_shipping_method_path(@shop, method) %></td>
+        <td><%= method.description %></td>
+        <td><%= method.min_weigth %></td>
+        <td><%= method.max_weigth %></td>
+        <td class="text-right">
+          <%= link_to duplicate_shop_shipping_method_path(@shop, method) do %>
+            <span class="glyphicon glyphicon-retweet"></span>
+          <% end %>
+          <%= link_to_destroy shop_shipping_method_path(@shop, method) %>
+        </td>
+      </tr>
     <% end %>
   </tbody>
 </table>
 
 <script>
   $(function () {
-    $('.enable-shipping-method').on('switchChange.bootstrapSwitch', function () {
+    $('.ajax-switcher').on('switchChange.bootstrapSwitch', function () {
       var $check = $(this);
       var url = $(this).data('ajaxPath');
       $check.bootstrapSwitch('toggleReadonly', true);
@@ -55,11 +74,21 @@
           $check.bootstrapSwitch('toggleReadonly', false);
         },
         error: function () {
-          alert('Erro ao atualizar forma de entrega.');
+          alert('Erro ao atualizar. Tente novamente mais tarde ou contate o administrador');
           $check.bootstrapSwitch('toggleReadonly', false);
           $check.bootstrapSwitch('toggleState', !$check.prop('checked'), true);
         }
       });
+    });
+
+    var sortable = Sortable.create($('#sortable-rows')[0], {
+      handle: '.sortable-handler',
+      draggable: 'tr',
+      onUpdate: function (evt) {
+        $.post("<%= norder_shop_shipping_methods_url(@shop) %>", { norder: this.toArray() }, function(response) {
+          console.log(response);
+        })
+      }
     });
   });
 </script>

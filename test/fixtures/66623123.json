@@ -1,0 +1,59 @@
+{
+   "results" : [
+      {
+         "address_components" : [
+            {
+               "long_name" : "66623",
+               "short_name" : "66623",
+               "types" : [ "postal_code", "postal_code_prefix" ]
+            },
+            {
+               "long_name" : "Ananindeua",
+               "short_name" : "Ananindeua",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "State of Pará",
+               "short_name" : "PA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "Brazil",
+               "short_name" : "BR",
+               "types" : [ "country", "political" ]
+            }
+         ],
+         "formatted_address" : "Ananindeua - State of Pará, Brazil",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : -1.3869216,
+                  "lng" : -48.4301293
+               },
+               "southwest" : {
+                  "lat" : -1.408111,
+                  "lng" : -48.4431124
+               }
+            },
+            "location" : {
+               "lat" : -1.3982046,
+               "lng" : -48.4362607
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : -1.3869216,
+                  "lng" : -48.4301293
+               },
+               "southwest" : {
+                  "lat" : -1.408111,
+                  "lng" : -48.4431124
+               }
+            }
+         },
+         "place_id" : "ChIJHZ9ZGf-KpJIRebVCPxjDL_8",
+         "types" : [ "postal_code", "postal_code_prefix" ]
+      }
+   ],
+   "status" : "OK"
+}

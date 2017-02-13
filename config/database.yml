@@ -5,11 +5,11 @@ default: &default
 
 development:
   <<: *default
-  database: vnda_shipping_development
+  database: dev_vnda_shipping_development
 
 test:
   <<: *default
-  database: vnda_shipping_test
+  database: dev_vnda_shipping_test
 
 production:
   encoding: utf8

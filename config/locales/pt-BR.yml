@@ -211,6 +211,7 @@ pt-BR:
       period: 'Período de Entrega'
     attributes:
       shop:
+        marketplace_id: 'Marketplace'
         name: 'Nome'
         declare_value: Declarar Valor (Correios)
         forward_to_axado: 'Encaminhar consulta ao Axado'

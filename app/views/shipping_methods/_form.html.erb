@@ -21,14 +21,14 @@
         <div class="form-group">
           <%= f.label :min_weigth %>
           <div class="input-group">
-            <%= f.text_field :min_weigth, class: 'form-control' %>
+            <%= f.number_field :min_weigth, class: 'form-control', min: 0, max: 1000, step: 0.001 %>
             <div class="input-group-addon">kg</div>
           </div>
         </div>
         <div class="form-group">
           <%= f.label :max_weigth %>
           <div class="input-group">
-            <%= f.text_field :max_weigth, class: 'form-control' %>
+            <%= f.number_field :max_weigth, class: 'form-control', min: 0, max: 1000, step: 0.001 %>
             <div class="input-group-addon">kg</div>
           </div>
         </div>
@@ -60,7 +60,7 @@
         </div>
       </div>
     </div>
-  
+
     <div class="row">
       <div class="col-md-4">
         <div class="form-group">
@@ -218,7 +218,10 @@
 
       <div class="panel-body">
         <div class="zip-messages"></div>
-        <div class="zip-container"></div>
+        <div class="zip-container">
+          <div class="alert alert-info">Carregando informações</div>
+        </div>
+        <div class="list-pagination"></div>
       </div>
     </div>
   </div>
@@ -360,6 +363,8 @@
 
   $(document).ready(function () {
     $("#show-map").bind("click", function(){
+      var map_id = $("#shipping_method_mid").val();
+      $("#mid_map").html("<iframe src='https://www.google.com/maps/d/u/0/embed?mid="+ map_id +"' width='100%' height='480'></iframe>");
       $("#myModal").modal('show');
     });
   });

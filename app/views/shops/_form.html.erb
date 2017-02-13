@@ -3,8 +3,14 @@
 
   <div class="row">
     <div class="col-md-6">
-      <%= f.label :name %>
-      <%= f.text_field :name, class: 'form-control' %>
+      <div class="form-group">
+        <%= f.label :marketplace_id %>
+        <%= f.select :marketplace_id, Shop.where(marketplace_id: 0).order(:name).map { |shop| [shop.name, shop.id] }.unshift(["", 0]), {}, { class: 'form-control' } %>
+      </div>
+      <div class="form-group">
+        <%= f.label :name %>
+        <%= f.text_field :name, class: 'form-control' %>
+      </div>
     </div>
   </div>
 
@@ -84,7 +90,7 @@
       <legend>Backup</legend>
       <div class="form-group">
         <%= f.label :backup_method_id %>
-        (No caso de API offilne)
+        (No caso de API offline)
         <%= f.select :backup_method_id, @shop.methods.map { |m| [m.name, m.id] },{include_blank: true}, class: 'form-control' %>
       </div>
     </div>

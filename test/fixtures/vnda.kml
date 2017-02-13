@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<kml xmlns='http://www.opengis.net/kml/2.2'>
+  <Document>
+    <name>Vnda</name>
+    <description><![CDATA[]]></description>
+    <Folder>
+      <name>Untitled layer</name>
+      <Placemark>
+        <name>Vnda</name>
+        <styleUrl>#poly-000000-1-77-nodesc</styleUrl>
+        <Polygon>
+          <outerBoundaryIs>
+            <LinearRing>
+              <tessellate>1</tessellate>
+              <coordinates>-51.1979413,-30.0194442,0.0 -51.1983705,-30.0210976,0.0 -51.1980754,-30.0234014,0.0 -51.1949909,-30.022138,0.0 -51.1920393,-30.021608,0.0 -51.1910355,-30.0216541,0.0 -51.1905788,-30.0219232,0.0 -51.190265,-30.0221079,0.0 -51.1899698,-30.0221985,0.0 -51.1896157,-30.021961,0.0 -51.1896801,-30.0214635,0.0 -51.1897767,-30.0207284,0.0 -51.1899054,-30.0200479,0.0 -51.1899054,-30.0192722,0.0 -51.1866009,-30.019379,0.0 -51.1870033,-30.0153426,0.0 -51.1909677,-30.0162857,0.0 -51.1966807,-30.0165922,0.0 -51.1979413,-30.0194442,0.0</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+    </Folder>
+    <Style id='poly-000000-1-77-nodesc-normal'>
+      <LineStyle>
+        <color>ff000000</color>
+        <width>1</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>4D000000</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <Style id='poly-000000-1-77-nodesc-highlight'>
+      <LineStyle>
+        <color>ff000000</color>
+        <width>2.0</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>4D000000</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+      <BalloonStyle>
+        <text><![CDATA[<h3>$[name]</h3>]]></text>
+      </BalloonStyle>
+    </Style>
+    <StyleMap id='poly-000000-1-77-nodesc'>
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#poly-000000-1-77-nodesc-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#poly-000000-1-77-nodesc-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+  </Document>
+</kml>

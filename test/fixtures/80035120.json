@@ -1,0 +1,64 @@
+{
+   "results" : [
+      {
+         "address_components" : [
+            {
+               "long_name" : "80035-120",
+               "short_name" : "80035-120",
+               "types" : [ "postal_code" ]
+            },
+            {
+               "long_name" : "Cabral",
+               "short_name" : "Cabral",
+               "types" : [ "political", "sublocality", "sublocality_level_1" ]
+            },
+            {
+               "long_name" : "Curitiba",
+               "short_name" : "Curitiba",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "State of Paraná",
+               "short_name" : "PR",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "Brazil",
+               "short_name" : "BR",
+               "types" : [ "country", "political" ]
+            }
+         ],
+         "formatted_address" : "Cabral, Curitiba - State of Paraná, 80035-120, Brazil",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : -25.4018946,
+                  "lng" : -49.215743
+               },
+               "southwest" : {
+                  "lat" : -25.5170584,
+                  "lng" : -49.3488175
+               }
+            },
+            "location" : {
+               "lat" : -25.4068905,
+               "lng" : -49.2514288
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : -25.4018946,
+                  "lng" : -49.2473994
+               },
+               "southwest" : {
+                  "lat" : -25.4117705,
+                  "lng" : -49.2549998
+               }
+            }
+         },
+         "place_id" : "ChIJD6RI9yjk3JQRnTdcPK4YXEg",
+         "types" : [ "postal_code" ]
+      }
+   ],
+   "status" : "OK"
+}

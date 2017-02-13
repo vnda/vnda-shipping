@@ -17,6 +17,8 @@
 
 /db/schema.rb
 
+/db/*.dump
+
 .env
 /public/kml
 
@@ -24,3 +26,4 @@
 
 .DS_Store
 .ruby-version
+.byebug_history

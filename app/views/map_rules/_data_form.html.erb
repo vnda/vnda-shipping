@@ -1,4 +1,4 @@
-<%= form_for [@shop, @method, map_rule], remote: true, html: {id: (map_rule.persisted? ? map_rule.id : 'new' ), class: 'map-rule-form'} do |f| %>
+<%= form_for [@shop, @method, map_rule], remote: true, html: {id: (map_rule.try(:id) || 'new' ), class: 'map-rule-form'} do |f| %>
   <div  >
     <div class="col-md-2 map-code">
       <%= f.text_field :name, class: 'form-control' %>
@@ -13,7 +13,7 @@
     <div class="col-md-2 deadline">
       <%= f.text_field :deadline, class: 'form-control' %>
     </div>
-    <% unless @shop.periods.empty?  %>
+    <% unless @shop.periods.blank?  %>
       <div class="col-md-2 period">
         <div class="multiselect">
           <%= f.select :period_ids, options_for_select(@shop.periods.collect { |p| [p.name, p.id] }, selected: f.object.periods.pluck(:id)), {:include_blank => false}, {:multiple => true} %>
@@ -25,7 +25,7 @@
       <button type="submit" class="btn btn-primary">
         <span class="glyphicon glyphicon-ok"></span>
       </button>
-      
+
       <%= f.hidden_field :_destroy %>
       <% if map_rule.persisted? %>
         <%= link_to shop_shipping_method_map_rule_path(@shop, @method, map_rule), class: 'btn btn-default',

@@ -2,7 +2,7 @@ class ShopsController < ApplicationController
   protect_from_forgery except: [:create]
 
   def index
-    @shops = Shop.order(:name)
+    @shops = Shop.includes(:marketplace).order(:name)
   end
 
   def new
@@ -18,7 +18,7 @@ class ShopsController < ApplicationController
         format.json { render json:  @shop.token, status: 201 }
       else
         format.html { render :new }
-        format.json { render json:  @shop }
+        format.json { render json: @shop }
       end
     end
   end
@@ -41,15 +41,21 @@ class ShopsController < ApplicationController
     success_redirect shops_path
   end
 
+  def set_shipping_order
+    @shop = Shop.find(params[:id])
+    @shop.update!(order_by_price: params[:enabled])
+    head :ok
+  end
+
   private
 
   def shop_params
-    params.require(:shop).permit(
-      :name, :intelipost_token, :forward_to_intelipost,
-      :axado_token, :forward_to_axado, :order_prefix, :declare_value,
-      :forward_to_correios, :correios_code, :correios_password,
-      :normal_shipping_name, :express_shipping_name, :backup_method_id)
-    .merge(correios_custom_services: (params[:shop][:correios_custom_services] || [])
-    .map{|i| JSON.parse(i)}.to_json )
+    params.
+      require(:shop).
+      permit(:name, :intelipost_token, :forward_to_intelipost, :axado_token,
+        :forward_to_axado, :order_prefix, :declare_value, :forward_to_correios,
+        :correios_code, :correios_password, :normal_shipping_name,
+        :express_shipping_name, :backup_method_id, :marketplace_id).
+      merge(correios_custom_services: (params[:shop][:correios_custom_services] || []).map { |i| JSON.parse(i) }.to_json)
   end
 end

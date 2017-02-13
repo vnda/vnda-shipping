@@ -1,1 +1,7 @@
-<%= render('list') %>
+<%= render 'list' %>
+
+$(".list-pagination").html("<%= escape_javascript(will_paginate @map_rules, renderer: BootstrapPagination::Rails) %>");
+$(".list-pagination a").attr('data-remote', 'true');
+$(".list-pagination a").on("click", function(){
+  $(".zip-container").html('<div class="alert alert-info">Carregando informações</div>');
+})

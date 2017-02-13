@@ -1,12 +1,10 @@
 $("#map-rules-form .zip-messages").html('');
 
 <% if flash[:error].present? %>
-  $("#map-rules-form .zip-messages").append("<%= escape_javascript(render 'flash_messages') %>");  
+  $("#map-rules-form .zip-messages").append("<%= escape_javascript(render 'flash_messages') %>");
 <% else %>
   $("#map-rules-form .zip-container").html('');
   <% @map_rules.each do |map_rule| %>
-    $("#map-rules-form .zip-container").append("<%= escape_javascript(render 'map_rule_form', map_rule: map_rule) %>");  
+    $("#map-rules-form .zip-container").append("<%= escape_javascript(render 'map_rule_form', map_rule: map_rule) %>");
   <% end %>
 <% end %>
-
-

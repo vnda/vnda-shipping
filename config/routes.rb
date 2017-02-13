@@ -5,7 +5,8 @@ Rails.application.routes.draw do
   get :status, to: 'application#status'
 
   root to: 'shops#index'
-  resources :shops, only: [:index, :new, :create, :edit, :update, :destroy] do
+  resources :shops do
+    patch :set_shipping_order, on: :member
     resources :shipping_friendly_errors, only: [:index, :new, :create, :edit, :update, :destroy] do
       get :affected, on: :member
     end
@@ -17,6 +18,7 @@ Rails.application.routes.draw do
       get :import2, on: :collection
       post :import_line, on: :collection
       post :execute, on: :collection
+      post :norder, on: :collection
       resources :zip_rules
       resources :map_rules do
         get :download_kml, on: :collection
@@ -43,4 +45,7 @@ Rails.application.routes.draw do
 
   post '/intelipost/:shop_token/create', to: 'api#create_intelipost'
   post '/intelipost/:shop_token/shipped', to: 'api#shipped'
+
+  get "/shops/:token/sellers", to: "api#sellers", defaults: { format: :json }
+  patch "/shops/:token/sellers", to: "api#update_seller", defaults: { format: :json }
 end

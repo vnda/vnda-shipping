@@ -58,8 +58,6 @@ class Correios
       return @shop.fallback_quote(request)
     end
 
-    puts response.body
-
     services = response.body[:calc_preco_prazo_response][:calc_preco_prazo_result][:servicos][:c_servico]
     services = [services] unless services.is_a?(Array)
 

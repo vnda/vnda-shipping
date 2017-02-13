@@ -1,0 +1,30 @@
+.table.table-form th,
+.table.table-form td {
+  padding: 6px;
+}
+.table.table-form th:first-child,
+.table.table-form td:first-child {
+  padding-left: 0;
+}
+.table.table-form th:last-child,
+.table.table-form td:last-child {
+  padding-right: 0;
+}
+header.page-header {
+  margin-top: 0;
+}
+header.page-header h3 {
+  margin-top: 0;
+}
+
+.sortable-handler-container {
+  width: 25px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.sortable-handler {
+  cursor: move;
+  cursor: grabbing;
+  cursor: -webkit-grabbing;
+}
