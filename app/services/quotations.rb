@@ -82,7 +82,7 @@ class Quotations
 
   def apply_additional_deadline(quotations)
     quotations.each do |quote|
-      quote.deadline = quote.deadline.to_i + params[:additional_deadline].to_i
+      quote.deadline = quote.deadline.to_i + @params[:additional_deadline].to_i
     end
   end
 
