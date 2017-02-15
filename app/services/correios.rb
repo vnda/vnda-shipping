@@ -1,5 +1,5 @@
 class Correios
-  URL = 'http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx?WSDL'
+  URL = 'http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx?WSDL'.freeze
 
   #deprecated
   SERVICES = {
@@ -55,14 +55,14 @@ class Correios
         'nVlValorDeclarado' => declared_value(request)
       )
     rescue Wasabi::Resolver::HTTPError, Excon::Errors::Timeout
-      return @shop.fallback_quote(request)
+      return fallback_quote(request)
     end
 
     services = response.body[:calc_preco_prazo_response][:calc_preco_prazo_result][:servicos][:c_servico]
     services = [services] unless services.is_a?(Array)
 
     success, error = services.partition { |s| s[:erro] == '0' || s[:erro] == "010"}
-    return @shop.fallback_quote(request) if success.empty? && error.any?
+    return fallback_quote(request) if success.empty? && error.any?
 
     error.each do |e|
       if e[:erro] == '-3'
@@ -177,4 +177,9 @@ class Correios
     deadline + 1 + full_weeks
   end
 
+  def fallback_quote(params)
+    shop = Shop.where(name: "fallback").first
+    return [] unless shop
+    Quotations.new(shop, params).to_a
+  end
 end

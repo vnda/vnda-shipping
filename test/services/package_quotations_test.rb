@@ -2,17 +2,6 @@ require "test_helper"
 
 class PackageQuotationsTest < ActiveSupport::TestCase
   test "calculates for multiple packages" do
-    # stub_request(:get, "http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx?WSDL").
-    #   to_return(status: 200,
-    #     body: Rails.root.join("test/fixtures/calc_preco_prazo.wsdl").read,
-    #     headers: { "Content-Type" => "text/xml; charset=utf-8" })
-
-    # stub_request(:post, "http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx").
-    #   with({ body: Rails.root.join("test/fixtures/calc_preco_prazo-child-1.request.xml").read.strip }, { body: Rails.root.join("test/fixtures/calc_preco_prazo.request.xml").read.strip }).
-    #   to_return(status: 200,
-    #     body: Rails.root.join("test/fixtures/calc_preco_prazo.response.xml").read,
-    #     headers: { "Content-Type" => "text/xml; charset=utf-8" })
-
     marketplace = create_shop(
       forward_to_correios: true,
       correios_code: "correioscode",
