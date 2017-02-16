@@ -1,10 +1,9 @@
 require "test_helper"
 
 class ApiSellersTest < ActionDispatch::IntegrationTest
-  test "returns 404 if no shop" do
-    # assert_raises(ActiveRecord::RecordNotFound) do
-      get "/shops/999/sellers.json"
-    # end
+  test "returns 401 if token is invalid" do
+    get "/shops/999/sellers.json"
+    assert_equal 401, status
   end
 
   test "empty shop no sellers" do
