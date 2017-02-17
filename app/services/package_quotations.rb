@@ -3,7 +3,7 @@ class PackageQuotations
     raise Quotations::BadParams unless params[:shipping_zip] && params[:products]
 
     @marketplace = marketplace
-    @params = params
+    @params = params.dup
     @zip = @params.delete(:shipping_zip).gsub(/\D+/, "")
 
     build_packages
