@@ -56,11 +56,9 @@ class ApiController < ActionController::Base
   def quote
     quotations = PackageQuotations.new(@shop, request_params).to_a
 
+    logger.info(quotations.to_json)
     if quotations.blank?
-      logger.warn("No methods available; shop: #{@shop.name} parameters: #{params}")
-
-      message = "Não existem opções de entrega para este endereço."
-      @shop.add_shipping_error(message)
+      message = @shop.add_shipping_error("Não existem opções de entrega para este endereço.")
       render json: { error: @shop.friendly_message_for(message) }, status: 400
     else
       render json: quotations, status: 200

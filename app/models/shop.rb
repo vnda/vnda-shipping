@@ -30,6 +30,7 @@ class Shop < ActiveRecord::Base
     unless shipping_errors.where(message: message).size > 0
       shipping_errors << ShippingError.new(message: message)
     end
+    message
   end
 
   def places_for_shipping_method(shipping_method_id)
