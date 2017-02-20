@@ -11,7 +11,7 @@ module SortQuotationsTest
     correios = mock_correios
     Correios.stub(:new, correios) do
       quotations = Quotations.
-        new(shop, shipping_zip: "90540140", products: [{ quantity: 1 }]).
+        new(shop, { shipping_zip: "90540140", products: [{ quantity: 1 }] }, Rails.logger).
         to_a
 
       assert_equal 2, quotations.size
@@ -33,7 +33,7 @@ module SortQuotationsTest
     correios = mock_correios
     Correios.stub(:new, correios) do
       quotations = Quotations.
-        new(shop, shipping_zip: "90540140", products: [{ quantity: 1 }]).
+        new(shop, { shipping_zip: "90540140", products: [{ quantity: 1 }] }, Rails.logger).
         to_a
 
       assert_equal 2, quotations.size

@@ -21,7 +21,7 @@ class CorreiosTest < ActiveSupport::TestCase
       correios_password: "pass"
     )
 
-    quotations = Correios.new(shop).quote(
+    quotations = Correios.new(shop, Rails.logger).quote(
       origin_zip: "03320000",
       shipping_zip: "90540140",
       products: [

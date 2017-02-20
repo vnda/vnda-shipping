@@ -1,11 +1,12 @@
 class Quotations
   BadParams = Class.new(StandardError)
 
-  def initialize(shop, params)
+  def initialize(shop, params, logger)
     raise BadParams unless params[:shipping_zip] && params[:products]
 
     @shop = shop
     @params = params
+    @logger = logger
     @zip = @params.delete(:shipping_zip).gsub(/\D+/, "")
   end
 
@@ -34,12 +35,12 @@ class Quotations
 
     if @shop.forward_to_correios? && @shop.enabled_correios_service.any?
       if quotations.empty? || !correios_completed?(@shop, quotations)
-        quotations += Correios.new(@shop).quote(@params.merge(shipping_zip: @zip))
+        quotations += Correios.new(@shop, @logger).quote(@params.merge(shipping_zip: @zip))
       end
     end
 
     if @shop.forward_to_intelipost?
-      quotations += Intelipost.new(@shop).quote(@params.merge(shipping_zip: @zip))
+      quotations += Intelipost.new(@shop, @logger).quote(@params.merge(shipping_zip: @zip))
     end
 
     quotations = group_lower_prices(quotations) if quotations.present?

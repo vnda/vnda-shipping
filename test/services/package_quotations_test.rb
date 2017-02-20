@@ -42,12 +42,12 @@ class PackageQuotationsTest < ActiveSupport::TestCase
     quotations_mock.expect(:to_a, child_2_quotations)
 
     quotations_class_mock = MiniTest::Mock.new
-    quotations_class_mock.expect(:new, quotations_mock, [child_1, { origin_zip: "03320000", products: [products[0]], shipping_zip: "80035120" }])
-    quotations_class_mock.expect(:new, quotations_mock, [marketplace, { origin_zip: "03320000", products: [products[1]], shipping_zip: "80035120" }])
-    quotations_class_mock.expect(:new, quotations_mock, [child_2, { origin_zip: "03320000", products: [products[2]], shipping_zip: "80035120" }])
+    quotations_class_mock.expect(:new, quotations_mock, [child_1, { origin_zip: "03320000", products: [products[0]], shipping_zip: "80035120" }, Rails.logger])
+    quotations_class_mock.expect(:new, quotations_mock, [marketplace, { origin_zip: "03320000", products: [products[1]], shipping_zip: "80035120" }, Rails.logger])
+    quotations_class_mock.expect(:new, quotations_mock, [child_2, { origin_zip: "03320000", products: [products[2]], shipping_zip: "80035120" }, Rails.logger])
 
     quotations = PackageQuotations.
-      new(marketplace, origin_zip: "03320000", shipping_zip: "80035120", products: products).
+      new(marketplace, { origin_zip: "03320000", shipping_zip: "80035120", products: products }, Rails.logger).
       to_a(quotations_class_mock)
 
     assert_equal 2, quotations.size

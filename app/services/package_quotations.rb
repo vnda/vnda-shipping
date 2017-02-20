@@ -1,9 +1,10 @@
 class PackageQuotations
-  def initialize(marketplace, params)
+  def initialize(marketplace, params, logger)
     raise Quotations::BadParams unless params[:shipping_zip] && params[:products]
 
     @marketplace = marketplace
     @params = params.dup
+    @logger = logger
     @zip = @params.delete(:shipping_zip).gsub(/\D+/, "")
 
     build_packages
@@ -11,7 +12,7 @@ class PackageQuotations
 
   def to_a(quotations_class = Quotations)
     quotations = @packages.flat_map do |shop, products|
-      quotations_class.new(shop, @params.merge(shipping_zip: @zip, products: products)).to_a
+      quotations_class.new(shop, @params.merge(shipping_zip: @zip, products: products), @logger).to_a
     end
 
     sum(quotations)
@@ -26,6 +27,8 @@ class PackageQuotations
     end
 
     @packages = products.group_by { |product| product.delete(:shop) }
+    log("number of packages: #{@packages.size}")
+    @packages
   end
 
   def sum(quotations)
@@ -36,5 +39,9 @@ class PackageQuotations
       memo << quotation
       memo
     end
+  end
+
+  def log(message)
+    @logger.tagged(self.class.name) { @logger.info(message) }
   end
 end

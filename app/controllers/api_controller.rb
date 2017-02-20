@@ -54,7 +54,7 @@ class ApiController < ActionController::Base
   end
 
   def quote
-    quotations = PackageQuotations.new(@shop, request_params).to_a
+    quotations = PackageQuotations.new(@shop, request_params, Rails.logger).to_a
 
     logger.info(quotations.to_json)
     if quotations.blank?

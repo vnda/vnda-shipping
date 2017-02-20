@@ -17,7 +17,7 @@ class QuotationsTest < ActiveSupport::TestCase
 
   test "raises an error if no valid parameters" do
     assert_raises Quotations::BadParams do
-      Quotations.new(create_shop, {})
+      Quotations.new(create_shop, {}, Rails.logger)
     end
   end
 

@@ -3,8 +3,9 @@ class Intelipost
 
   URL = 'https://api.intelipost.com.br/api/v1/quote_by_product'.freeze
 
-  def initialize(shop)
+  def initialize(shop, logger)
     @shop = shop
+    @logger = logger
   end
 
   def quote(params)
@@ -19,7 +20,6 @@ class Intelipost
     rescue Zlib::GzipFile::Error
       data = JSON.parse(response[:body])
     end
-    Rails.logger.info("Intelipost response data #{data}")
 
     cotation_id = data['content']['id']
     deliveries = data['content']['delivery_options'].map do |o|
@@ -89,21 +89,27 @@ class Intelipost
   end
 
   def request(params)
+    params = normalize_params(params).to_json
+    log(params)
+
     response = Excon.post(URL,
       headers: {
         "Content-Type" => "application/json",
         "Accept" => "application/json",
         "Api-Key" => @shop.intelipost_token
       },
-      body: normalize_params(params).to_json
+      body: params
     )
   rescue Excon::Errors::BadRequest => ex
-    Rails.logger.info("Intelipost request: #{params.to_json}")
-    Rails.logger.info("Intelipost response #{ex.response[:body]}")
+    log(ex.response[:body])
 
     json = JSON.parse(ex.response[:body])
 
     @shop.add_shipping_error(json['messages']['text'])
     raise ShippingProblem, json['messages']['text']
+  end
+
+  def log(message)
+    @logger.tagged(self.class.name) { @logger.info(message) }
   end
 end

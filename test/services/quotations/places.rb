@@ -23,7 +23,7 @@ module PlacesQuotationsTest
       products: [{ width: 7.0, height: 2.0, length: 14.0, quantity: 1 }]
     }
 
-    quotations = Quotations.new(shop, params).to_a
+    quotations = Quotations.new(shop, params, Rails.logger).to_a
     assert_equal 1, quotations.size
 
     assert_instance_of PlaceQuotation, quotations[0]

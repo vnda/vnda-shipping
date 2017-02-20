@@ -23,8 +23,9 @@ class Correios
   MIN_HEIGHT = 2
   MIN_LENGTH = 16
 
-  def initialize(shop)
+  def initialize(shop, logger)
     @shop = shop
+    @logger = logger
   end
 
   def quote(request)
@@ -32,10 +33,14 @@ class Correios
     box = package_dimensions(request[:products])
     cubic_weight = (box[:length].to_f* box[:height].to_f * box[:width].to_f) / 6000.0
     weight = request[:products].sum { |i| i[:weight].to_f * i[:quantity].to_i }
-    if cubic_weight > 10.0 and cubic_weight < weight
+    if cubic_weight > 10.0 && cubic_weight < weight
       weight = cubic_weight
     end
-    return [] if weight > 30
+
+    if weight > 30
+      log("package too heavy (#{weight})", :warn)
+      return []
+    end
 
     begin
       response = send_message(:calc_preco_prazo,
@@ -68,15 +73,14 @@ class Correios
       if e[:erro] == '-3'
         raise InvalidZip
       else
-        Rails.logger.error("#{e[:erro]}: #{e[:msg_erro]}")
+        log("#{e[:erro]}: #{e[:msg_erro]}", :error)
         @shop.add_shipping_error(e[:msg_erro])
-        #raise ShippingProblem, e[:msg_erro]
       end
     end
 
     allowed, blocked = success.partition { |s| check_blocked_zip(request[:shipping_zip], s) }
     blocked.each do |s|
-      Rails.logger.error("Block rule found for service #{s[:codigo]} #{@shop.allowed_correios_services[s[:codigo]] || SERVICES[s[:codigo].to_i]}") #SERVICES is deprecated
+      log("Block rule found for service #{s[:codigo]} #{@shop.allowed_correios_services[s[:codigo]] || SERVICES[s[:codigo].to_i]}", :error) #SERVICES is deprecated
     end
 
     result = []
@@ -109,9 +113,9 @@ class Correios
   def send_message(method_id, message)
     client = Savon.client(wsdl: URL, convert_request_keys_to: :none, open_timeout: 5, read_timeout: 5)
     request_xml = client.operation(method_id).build(message: message).to_s
-    Rails.logger.info("Request: #{request_xml}")
+    log("Request: #{request_xml}")
     response = client.call(method_id, message: message)
-    Rails.logger.info("Response: #{response.to_xml}")
+    log("Response: #{response.to_xml}")
 
     QuoteHistory.register(@shop.id, @cart_id, {
       :external_request => request_xml,
@@ -162,6 +166,7 @@ class Correios
   def check_blocked_zip(zip, response)
     methods = @shop.shipping_methods_correios.where(service: response[:codigo].to_s)
     return true if methods.empty? #to compatibility to old config method
+
     blocked_methods = methods.joins(:block_rules).merge(BlockRule.for_zip(zip.to_i))
     if blocked_methods.any?
       methods = methods.where("id NOT IN (?)", blocked_methods.pluck(:id))
@@ -180,6 +185,10 @@ class Correios
   def fallback_quote(params)
     shop = Shop.where(name: "fallback").first
     return [] unless shop
-    Quotations.new(shop, params).to_a
+    Quotations.new(shop, params, @logger).to_a
+  end
+
+  def log(message, level = :info)
+    @logger.tagged("Correios") { @logger.public_send(level, message) }
   end
 end
