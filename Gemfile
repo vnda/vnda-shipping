@@ -20,6 +20,7 @@ gem 'will_paginate', '~> 3.1.0'
 gem 'will_paginate-bootstrap'
 
 gem 'sinatra', require: false
+gem 'thor', '0.19.1', require: false
 
 group :development do
   gem "byebug"
