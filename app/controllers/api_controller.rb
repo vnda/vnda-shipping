@@ -3,8 +3,12 @@ class ApiController < ActionController::Base
     :delivery_types, :delivery_periods, :local, :places, :shipping_methods,
     :sellers, :update_seller]
 
-  rescue_from InvalidZip, Quotations::BadParams do
-    head :bad_request
+  rescue_from InvalidZip do
+    render json: { error: "invalid zip" }, status: 400
+  end
+
+  rescue_from Quotations::BadParams do |ex|
+    render json: { error: ex.message }, status: 400
   end
 
   rescue_from ShippingProblem do |ex|

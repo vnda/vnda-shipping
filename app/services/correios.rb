@@ -31,7 +31,7 @@ class Correios
   def quote(request)
     @cart_id = request[:cart_id]
     box = package_dimensions(request[:products])
-    cubic_weight = (box[:length].to_f* box[:height].to_f * box[:width].to_f) / 6000.0
+    cubic_weight = (box[:length].to_f * box[:height].to_f * box[:width].to_f) / 6000.0
     weight = request[:products].sum { |i| i[:weight].to_f * i[:quantity].to_i }
     if cubic_weight > 10.0 && cubic_weight < weight
       weight = cubic_weight
@@ -165,7 +165,7 @@ class Correios
 
   def check_blocked_zip(zip, response)
     methods = @shop.shipping_methods_correios.where(service: response[:codigo].to_s)
-    return true if methods.empty? #to compatibility to old config method
+    return true if methods.empty? # to compatibility to old config method
 
     blocked_methods = methods.joins(:block_rules).merge(BlockRule.for_zip(zip.to_i))
     if blocked_methods.any?

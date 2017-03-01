@@ -68,7 +68,7 @@ class Quotations
   def correios_completed?(shop, quotations)
     correios_delivery_types = @shop.methods.where(enabled: true, data_origin: "correios").map{|m| m.delivery_type.name }.uniq
     if correios_delivery_types.any?
-      delivery_types_quoted = quotations.map{|q| q.delivery_type}
+      delivery_types_quoted = quotations.map { |q| q.delivery_type }
       return (correios_delivery_types - delivery_types_quoted).empty?
     end
     true
