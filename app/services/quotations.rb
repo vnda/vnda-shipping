@@ -25,7 +25,7 @@ class Quotations
 
     if available_shipping_methods.where(data_origin: "places").any?
       quotations << available_shipping_methods.for_places_origin(@zip.to_i).
-        select("shipping_methods.*, 0 AS price, 0 AS deadline")
+        select("shipping_methods.*, 0 AS price, deadline")
     end
 
     weight = greater_weight(@params[:products])
