@@ -15,7 +15,7 @@ module PlacesQuotationsTest
       data_origin: "places"
     )
 
-    shipping_method.places.create!(name: "Loja", range: (80000000...81000000))
+    shipping_method.places.create!(name: "Loja", range: (80000000...81000000), deadline: 8)
 
     params = {
       origin_zip: "03320000",
@@ -29,7 +29,7 @@ module PlacesQuotationsTest
     assert_instance_of PlaceQuotation, quotations[0]
     assert_equal "Retirar na loja", quotations[0].name
     assert_equal 0, quotations[0].price
-    assert_equal 0, quotations[0].deadline
+    assert_equal 8, quotations[0].deadline
     assert_equal "retirar-na-loja", quotations[0].slug
     assert_equal "Normal", quotations[0].delivery_type
     assert_equal "places", quotations[0].delivery_type_slug
