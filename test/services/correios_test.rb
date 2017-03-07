@@ -22,6 +22,8 @@ class CorreiosTest < ActiveSupport::TestCase
     )
 
     quotations = Correios.new(shop, Rails.logger).quote(
+      cart_id: 1,
+      package: "A1B2C3",
       origin_zip: "03320000",
       shipping_zip: "90540140",
       products: [
@@ -37,10 +39,10 @@ class CorreiosTest < ActiveSupport::TestCase
     assert_equal 4, quotations[0].deadline
     assert_equal "pac-varejo", quotations[0].slug
     assert_equal "Normal", quotations[0].delivery_type
-    assert_equal "", quotations[0].deliver_company
-    assert_equal "", quotations[0].cotation_id
+    assert_nil quotations[0].deliver_company
+    assert_nil quotations[0].quotation_id
     assert_equal "normal", quotations[0].delivery_type_slug
-    assert_equal "", quotations[0].notice
+    assert_nil quotations[0].notice
 
     assert_instance_of Quotation, quotations[1]
     assert_equal "Expressa", quotations[1].name
@@ -48,10 +50,10 @@ class CorreiosTest < ActiveSupport::TestCase
     assert_equal 2, quotations[1].deadline
     assert_equal "sedex-varejo", quotations[1].slug
     assert_equal "Expressa", quotations[1].delivery_type
-    assert_equal "", quotations[1].deliver_company
-    assert_equal "", quotations[1].cotation_id
+    assert_nil quotations[1].deliver_company
+    assert_nil quotations[1].quotation_id
     assert_equal "expressa", quotations[1].delivery_type_slug
-    assert_equal "", quotations[1].notice
+    assert_nil quotations[1].notice
   end
 
   def create_fallback_shop

@@ -1,5 +1,6 @@
 class Correios
   URL = 'http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx?WSDL'.freeze
+  FALLBACK_SHOP_NAME = "fallback".freeze
 
   #deprecated
   SERVICES = {
@@ -29,21 +30,20 @@ class Correios
   end
 
   def quote(request)
-    @cart_id = request[:cart_id]
+    weight = request[:products].sum { |i| i[:weight].to_f * i[:quantity].to_i }
+    if weight > 30
+      log("package too heavy (#{weight})", :warn)
+      return fallback_quote(request)
+    end
+
     box = package_dimensions(request[:products])
     cubic_weight = (box[:length].to_f * box[:height].to_f * box[:width].to_f) / 6000.0
-    weight = request[:products].sum { |i| i[:weight].to_f * i[:quantity].to_i }
     if cubic_weight > 10.0 && cubic_weight < weight
       weight = cubic_weight
     end
 
-    if weight > 30
-      log("package too heavy (#{weight})", :warn)
-      return []
-    end
-
     begin
-      response = send_message(:calc_preco_prazo,
+      response = send_message(:calc_preco_prazo, {
         'nCdEmpresa' => @shop.correios_code,
         'sDsSenha' => @shop.correios_password,
         'nCdServico' => @shop.enabled_correios_service.join(?,),
@@ -58,7 +58,7 @@ class Correios
         'sCdMaoPropria' => 'N',
         'sCdAvisoRecebimento' => 'N',
         'nVlValorDeclarado' => declared_value(request)
-      )
+      }, request[:cart_id])
     rescue Wasabi::Resolver::HTTPError, Excon::Errors::Timeout
       return fallback_quote(request)
     end
@@ -83,21 +83,24 @@ class Correios
       log("Block rule found for service #{s[:codigo]} #{@shop.allowed_correios_services[s[:codigo]] || SERVICES[s[:codigo].to_i]}", :error) #SERVICES is deprecated
     end
 
-    result = []
-    allowed.compact.each do |option|
-      deadline = deadline_business_day(option[:erro] == '010'? option[:prazo_entrega].to_i + 7 : option[:prazo_entrega].to_i)
+    Quotation.transaction do
+      allowed.compact.map do |option|
+        deadline = deadline_business_day(option[:erro] == '010' ? option[:prazo_entrega].to_i + 7 : option[:prazo_entrega].to_i)
 
-      result << Quotation.new(
-        name: shipping_name(option[:codigo]),
-        price: parse_price(option[:valor]),
-        deadline: deadline,
-        slug: (@shop.allowed_correios_services[option[:codigo]] || option[:codigo]).parameterize,
-        delivery_type: shipping_type(option[:codigo]),
-        deliver_company: "Correios",
-        cotation_id: ''
-      )
+        quotation = Quotation.find_or_initialize_by(
+          shop_id: @shop.id,
+          cart_id: request[:cart_id],
+          package: request[:package],
+          delivery_type: shipping_type(option[:codigo])
+        )
+        quotation.name = shipping_name(option[:codigo])
+        quotation.price = parse_price(option[:valor])
+        quotation.deadline = deadline
+        quotation.slug = (@shop.allowed_correios_services[option[:codigo]] || option[:codigo]).parameterize
+        quotation.deliver_company = "Correios"
+        quotation.tap(&:save!)
+      end
     end
-    result
   end
 
   def declared_value(request)
@@ -110,14 +113,14 @@ class Correios
 
   private
 
-  def send_message(method_id, message)
+  def send_message(method_id, message, cart_id)
     client = Savon.client(wsdl: URL, convert_request_keys_to: :none, open_timeout: 5, read_timeout: 5)
     request_xml = client.operation(method_id).build(message: message).to_s
     log("Request: #{request_xml}")
     response = client.call(method_id, message: message)
     log("Response: #{response.to_xml}")
 
-    QuoteHistory.register(@shop.id, @cart_id, {
+    QuoteHistory.register(@shop.id, cart_id, {
       :external_request => request_xml,
       :external_response => response.to_xml
     })
@@ -126,7 +129,8 @@ class Correios
   end
 
   def package_dimensions(items)
-    whl = (@shop.volume_for(items)**(1/3.0)).ceil
+    whl = (@shop.volume_for(items) ** (1 / 3.0)).ceil
+
     {
       width: [whl, MIN_WIDTH].max,
       height: [whl, MIN_HEIGHT].max,
@@ -183,7 +187,7 @@ class Correios
   end
 
   def fallback_quote(params)
-    shop = Shop.where(name: "fallback").first
+    shop = Shop.where(name: FALLBACK_SHOP_NAME).first unless @shop.name == FALLBACK_SHOP_NAME
     return [] unless shop
     Quotations.new(shop, params, @logger).to_a
   end

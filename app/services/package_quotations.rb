@@ -1,40 +1,64 @@
 class PackageQuotations
   def initialize(marketplace, params, logger)
-    raise Quotations::BadParams unless params[:shipping_zip] && params[:products]
+    @params = params.dup
+    validate_params!(:package_prefix, :shipping_zip, :products)
 
     @marketplace = marketplace
-    @params = params.dup
     @logger = logger
     @zip = @params.delete(:shipping_zip).gsub(/\D+/, "")
+    @package_prefix = @params.delete(:package_prefix)
 
     build_packages
   end
 
-  def to_a(quotations_class = Quotations)
-    quotations = @packages.flat_map do |shop, products|
-      quotations_class.new(shop, @params.merge(shipping_zip: @zip, products: products), @logger).to_a
+  def to_h(quotations_class = Quotations)
+    quotations = @packages.flat_map do |shop, (package, products)|
+      params = @params.merge(package: package, shipping_zip: @zip, products: products)
+      quotations_class.new(shop, params, @logger).to_a
     end
 
-    sum(quotations)
+    log("number of quotations: #{quotations.size}")
+
+    results = quotations.group_by(&:package).inject({}) do |memo, (package, quotations)|
+      memo[package] = sum(quotations)
+      memo
+    end
+
+    results[:total_packages] = results.keys.size
+    results[:total_quotations] = quotations.size
+    results
   end
 
   protected
 
+  def validate_params!(*names)
+    mandatory_params = names.inject({}) { |memo, name| memo[name] = @params[name]; memo }
+    unless mandatory_params.all? { |_, value| value.present? }
+      message = mandatory_params.reject { |_, value| value.present? }.keys.to_sentence
+      raise Quotations::BadParams, message
+    end
+  end
+
   def build_packages
     products = @params[:products].map do |product|
-      product[:shop] = @marketplace.shops.where(marketplace_tag: product[:tags]).first || @marketplace
+      product[:shop] = @marketplace.shops.includes(:marketplace).where(marketplace_tag: product[:tags]).first || @marketplace
       product
+    end.sort_by { |product| product[:shop].marketplace ? product[:shop][:id] : 0 }
+
+    @packages = products.group_by { |product| product.delete(:shop) }.each_with_index.inject({}) do |memo, ((shop, products), i)|
+      memo[shop] = [[@package_prefix, "%02i" % (i + 1)].join("-"), products]
+      memo
     end
 
-    @packages = products.group_by { |product| product.delete(:shop) }
     log("number of packages: #{@packages.size}")
     @packages
   end
 
   def sum(quotations)
-    quotations.group_by { |quote| quote.delivery_type_slug }.inject([]) do |memo, (slug, quotations)|
-      quotation = quotations.max_by { |quotation| quotation.deadline }
-      quotation.price = quotations.map { |quotation| quotation.price.to_d }.sum.to_f
+    quotations.group_by { |quote| quote.delivery_type_slug }.inject([]) do |memo, (_, quotations)|
+      quotation = quotations.max_by { |quotation| quotation.deadline }.dup
+      quotation.package = nil
+      quotation.price = quotations.map { |quotation| quotation.price }.sum.to_f
 
       memo << quotation
       memo

@@ -5,7 +5,7 @@ class Quotations
     raise BadParams unless params[:shipping_zip] && params[:products]
 
     @shop = shop
-    @params = params
+    @params = params.dup
     @logger = logger
     @zip = @params.delete(:shipping_zip).gsub(/\D+/, "")
   end
@@ -109,12 +109,17 @@ class Quotations
           shipping_method_id: shipping_method.id
         ))
       else
-        Quotation.new(attributes.merge(
-          price: shipping_method.price,
-          deliver_company: "",
-          cotation_id: "",
-        ))
+        Quotation.create!(attributes.merge(
+          shop_id: @shop.id,
+          cart_id: @params[:cart_id],
+          package: @params[:package],
+          price: shipping_method.price
+        )).tap { |q| log(q.ai) }
       end
     end
+  end
+
+  def log(message)
+    @logger.tagged(self.class.name) { @logger.info(message) }
   end
 end

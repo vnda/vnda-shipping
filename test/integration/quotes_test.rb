@@ -16,11 +16,11 @@ class QuotesTest < ActionDispatch::IntegrationTest
   test "generates a new error message when no quotations" do
     shop = create_shop
 
-    quotations = MiniTest::Mock.new
-    quotations.expect(:to_a, [])
+    package_quotations = MiniTest::Mock.new
+    package_quotations.expect(:to_h, { total_quotations: 0 })
 
-    Quotations.stub(:new, quotations) do
-      post "/quote?token=#{shop.token}", shipping_zip: "12946636", products: [{ quantity: 1 }]
+    PackageQuotations.stub(:new, package_quotations) do
+      post "/quote?token=#{shop.token}", package_prefix: "A1B2C3", shipping_zip: "12946636", products: [{ quantity: 1 }]
 
       response.status.must_equal(400)
       response.body.must_equal({ error: "Não existem opções de entrega para este endereço." }.to_json)
@@ -28,17 +28,19 @@ class QuotesTest < ActionDispatch::IntegrationTest
       shop.reload.shipping_errors.size.must_equal(1)
       shop.reload.shipping_errors[0].message.must_equal("Não existem opções de entrega para este endereço.")
     end
+
+    assert package_quotations.verify
   end
 
   test "returns a friendly error message when no quotations" do
     shop = create_shop
     shop.shipping_friendly_errors.create!(rule: "Não existem opções de entrega para este endereço.", message: "Atualmente não temos opções de entregar para o seu endereço, tente novamente mais tarde")
 
-    quotations = MiniTest::Mock.new
-    quotations.expect(:to_a, [])
+    package_quotations = MiniTest::Mock.new
+    package_quotations.expect(:to_h, { total_quotations: 0 })
 
-    Quotations.stub(:new, quotations) do
-      post "/quote?token=#{shop.token}", shipping_zip: "12946636", products: [{ quantity: 1 }]
+    PackageQuotations.stub(:new, package_quotations) do
+      post "/quote?token=#{shop.token}", package_prefix: "A1B2C3", shipping_zip: "12946636", products: [{ quantity: 1 }]
 
       response.status.must_equal(400)
       response.body.must_equal({ error: "Atualmente não temos opções de entregar para o seu endereço, tente novamente mais tarde" }.to_json)
@@ -47,10 +49,10 @@ class QuotesTest < ActionDispatch::IntegrationTest
       shop.reload.shipping_errors[0].message.must_equal("Não existem opções de entrega para este endereço.")
     end
 
-    assert quotations.verify
+    assert package_quotations.verify
   end
 
-  test "returns all available quotations" do
+  test "returns all available quotations for a single package" do
     stub_correios
 
     shop = create_shop(
@@ -59,33 +61,33 @@ class QuotesTest < ActionDispatch::IntegrationTest
       correios_password: "correiosp@ss"
     )
 
-    post "/quote", token: shop.token, origin_zip: "03320000", shipping_zip: "80035120", products: [{ width: 7.0, height: 2.0, length: 14.0, quantity: 1 }]
+    post "/quote", token: shop.token, cart_id: 1, package_prefix: "A1B2C3", origin_zip: "03320000", shipping_zip: "80035120", products: [{ width: 7.0, height: 2.0, length: 14.0, quantity: 1 }]
 
     assert_equal 200, status
 
     quotations = JSON.load(body)
+    assert_equal ["A1B2C3-01"], quotations.keys
+    assert_equal 2, quotations["A1B2C3-01"].size
 
-    assert_equal 2, quotations.size
+    assert_equal "Normal", quotations["A1B2C3-01"][0]["name"]
+    assert_equal 18.3, quotations["A1B2C3-01"][0]["price"]
+    assert_equal 6, quotations["A1B2C3-01"][0]["deadline"]
+    assert_equal "41106", quotations["A1B2C3-01"][0]["slug"]
+    assert_equal "Normal", quotations["A1B2C3-01"][0]["delivery_type"]
+    assert_equal "normal", quotations["A1B2C3-01"][0]["delivery_type_slug"]
+    assert_equal "Correios", quotations["A1B2C3-01"][0]["deliver_company"]
+    assert_nil quotations["A1B2C3-01"][0]["notice"]
+    assert_nil quotations["A1B2C3-01"][0]["quotation_id"]
 
-    assert_equal "", quotations[0]["cotation_id"]
-    assert_equal "Normal", quotations[0]["name"]
-    assert_equal 18.3, quotations[0]["price"]
-    assert_equal 7, quotations[0]["deadline"]
-    assert_equal "41106", quotations[0]["slug"]
-    assert_equal "Normal", quotations[0]["delivery_type"]
-    assert_equal "normal", quotations[0]["delivery_type_slug"]
-    assert_equal "Correios", quotations[0]["deliver_company"]
-    assert_equal "", quotations[0]["notice"]
-
-    assert_equal "", quotations[1]["cotation_id"]
-    assert_equal "Expressa", quotations[1]["name"]
-    assert_equal 26, quotations[1]["price"]
-    assert_equal 1, quotations[1]["deadline"]
-    assert_equal "40010", quotations[1]["slug"]
-    assert_equal "Expressa", quotations[1]["delivery_type"]
-    assert_equal "expressa", quotations[1]["delivery_type_slug"]
-    assert_equal "Correios", quotations[1]["deliver_company"]
-    assert_equal "", quotations[1]["notice"]
+    assert_equal "Expressa", quotations["A1B2C3-01"][1]["name"]
+    assert_equal 26.0, quotations["A1B2C3-01"][1]["price"]
+    assert_equal 1, quotations["A1B2C3-01"][1]["deadline"]
+    assert_equal "40010", quotations["A1B2C3-01"][1]["slug"]
+    assert_equal "Expressa", quotations["A1B2C3-01"][1]["delivery_type"]
+    assert_equal "expressa", quotations["A1B2C3-01"][1]["delivery_type_slug"]
+    assert_equal "Correios", quotations["A1B2C3-01"][1]["deliver_company"]
+    assert_nil quotations["A1B2C3-01"][1]["notice"]
+    assert_nil quotations["A1B2C3-01"][1]["quotation_id"]
   end
 
   test "returns all available quotations for all packages" do
@@ -123,17 +125,31 @@ class QuotesTest < ActionDispatch::IntegrationTest
       { width: 9.0, height: 4.0, length: 16.0, quantity: 1, tags: ["calca", "child-2"] }
     ]
 
-    post "/quote", token: shop.token, origin_zip: "03320000", shipping_zip: "80035120", products: products
+    post "/quote", token: shop.token, package_prefix: "A1B2C3", cart_id: 1, origin_zip: "03320000", shipping_zip: "80035120", products: products
 
     assert_equal 200, status
 
     quotations = JSON.load(body)
 
-    assert_equal 2, quotations.size
-    assert_equal 54.9, quotations[0]["price"]
-    assert_equal 7, quotations[0]["deadline"]
-    assert_equal 78.0, quotations[1]["price"]
-    assert_equal 1, quotations[1]["deadline"]
+    assert_equal ["A1B2C3-01", "A1B2C3-02", "A1B2C3-03"], quotations.keys
+
+    assert_equal 2, quotations["A1B2C3-01"].size
+    assert_equal 18.3, quotations["A1B2C3-01"][0]["price"]
+    assert_equal 6, quotations["A1B2C3-01"][0]["deadline"]
+    assert_equal 26.0, quotations["A1B2C3-01"][1]["price"]
+    assert_equal 1, quotations["A1B2C3-01"][1]["deadline"]
+
+    assert_equal 2, quotations["A1B2C3-02"].size
+    assert_equal 16.3, quotations["A1B2C3-02"][0]["price"]
+    assert_equal 8, quotations["A1B2C3-02"][0]["deadline"]
+    assert_equal 27.0, quotations["A1B2C3-02"][1]["price"]
+    assert_equal 1, quotations["A1B2C3-02"][1]["deadline"]
+
+    assert_equal 2, quotations["A1B2C3-03"].size
+    assert_equal 17.3, quotations["A1B2C3-03"][0]["price"]
+    assert_equal 7, quotations["A1B2C3-03"][0]["deadline"]
+    assert_equal 26.5, quotations["A1B2C3-03"][1]["price"]
+    assert_equal 1, quotations["A1B2C3-03"][1]["deadline"]
   end
 
   def create_shop(attributes = {})

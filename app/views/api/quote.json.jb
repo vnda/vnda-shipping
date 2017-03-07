@@ -1,0 +1,4 @@
+@quotations.except(:total_packages, :total_quotations).inject({}) do |memo, (package, quotations)|
+  memo[package] = render(quotations)
+  memo
+end

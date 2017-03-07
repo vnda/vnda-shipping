@@ -17,14 +17,12 @@ module Axado
 
     data = JSON.parse(response.body)
     data['cotacoes'].map do |o|
-      Quotation.new(
+      Quotation.create!(
         name: o['servico_nome'],
         price: o['cotacao_preco'].gsub(/[.,]/, '.' => '', ',' => '.').to_f,
         deadline: o['cotacao_prazo'],
         slug: o['servico_metaname'].gsub(?-, ?_),
-        delivery_type: express_service?(o['servico_metaname']) ? 'Expressa' : 'Normal',
-        deliver_company: "",
-        cotation_id: ""
+        delivery_type: express_service?(o['servico_metaname']) ? 'Expressa' : 'Normal'
       )
     end
   rescue Excon::Errors::BadRequest => e

@@ -10,6 +10,8 @@ module IntelipostQuotationsTest
     )
 
     params = {
+      cart_id: 1,
+      package: "A1B2C3-1",
       origin_zip: "03320000",
       shipping_zip: "80035120",
       products: [{ width: 7.0, height: 2.0, length: 14.0, quantity: 1 }]
@@ -20,14 +22,14 @@ module IntelipostQuotationsTest
 
     assert_instance_of Quotation, quotations[0]
     assert_equal "Entrega Normal", quotations[0].name
-    assert_equal 8.72, quotations[0].price
+    assert_equal BigDecimal.new("8.72"), quotations[0].price
     assert_equal 5, quotations[0].deadline
     assert_equal "correios-pac", quotations[0].slug
     assert_equal "Normal", quotations[0].delivery_type
     assert_equal "Correios", quotations[0].deliver_company
-    assert_equal 1181269286, quotations[0].cotation_id
+    assert_equal "1181269286", quotations[0].quotation_id
     assert_equal "normal", quotations[0].delivery_type_slug
-    assert_equal "", quotations[0].notice
+    assert_nil quotations[0].notice
 
     assert_instance_of Quotation, quotations[1]
     assert_equal "Entrega Expressa", quotations[1].name
@@ -36,9 +38,9 @@ module IntelipostQuotationsTest
     assert_equal "correios-esedex", quotations[1].slug
     assert_equal "Expressa", quotations[1].delivery_type
     assert_equal "Correios", quotations[1].deliver_company
-    assert_equal 1181269286, quotations[1].cotation_id
+    assert_equal "1181269286", quotations[1].quotation_id
     assert_equal "expressa", quotations[1].delivery_type_slug
-    assert_equal "", quotations[1].notice
+    assert_nil quotations[1].notice
   end
 
   def stub_intelipost_requests

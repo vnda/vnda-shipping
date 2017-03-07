@@ -9,6 +9,7 @@ class Shop < ActiveRecord::Base
   has_many :shipping_errors, class_name: 'ShippingError', dependent: :destroy
   has_many :shipping_friendly_errors, dependent: :destroy
   has_many :quotes, class_name: 'QuoteHistory', dependent: :destroy
+  has_many :quotations
   has_many :zipcode_spreadsheets
 
   before_create { self.token = SecureRandom.hex }
@@ -104,7 +105,7 @@ class Shop < ActiveRecord::Base
   end
 
   def shipping_methods_correios
-    methods.where(data_origin: "correios").where(enabled: true)
+    methods.where(data_origin: "correios").where(enabled: true).order(:id)
   end
 
   def enabled_correios_service

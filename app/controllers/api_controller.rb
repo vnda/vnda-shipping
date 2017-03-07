@@ -1,7 +1,7 @@
 class ApiController < ActionController::Base
   before_action :set_shop, only: [:quotation_details, :quote, :delivery_date,
     :delivery_types, :delivery_periods, :local, :places, :shipping_methods,
-    :sellers, :update_seller]
+    :sellers, :update_seller, :quotation]
 
   rescue_from InvalidZip do
     render json: { error: "invalid zip" }, status: 400
@@ -58,14 +58,12 @@ class ApiController < ActionController::Base
   end
 
   def quote
-    quotations = PackageQuotations.new(@shop, request_params, Rails.logger).to_a
+    @quotations = PackageQuotations.new(@shop, request_params, logger).to_h
 
-    logger.info(quotations.to_json)
-    if quotations.blank?
+    logger.info(@quotations.to_json)
+    unless @quotations[:total_quotations] > 0
       message = @shop.add_shipping_error("Não existem opções de entrega para este endereço.")
       render json: { error: @shop.friendly_message_for(message) }, status: 400
-    else
-      render json: quotations, status: 200
     end
   end
 
@@ -124,13 +122,22 @@ class ApiController < ActionController::Base
     end
   end
 
+  def quotation
+    @quotation = Quotation.
+      joins(:shop).
+      joins("LEFT JOIN shops marketplace ON (marketplace.id = shops.marketplace_id)").
+      where("shops.id = ? OR marketplace.id = ?", @shop.id, @shop.id).
+      where(package: params[:package_code], delivery_type_slug: params[:delivery_type_slug]).
+      first!
+  end
+
   private
 
   def set_shop
     logger.debug "Shop: #{env['HTTP_X_STORE']}"
 
     if params[:token].present?
-      @shop = Shop.find_by!(token: params[:token])
+      @shop = Shop.includes(:marketplace).find_by!(token: params[:token])
     else
       name = (env["HTTP_X_STORE"] || "unknown-host").split(':').first
       @shop = Shop.find_by!(name: name) if name.present?
@@ -147,6 +154,7 @@ class ApiController < ActionController::Base
       :additional_deadline,
       :additional_price,
       :cart_id,
+      :package_prefix,
       products: [
         :sku,
         :price,

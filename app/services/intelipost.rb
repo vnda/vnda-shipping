@@ -21,17 +21,19 @@ class Intelipost
       data = JSON.parse(response[:body])
     end
 
-    cotation_id = data['content']['id']
     deliveries = data['content']['delivery_options'].map do |o|
-      Quotation.new(
-        cotation_id: cotation_id,
+      Quotation.create!(
+        shop_id: @shop.id,
+        cart_id: params[:cart_id],
+        package: params[:package],
+        quotation_id: data['content']['id'],
         name: o['description'],
         price: o['final_shipping_cost'],
         deadline: o['delivery_estimate_business_days'],
         slug: o['delivery_method_name'].parameterize,
         deliver_company: o['logistic_provider_name'],
         delivery_type: find_delivery_type(o['delivery_method_type'], o['description'])
-      ) if is_number?(o['delivery_estimate_business_days'])
+      ) if number?(o['delivery_estimate_business_days'])
     end
     deliveries.compact!
     deliveries
@@ -39,11 +41,9 @@ class Intelipost
 
   private
 
-  def is_number?(delivery_days)
+  def number?(delivery_days)
     if /\A\d+\z/.match(delivery_days.to_s)
-      if delivery_days.to_i > 0
-        return true
-      end
+      return true if delivery_days.to_i > 0
     end
     false
   end
