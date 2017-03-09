@@ -114,7 +114,7 @@ class Quotations
           cart_id: @params[:cart_id],
           package: @params[:package],
           price: shipping_method.price
-        )).tap { |q| log(q.ai) }
+        )).tap { |q| log(q.inspect) }
       end
     end
   end
