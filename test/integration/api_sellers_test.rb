@@ -6,7 +6,7 @@ class ApiSellersTest < ActionDispatch::IntegrationTest
     assert_equal 401, status
   end
 
-  test "empty shop no sellers" do
+  test "empty if shop has no sellers" do
     get "/shops/#{create_shop.token}/sellers.json"
     assert_equal 200, status
 

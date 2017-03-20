@@ -1,4 +1,4 @@
-class ApiController < ActionController::Base
+class APIController < ActionController::Base
   before_action :set_shop, only: [:quotation_details, :quote, :delivery_date,
     :delivery_types, :delivery_periods, :local, :places, :shipping_methods,
     :sellers, :update_seller, :quotation]
