@@ -61,7 +61,9 @@ class QuotesTest < ActionDispatch::IntegrationTest
       correios_password: "correiosp@ss"
     )
 
-    post "/quote", token: shop.token, cart_id: 1, package_prefix: "A1B2C3", origin_zip: "03320000", shipping_zip: "80035120", products: [{ width: 7.0, height: 2.0, length: 14.0, quantity: 1 }]
+    post "/quote", token: shop.token, cart_id: 1, package_prefix: "A1B2C3",
+      origin_zip: "03320000", shipping_zip: "80035120",
+      products: [{ width: 7.0, height: 2.0, length: 14.0, quantity: 1, sku: "A1" }]
 
     assert_equal 200, status
 
@@ -71,7 +73,7 @@ class QuotesTest < ActionDispatch::IntegrationTest
 
     assert_equal "Normal", quotations["A1B2C3-01"][0]["name"]
     assert_equal 18.3, quotations["A1B2C3-01"][0]["price"]
-    assert_equal 6, quotations["A1B2C3-01"][0]["deadline"]
+    assert_equal 5, quotations["A1B2C3-01"][0]["deadline"]
     assert_equal "41106", quotations["A1B2C3-01"][0]["slug"]
     assert_equal "Normal", quotations["A1B2C3-01"][0]["delivery_type"]
     assert_equal "normal", quotations["A1B2C3-01"][0]["delivery_type_slug"]
@@ -120,12 +122,13 @@ class QuotesTest < ActionDispatch::IntegrationTest
     )
 
     products = [
-      { width: 8.0, height: 3.0, length: 15.0, quantity: 1, tags: ["camiseta", "child-1"] },
-      { width: 7.0, height: 2.0, length: 14.0, quantity: 1, tags: ["meia"] },
-      { width: 9.0, height: 4.0, length: 16.0, quantity: 1, tags: ["calca", "child-2"] }
+      { width: 8.0, height: 3.0, length: 15.0, quantity: 1, sku: "A1", tags: ["camiseta", "child-1"] },
+      { width: 7.0, height: 2.0, length: 14.0, quantity: 1, sku: "A2", tags: ["meia"] },
+      { width: 9.0, height: 4.0, length: 16.0, quantity: 1, sku: "A3", tags: ["calca", "child-2"] }
     ]
 
-    post "/quote", token: shop.token, package_prefix: "A1B2C3", cart_id: 1, origin_zip: "03320000", shipping_zip: "80035120", products: products
+    post "/quote", token: shop.token, package_prefix: "A1B2C3", cart_id: 1,
+      origin_zip: "03320000", shipping_zip: "80035120", products: products
 
     assert_equal 200, status
 
@@ -135,7 +138,7 @@ class QuotesTest < ActionDispatch::IntegrationTest
 
     assert_equal 2, quotations["A1B2C3-01"].size
     assert_equal 18.3, quotations["A1B2C3-01"][0]["price"]
-    assert_equal 6, quotations["A1B2C3-01"][0]["deadline"]
+    assert_equal 5, quotations["A1B2C3-01"][0]["deadline"]
     assert_equal 26.0, quotations["A1B2C3-01"][1]["price"]
     assert_equal 1, quotations["A1B2C3-01"][1]["deadline"]
 

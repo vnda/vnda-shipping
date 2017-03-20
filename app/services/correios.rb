@@ -98,6 +98,7 @@ class Correios
         quotation.deadline = deadline
         quotation.slug = (@shop.allowed_correios_services[option[:codigo]] || option[:codigo]).parameterize
         quotation.deliver_company = "Correios"
+        quotation.skus = request[:products].map { |product| product[:sku] }
         quotation.tap(&:save!)
       end
     end

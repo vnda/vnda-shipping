@@ -7,7 +7,8 @@ json = {
   delivery_type_slug: quotation.delivery_type_slug,
   deliver_company: quotation.deliver_company,
   notice: quotation.notice,
-  quotation_id: quotation.quotation_id
+  quotation_id: quotation.quotation_id,
+  skus: quotation.skus
 }
 
 json[:package] = quotation.package if quotation.package

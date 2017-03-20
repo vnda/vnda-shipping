@@ -31,7 +31,8 @@ class QuotationTest < ActionDispatch::IntegrationTest
       slug: normal.slug,
       delivery_type: normal.delivery_type.name,
       notice: normal.notice,
-      price: 8
+      price: 8,
+      skus: ["A1"]
     )
 
     shop.quotations.create!(
@@ -42,7 +43,8 @@ class QuotationTest < ActionDispatch::IntegrationTest
       slug: express.slug,
       delivery_type: express.delivery_type.name,
       notice: express.notice,
-      price: 20
+      price: 20,
+      skus: ["A2"]
     )
 
     get "/quotations/A1B2C3-1/expressa", token: shop.token

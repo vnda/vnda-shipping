@@ -113,7 +113,8 @@ class Quotations
           shop_id: @shop.id,
           cart_id: @params[:cart_id],
           package: @params[:package],
-          price: shipping_method.price
+          price: shipping_method.price,
+          skus: @params[:products].map { |product| product[:sku] }
         )).tap { |q| log(q.inspect) }
       end
     end

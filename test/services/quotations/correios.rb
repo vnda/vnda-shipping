@@ -15,7 +15,7 @@ module CorreiosQuotationsTest
       package: "A1B2C3-1",
       origin_zip: "03320000",
       shipping_zip: "80035120",
-      products: [{ width: 7.0, height: 2.0, length: 14.0, quantity: 1 }]
+      products: [{ width: 7.0, height: 2.0, length: 14.0, quantity: 1, sku: "A1" }]
     }
 
     quotations = Quotations.new(shop, params, Rails.logger).to_a
@@ -24,7 +24,7 @@ module CorreiosQuotationsTest
     assert_instance_of Quotation, quotations[0]
     assert_equal "Normal", quotations[0].name
     assert_equal 18.3, quotations[0].price
-    assert_equal 6, quotations[0].deadline
+    assert_equal 5, quotations[0].deadline
     assert_equal "41106", quotations[0].slug
     assert_equal "Normal", quotations[0].delivery_type
     assert_equal "Correios", quotations[0].deliver_company

@@ -32,7 +32,8 @@ class Intelipost
         deadline: o['delivery_estimate_business_days'],
         slug: o['delivery_method_name'].parameterize,
         deliver_company: o['logistic_provider_name'],
-        delivery_type: find_delivery_type(o['delivery_method_type'], o['description'])
+        delivery_type: find_delivery_type(o['delivery_method_type'], o['description']),
+        skus: params[:products].map { |product| product[:sku] }
       ) if number?(o['delivery_estimate_business_days'])
     end
     deliveries.compact!

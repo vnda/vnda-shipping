@@ -81,7 +81,8 @@ class PackageQuotationsTest < ActiveSupport::TestCase
       package: "A1B2C3-#{attributes[:package_suffix]}",
       name: "Expressa",
       slug: "expressa",
-      delivery_type: "Expressa"
+      delivery_type: "Expressa",
+      skus: ["A1"]
     }.merge(attributes.except(:package_suffix)))
   end
 
@@ -91,7 +92,8 @@ class PackageQuotationsTest < ActiveSupport::TestCase
       package: "A1B2C3-#{attributes[:package_suffix]}",
       name: "Normal",
       slug: "normal",
-      delivery_type: "Normal"
+      delivery_type: "Normal",
+      skus: ["A2"]
     }.merge(attributes.except(:package_suffix)))
   end
 end
