@@ -46,7 +46,7 @@ class Correios
       response = send_message(:calc_preco_prazo, {
         'nCdEmpresa' => @shop.correios_code,
         'sDsSenha' => @shop.correios_password,
-        'nCdServico' => @shop.enabled_correios_service.join(?,),
+        'nCdServico' => @shop.enabled_correios_service(request).join(?,),
         'sCepOrigem' => request[:origin_zip],
         'sCepDestino' => request[:shipping_zip],
         'nVlPeso' => weight,
