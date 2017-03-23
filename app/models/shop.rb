@@ -109,20 +109,22 @@ class Shop < ActiveRecord::Base
   end
 
   def enabled_correios_service(params = {})
-    if name.include?("taglivros")
+    services = shipping_methods_correios
+
+    if params.present? && name.include?("taglivros")
       cart_tags = params[:products].
         flat_map{ |product| product[:shipping_tags] }.
         map{|tag| tag.nil? ? "diversos" : tag }.
         uniq
 
-      if !cart_tags.include?("diversos") && (cart_tags.include?("livro") || cart_tags.include?("kit"))
-        shipping_methods_correios.where(service: "20010")
+      services = if !cart_tags.include?("diversos") && (cart_tags.include?("livro") || cart_tags.include?("kit"))
+        services.where(service: "20010")
       else
-        shipping_methods_correios.where.not(service: "20010")
+        services.where.not(service: "20010")
       end
-    else
-      shipping_methods_correios.pluck(:service)
     end
+
+    services.pluck(:service)
   end
 
   def allowed_correios_services

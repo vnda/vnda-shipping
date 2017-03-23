@@ -163,7 +163,8 @@ class APIController < ActionController::Base
         :width,
         :weight,
         :quantity,
-        tags: []
+        tags: [],
+        shipping_tags: []
       ]
     )
   end
