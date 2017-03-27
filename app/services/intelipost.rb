@@ -65,7 +65,7 @@ class Intelipost
 
   def normalize_params(params)
     normalized_params = {
-      origin_zip_code: params[:origin_zip].insert(5, "-"),
+      origin_zip_code: (@shop.zip.presence || params[:origin_zip]).insert(5, "-"),
       destination_zip_code: params[:shipping_zip].insert(5, "-"),
       additional_information: {},
       products: params[:products].map do |product|

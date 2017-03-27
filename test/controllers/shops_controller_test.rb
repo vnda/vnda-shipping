@@ -20,7 +20,7 @@ describe ShopsController do
 
   test "should create shop" do
     assert_difference('Shop.count') do
-      post :create, shop: { name: 'Loja 2'}
+      post :create, shop: { name: 'Loja 2', zip: "03320000" }
     end
 
     assert_redirected_to shop_shipping_methods_path(Shop.last)
@@ -32,7 +32,7 @@ describe ShopsController do
   end
 
   test "should update shop" do
-    patch :update, id: @shop, shop: { name: 'Loja 3' }
+    patch :update, id: @shop, shop: { name: 'Loja 3', zip: "03320000" }
     assert_redirected_to shops_path
   end
 

@@ -16,7 +16,7 @@ class ApiSellersTest < ActionDispatch::IntegrationTest
 
   test "returns shop with its child-shops" do
     marketplace = create_shop
-    marketplace.shops.create!(name: "Loja Filha", token: "c3b2a1")
+    marketplace.shops.create!(name: "Loja Filha", token: "c3b2a1", zip: "03320000")
 
     get "/shops/#{marketplace.token}/sellers.json"
     assert_equal 200, status
@@ -28,6 +28,6 @@ class ApiSellersTest < ActionDispatch::IntegrationTest
   end
 
   def create_shop(attributes = {})
-    Shop.create!({ name: 'Loja', token: "a1b2c3" }.reverse_merge(attributes))
+    Shop.create!({ name: 'Loja', token: "a1b2c3", zip: "03320000" }.reverse_merge(attributes))
   end
 end

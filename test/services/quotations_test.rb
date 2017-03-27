@@ -22,6 +22,6 @@ class QuotationsTest < ActiveSupport::TestCase
   end
 
   def create_shop(attributes = {})
-    Shop.create!({ name: 'Loja', token: "a1b2c3" }.reverse_merge(attributes))
+    Shop.create!({ name: 'Loja', token: "a1b2c3", zip: "03320000" }.reverse_merge(attributes))
   end
 end

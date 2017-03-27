@@ -18,13 +18,13 @@ class CorreiosTest < ActiveSupport::TestCase
       name: "Loja",
       forward_to_correios: true,
       correios_code: "code",
-      correios_password: "pass"
+      correios_password: "pass",
+      zip: "03320000"
     )
 
     quotations = Correios.new(shop, Rails.logger).quote(
       cart_id: 1,
       package: "A1B2C3",
-      origin_zip: "03320000",
       shipping_zip: "90540140",
       products: [
         { width: 7.0, height: 2.0, length: 14.0, quantity: 1, sku: "A1", tags: ["camiseta"] }
@@ -57,7 +57,7 @@ class CorreiosTest < ActiveSupport::TestCase
   end
 
   def create_fallback_shop
-    shop = Shop.create!(name: "fallback")
+    shop = Shop.create!(name: "fallback", zip: "03320000")
 
     normal_method = shop.methods.create!(
       name: "Normal",

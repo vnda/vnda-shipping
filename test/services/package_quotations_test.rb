@@ -5,7 +5,8 @@ class PackageQuotationsTest < ActiveSupport::TestCase
     marketplace = create_shop(
       forward_to_correios: true,
       correios_code: "correioscode",
-      correios_password: "correiosp@ss"
+      correios_password: "correiosp@ss",
+      zip: "03320000"
     )
 
     child_1 = create_shop(
@@ -14,7 +15,8 @@ class PackageQuotationsTest < ActiveSupport::TestCase
       correios_code: "loja1code",
       correios_password: "loja1p@ss",
       marketplace_id: marketplace.id,
-      marketplace_tag: "child-1"
+      marketplace_tag: "child-1",
+      zip: "03320000"
     )
 
     child_2 = create_shop(
@@ -23,7 +25,8 @@ class PackageQuotationsTest < ActiveSupport::TestCase
       correios_code: "loja2code",
       correios_password: "loja2p@ss",
       marketplace_id: marketplace.id,
-      marketplace_tag: "child-2"
+      marketplace_tag: "child-2",
+      zip: "03320000"
     )
 
     products = [
@@ -42,12 +45,12 @@ class PackageQuotationsTest < ActiveSupport::TestCase
     quotations_mock.expect(:to_a, child_2_quotations)
 
     quotations_class_mock = MiniTest::Mock.new
-    quotations_class_mock.expect(:new, quotations_mock, [marketplace, { package: "A1B2C3-01", origin_zip: "03320000", products: [products[1]], shipping_zip: "80035120" }, Rails.logger])
-    quotations_class_mock.expect(:new, quotations_mock, [child_1, { package: "A1B2C3-02", origin_zip: "03320000", products: [products[0]], shipping_zip: "80035120" }, Rails.logger])
-    quotations_class_mock.expect(:new, quotations_mock, [child_2, { package: "A1B2C3-03", origin_zip: "03320000", products: [products[2]], shipping_zip: "80035120" }, Rails.logger])
+    quotations_class_mock.expect(:new, quotations_mock, [marketplace, { package: "A1B2C3-01", products: [products[1]], shipping_zip: "80035120" }, Rails.logger])
+    quotations_class_mock.expect(:new, quotations_mock, [child_1, { package: "A1B2C3-02", products: [products[0]], shipping_zip: "80035120" }, Rails.logger])
+    quotations_class_mock.expect(:new, quotations_mock, [child_2, { package: "A1B2C3-03", products: [products[2]], shipping_zip: "80035120" }, Rails.logger])
 
     quotations = PackageQuotations.
-      new(marketplace, { package_prefix: "A1B2C3", origin_zip: "03320000", shipping_zip: "80035120", products: products }, Rails.logger).
+      new(marketplace, { package_prefix: "A1B2C3", shipping_zip: "80035120", products: products }, Rails.logger).
       to_h(quotations_class_mock)
 
     assert_equal ["A1B2C3-1", "A1B2C3-2", "A1B2C3-3", :total_packages, :total_quotations], quotations.keys

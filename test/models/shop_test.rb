@@ -1,7 +1,7 @@
 require 'test_helper'
 
 describe Shop do
-  let(:shop_params) { { id: 1, name: "Loja Teste"} }
+  let(:shop_params) { { id: 1, name: "Loja Teste", zip: "03320000" } }
   let(:shop) { Shop.new(shop_params) }
 
   it "is valid with valid params" do

@@ -58,12 +58,13 @@ class QuotesTest < ActionDispatch::IntegrationTest
     shop = create_shop(
       forward_to_correios: true,
       correios_code: "correioscode",
-      correios_password: "correiosp@ss"
+      correios_password: "correiosp@ss",
+      zip: "03320000"
     )
 
     post "/quote", token: shop.token, cart_id: 1, package_prefix: "A1B2C3",
-      origin_zip: "03320000", shipping_zip: "80035120",
-      products: [{ width: 7.0, height: 2.0, length: 14.0, quantity: 1, sku: "A1" }]
+      shipping_zip: "80035120", products: [{ width: 7.0, height: 2.0,
+        length: 14.0, quantity: 1, sku: "A1" }]
 
     assert_equal 200, status
 
@@ -118,7 +119,8 @@ class QuotesTest < ActionDispatch::IntegrationTest
       correios_code: "loja2code",
       correios_password: "loja2pass",
       marketplace_id: shop.id,
-      marketplace_tag: "child-2"
+      marketplace_tag: "child-2",
+      zip: "03320000"
     )
 
     products = [
@@ -128,7 +130,7 @@ class QuotesTest < ActionDispatch::IntegrationTest
     ]
 
     post "/quote", token: shop.token, package_prefix: "A1B2C3", cart_id: 1,
-      origin_zip: "03320000", shipping_zip: "80035120", products: products
+      shipping_zip: "80035120", products: products
 
     assert_equal 200, status
 
@@ -156,7 +158,7 @@ class QuotesTest < ActionDispatch::IntegrationTest
   end
 
   def create_shop(attributes = {})
-    Shop.create!({ name: 'Loja', token: "a1b2c3" }.merge(attributes))
+    Shop.create!({ name: 'Loja', token: "a1b2c3", zip: "03320000" }.merge(attributes))
   end
 
   def stub_correios

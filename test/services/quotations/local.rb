@@ -20,7 +20,6 @@ module LocalQuotationsTest
     params = {
       cart_id: 1,
       package: "A1B2C3-1",
-      origin_zip: "03320000",
       shipping_zip: "80035120",
       products: [{ width: 7.0, height: 2.0, length: 14.0, quantity: 1, sku: "A1" }]
     }

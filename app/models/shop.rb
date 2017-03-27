@@ -12,13 +12,17 @@ class Shop < ActiveRecord::Base
   has_many :quotations
   has_many :zipcode_spreadsheets
 
+  before_validation :clean_zip
   before_create { self.token = SecureRandom.hex }
   after_create :create_delivery_types
   after_create :create_correios_methods, if: :forward_to_correios?
 
-  validates :name, presence: true, uniqueness: true
-  validates :axado_token, presence: true, if: :forward_to_axado?
-  validates :correios_code, :correios_password, presence: true, if: :forward_to_correios?
+  validates_presence_of :name, :zip
+  validates_presence_of :axado_token, if: :forward_to_axado?
+  validates_presence_of :correios_code, :correios_password, if: :forward_to_correios?
+  validates_uniqueness_of :name, allow_blank: true
+  validates_format_of :zip, with: /\A\d+\z/, allow_blank: true
+  validates_length_of :zip, is: 8, allow_blank: true
 
   def friendly_message_for(message)
     shipping_friendly_errors.order(:created_at).each do |friendly_message|
@@ -153,6 +157,10 @@ class Shop < ActiveRecord::Base
   end
 
   protected
+
+  def clean_zip
+    self.zip = zip.gsub(/\D+/, "") if zip?
+  end
 
   def create_delivery_types
     delivery_types.where(name: "Normal").first_or_create(enabled: true)

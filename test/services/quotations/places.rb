@@ -2,7 +2,7 @@ module PlacesQuotationsTest
   extend ActiveSupport::Testing::Declarative
 
   test "quotations using places" do
-    shop = create_shop
+    shop = create_shop(zip: "03320000")
 
     shipping_method = shop.methods.create!(
       name: "Retirar na loja",
@@ -18,7 +18,6 @@ module PlacesQuotationsTest
     shipping_method.places.create!(name: "Loja", range: (80000000...81000000), deadline: 8)
 
     params = {
-      origin_zip: "03320000",
       shipping_zip: "80035120",
       products: [{ width: 7.0, height: 2.0, length: 14.0, quantity: 1 }]
     }

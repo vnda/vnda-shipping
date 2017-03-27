@@ -139,7 +139,7 @@ class APIController < ActionController::Base
 
   def request_params
     params.permit(
-      :origin_zip,
+      :origin_zip, # TODO remove after all shops have zip set
       :shipping_zip,
       :order_total_price,
       :additional_deadline,

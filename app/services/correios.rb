@@ -47,7 +47,7 @@ class Correios
         'nCdEmpresa' => @shop.correios_code,
         'sDsSenha' => @shop.correios_password,
         'nCdServico' => @shop.enabled_correios_service(request).join(?,),
-        'sCepOrigem' => request[:origin_zip],
+        'sCepOrigem' => @shop.zip.presence || request[:origin_zip],
         'sCepDestino' => request[:shipping_zip],
         'nVlPeso' => weight,
         'nCdFormato' => 1,

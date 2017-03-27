@@ -4,15 +4,18 @@ one:
   forward_to_axado: false
   forward_to_correios: false
   forward_to_intelipost: false
+  zip: "03320000"
 
-axado:  
+axado:
   name: "shop with axado"
   token: 'token_shop_axado'
   forward_to_axado: true
   axado_token: '123456'
+  zip: "90540140"
 
-correios: 
+correios:
   name: "shop with correios"
   token: 'token_shop_correios'
   forward_to_correios: false
   correios_code: 'asd'
+  zip: "80035120"

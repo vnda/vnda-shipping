@@ -40,7 +40,7 @@ module Axado
 
   def build_request(r)
     {
-      cep_origem:       r[:origin_zip],
+      cep_origem:       @shop.zip.presence || r[:origin_zip],
       cep_destino:      r[:shipping_zip],
       valor_notafiscal: r[:order_total_price],
       prazo_adicional:  r[:additional_deadline],

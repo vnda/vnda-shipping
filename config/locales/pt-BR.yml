@@ -213,6 +213,7 @@ pt-BR:
       shop:
         marketplace_id: 'Marketplace'
         name: 'Nome'
+        zip: 'CEP'
         declare_value: Declarar Valor (Correios)
         forward_to_axado: 'Encaminhar consulta ao Axado'
         forward_to_intelipost: 'Encaminhar consulta ao Intelipost'
