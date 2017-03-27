@@ -58,7 +58,11 @@ class APIController < ActionController::Base
   end
 
   def quote
-    @quotations = PackageQuotations.new(@shop, request_params, logger).to_h
+    if @shop.name.include?("taglivros") || true
+      @quotations = TaglivrosPackage.new(@shop, request_params, logger).to_h
+    else
+      @quotations = PackageQuotations.new(@shop, request_params, logger).to_h
+    end
 
     logger.info(@quotations.to_json)
     unless @quotations[:total_quotations] > 0
