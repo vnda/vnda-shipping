@@ -126,6 +126,15 @@ class APIController < ActionController::Base
     end
   end
 
+  def quotation
+    @quotation = Quotation.
+      joins(:shop).
+      joins("LEFT JOIN shops marketplace ON (marketplace.id = shops.marketplace_id)").
+      where("shops.id = ? OR marketplace.id = ?", @shop.id, @shop.id).
+      where(package: params[:package_code], delivery_type_slug: params[:delivery_type_slug]).
+      first!
+  end
+
   private
 
   def set_shop
