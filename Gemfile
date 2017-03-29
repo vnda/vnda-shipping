@@ -31,6 +31,7 @@ end
 group :test do
   gem 'minitest-spec-rails'
   gem 'webmock', '2.3.2'
+  gem 'timecop', '0.8.1'
 
   gem 'simplecov', require: false
 end

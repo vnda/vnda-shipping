@@ -1,6 +1,14 @@
 require 'test_helper'
 
 class QuotesTest < ActionDispatch::IntegrationTest
+  setup do
+    Timecop.freeze(2017, 3, 27, 17, 54, 55)
+  end
+
+  teardown do
+    Timecop.return
+  end
+
   test "correios return unauthorized if no token" do
     post "/quote", token: nil
     assert_equal 401, status

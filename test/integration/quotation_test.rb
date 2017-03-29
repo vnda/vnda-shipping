@@ -63,6 +63,6 @@ class QuotationTest < ActionDispatch::IntegrationTest
   end
 
   def create_shop(attributes = {})
-    Shop.create!({ name: 'Loja', token: "a1b2c3" }.merge(attributes))
+    Shop.create!({ name: 'Loja', token: "a1b2c3", zip: "03320000" }.merge(attributes))
   end
 end

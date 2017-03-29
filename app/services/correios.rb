@@ -86,14 +86,17 @@ class Correios
     Quotation.transaction do
       allowed.compact.map do |option|
         deadline = deadline_business_day(option[:erro] == '010' ? option[:prazo_entrega].to_i + 7 : option[:prazo_entrega].to_i)
+        shipping_method = @shop.shipping_methods_correios.
+          where(service: option[:codigo]).first
 
         quotation = Quotation.find_or_initialize_by(
           shop_id: @shop.id,
           cart_id: request[:cart_id],
           package: request[:package],
-          delivery_type: shipping_type(option[:codigo])
+          delivery_type: shipping_type(shipping_method, option[:codigo])
         )
-        quotation.name = shipping_name(option[:codigo])
+        quotation.shipping_method_id = shipping_method.id if shipping_method
+        quotation.name = shipping_name(shipping_method, option[:codigo])
         quotation.price = parse_price(option[:valor])
         quotation.deadline = deadline
         quotation.slug = (@shop.allowed_correios_services[option[:codigo]] || option[:codigo]).parameterize
@@ -143,9 +146,8 @@ class Correios
     str.gsub(/[.,]/, '.' => '', ',' => '.').to_f
   end
 
-  def shipping_name(code)
-    method_name = @shop.shipping_methods_correios.where(service: code.to_s)
-    return method_name.pluck(:name).first if method_name.any?
+  def shipping_name(shipping_method, code)
+    return shipping_method.name if shipping_method
 
     #deprecated
     config_name = if EXPRESS.include?(code.to_i)
@@ -158,9 +160,9 @@ class Correios
   end
 
   #deprecated
-  def shipping_type(code)
-    method_name = @shop.shipping_methods_correios.where(service: code.to_s)
-    return method_name.first.delivery_type.name if method_name.any?
+  def shipping_type(shipping_method, code)
+    return shipping_method.delivery_type.name if shipping_method
+
     if EXPRESS.include?(code.to_i)
       "Expressa"
     else
@@ -182,6 +184,7 @@ class Correios
   def deadline_business_day(deadline)
     today = Time.current.wday
     return deadline if deadline + today < 7
+
     partial = 6 - today
     full_weeks = (deadline - partial) / 7
     deadline + 1 + full_weeks

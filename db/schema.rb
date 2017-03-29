@@ -11,12 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170324211752) do
+ActiveRecord::Schema.define(version: 20170329201700) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "postgis"
   enable_extension "hstore"
+  enable_extension "postgis"
 
   create_table "block_rules", force: :cascade do |t|
     t.integer   "shipping_method_id", null: false
@@ -96,9 +96,11 @@ ActiveRecord::Schema.define(version: 20170324211752) do
     t.datetime "created_at",                                                null: false
     t.datetime "updated_at",                                                null: false
     t.string   "skus",                                        default: [],  null: false, array: true
+    t.integer  "shipping_method_id"
   end
 
   add_index "quotations", ["cart_id"], name: "index_quotations_on_cart_id", using: :btree
+  add_index "quotations", ["shipping_method_id"], name: "index_quotations_on_shipping_method_id", using: :btree
   add_index "quotations", ["shop_id"], name: "index_quotations_on_shop_id", using: :btree
 
   create_table "quote_histories", force: :cascade do |t|
@@ -137,7 +139,7 @@ ActiveRecord::Schema.define(version: 20170324211752) do
     t.string   "slug",             limit: 255,                                                                          null: false
     t.boolean  "express",                      default: false,                                                          null: false
     t.boolean  "enabled",                      default: false,                                                          null: false
-    t.numrange "weigth_range",                 default: BigDecimal(0.0)..BigDecimal(1000.0),                            null: false
+    t.numrange "weigth_range",                 default: BigDecimal("0.0")..BigDecimal("1000.0"),                        null: false
     t.integer  "delivery_type_id"
     t.string   "data_origin",      limit: 255, default: "local",                                                        null: false
     t.string   "service",          limit: 255

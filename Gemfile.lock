@@ -193,6 +193,7 @@ GEM
     thor (0.19.1)
     thread_safe (0.3.5)
     tilt (2.0.5)
+    timecop (0.8.1)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
     unf (0.1.4)
@@ -238,6 +239,7 @@ DEPENDENCIES
   simplecov
   sinatra
   thor (= 0.19.1)
+  timecop (= 0.8.1)
   webmock (= 2.3.2)
   will_paginate (~> 3.1.0)
   will_paginate-bootstrap
@@ -246,4 +248,4 @@ RUBY VERSION
    ruby 2.3.0p0
 
 BUNDLED WITH
-   1.14.2
+   1.14.5

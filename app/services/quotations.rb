@@ -95,28 +95,22 @@ class Quotations
 
   def quotation_for(shipping_methods)
     shipping_methods.map do |shipping_method|
-      attributes = {
+      quotation = Quotation.new(
+        shop_id: @shop.id,
+        cart_id: @params[:cart_id],
+        shipping_method_id: shipping_method.id,
         name: shipping_method.name,
         deadline: shipping_method.deadline,
         slug: shipping_method.slug,
         delivery_type: shipping_method.delivery_type.name,
-        notice: shipping_method.notice
-      }
-
-      case shipping_method.data_origin
-      when "places"
-        PlaceQuotation.new(attributes.merge(
-          shipping_method_id: shipping_method.id
-        ))
-      else
-        Quotation.create!(attributes.merge(
-          shop_id: @shop.id,
-          cart_id: @params[:cart_id],
-          package: @params[:package],
-          price: shipping_method.price,
-          skus: @params[:products].map { |product| product[:sku] }
-        )).tap { |q| log(q.inspect) }
-      end
+        notice: shipping_method.notice,
+        package: @params[:package],
+        price: shipping_method.price,
+        skus: @params[:products].map { |product| product[:sku] }
+      )
+      log(quotation.attributes.to_json)
+      quotation.save!
+      quotation
     end
   end
 

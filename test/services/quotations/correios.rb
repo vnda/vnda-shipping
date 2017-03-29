@@ -13,7 +13,7 @@ module CorreiosQuotationsTest
 
     params = {
       cart_id: 1,
-      package: "A1B2C3-1",
+      package: "A1B2C3-01",
       shipping_zip: "80035120",
       products: [{ width: 7.0, height: 2.0, length: 14.0, quantity: 1, sku: "A1" }]
     }
@@ -22,6 +22,10 @@ module CorreiosQuotationsTest
     assert_equal 2, quotations.size
 
     assert_instance_of Quotation, quotations[0]
+    assert_equal shop.id, quotations[0].shop_id
+    assert_equal 1, quotations[0].cart_id
+    assert_equal shop.methods.where(name: "Normal").first.id, quotations[0].shipping_method_id
+    assert_equal "A1B2C3-01", quotations[0].package
     assert_equal "Normal", quotations[0].name
     assert_equal 18.3, quotations[0].price
     assert_equal 5, quotations[0].deadline
@@ -33,6 +37,10 @@ module CorreiosQuotationsTest
     assert_nil quotations[0].notice
 
     assert_instance_of Quotation, quotations[1]
+    assert_equal shop.id, quotations[1].shop_id
+    assert_equal 1, quotations[1].cart_id
+    assert_equal shop.methods.where(name: "Expressa").first.id, quotations[1].shipping_method_id
+    assert_equal "A1B2C3-01", quotations[1].package
     assert_equal "Expressa", quotations[1].name
     assert_equal 26, quotations[1].price
     assert_equal 1, quotations[1].deadline
