@@ -224,7 +224,8 @@ DEPENDENCIES
   httparty (= 0.13.5)
   jb (= 0.4.1)
   kaminari
-  minitest-spec-rails
+  minitest (= 5.10.1)
+  minitest-spec-rails (= 5.4.0)
   newrelic_rpm (= 3.18.0.329)
   nokogiri (= 1.6.7.2)
   pg
