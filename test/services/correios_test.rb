@@ -1,6 +1,42 @@
 require "test_helper"
 
 class CorreiosTest < ActiveSupport::TestCase
+  test "use only enabled services" do
+    stub_request(:get, "http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx?WSDL").
+      to_return(status: 200,
+        body: Rails.root.join("test/fixtures/calc_preco_prazo.wsdl").read,
+        headers: { "Content-Type" => "text/xml; charset=utf-8" })
+
+    stub_request(:post, "http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx").
+      with(body: request_fixture).
+      to_return(status: 200, body: response_fixture)
+
+    shop = create_shop
+    shop.methods.first.toggle!(:enabled)
+
+    quotations = Correios.new(shop, Rails.logger).quote(
+      cart_id: 1,
+      package: "A1B2C3",
+      shipping_zip: "90540140",
+      products: [
+        { width: 7.0, height: 2.0, length: 14.0, quantity: 1, sku: "A1", tags: ["camiseta"] }
+      ]
+    )
+
+    assert_equal 1, quotations.size
+
+    assert_instance_of Quotation, quotations[0]
+    assert_equal "Expressa", quotations[0].name
+    assert_equal 26.8, quotations[0].price
+    assert_equal 1, quotations[0].deadline
+    assert_equal "40010", quotations[0].slug
+    assert_equal "Expressa", quotations[0].delivery_type
+    assert_equal "Correios", quotations[0].deliver_company
+    assert_nil quotations[0].quotation_id
+    assert_equal "expressa", quotations[0].delivery_type_slug
+    assert_nil quotations[0].notice
+  end
+
   test "fallback_quote" do
     create_fallback_shop
 
@@ -14,14 +50,7 @@ class CorreiosTest < ActiveSupport::TestCase
         headers: { "Content-Type" => "text/xml;charset=UTF-8", "Soapaction"=>"\"http://tempuri.org/CalcPrecoPrazo\"" }).
       to_timeout
 
-    shop = Shop.create!(
-      name: "Loja",
-      forward_to_correios: true,
-      correios_code: "code",
-      correios_password: "pass",
-      zip: "03320000"
-    )
-
+    shop = create_shop
     quotations = Correios.new(shop, Rails.logger).quote(
       cart_id: 1,
       package: "A1B2C3",
@@ -54,6 +83,16 @@ class CorreiosTest < ActiveSupport::TestCase
     assert_nil quotations[1].quotation_id
     assert_equal "expressa", quotations[1].delivery_type_slug
     assert_nil quotations[1].notice
+  end
+
+  def create_shop(attributes = {})
+    Shop.create!(attributes.reverse_merge(
+      name: "Loja",
+      forward_to_correios: true,
+      correios_code: "code",
+      correios_password: "pass",
+      zip: "03320000"
+    ))
   end
 
   def create_fallback_shop

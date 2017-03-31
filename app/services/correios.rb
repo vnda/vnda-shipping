@@ -80,7 +80,7 @@ class Correios
 
     allowed, blocked = success.partition { |s| check_blocked_zip(request[:shipping_zip], s) }
     blocked.each do |s|
-      log("Block rule found for service #{s[:codigo]} #{@shop.allowed_correios_services[s[:codigo]] || SERVICES[s[:codigo].to_i]}", :error) #SERVICES is deprecated
+      log("Block rule found for service #{s[:codigo]}", :error)
     end
 
     Quotation.transaction do
@@ -99,7 +99,7 @@ class Correios
         quotation.name = shipping_name(shipping_method, option[:codigo])
         quotation.price = parse_price(option[:valor])
         quotation.deadline = deadline
-        quotation.slug = (@shop.allowed_correios_services[option[:codigo]] || option[:codigo]).parameterize
+        quotation.slug = option[:codigo]
         quotation.deliver_company = "Correios"
         quotation.skus = request[:products].map { |product| product[:sku] }
         quotation.tap(&:save!)
@@ -149,20 +149,20 @@ class Correios
   def shipping_name(shipping_method, code)
     return shipping_method.name if shipping_method
 
-    #deprecated
+    # DEPRECATED should not get here since shipping_method won't be nil
     config_name = if EXPRESS.include?(code.to_i)
       @shop.express_shipping_name
     else
       @shop.normal_shipping_name
     end
 
-    config_name.presence || @shop.allowed_correios_services[code] || SERVICES[code.to_i] #SERVICES is deprecated
+    config_name.presence || code
   end
 
-  #deprecated
   def shipping_type(shipping_method, code)
     return shipping_method.delivery_type.name if shipping_method
 
+    # DEPRECATED should not get here since shipping_method won't be nil
     if EXPRESS.include?(code.to_i)
       "Expressa"
     else

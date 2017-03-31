@@ -131,13 +131,6 @@ class Shop < ActiveRecord::Base
     services.pluck(:service)
   end
 
-  def allowed_correios_services
-    services = {}
-    JSON.load(correios_custom_services).map{|service| services.merge!(service) } if correios_custom_services.present?
-    services = Correios::SERVICES if services.empty?
-    services
-  end
-
   def delivery_day_status(date, zip, period_name)
     if (date >= Date.current)
       p = periods_for(:zip_rules, date, zip, period_name) | periods_for(:map_rules, date, zip, period_name)

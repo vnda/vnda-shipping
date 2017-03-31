@@ -1,50 +1,50 @@
 <% content_for :title, 'Importar correio' %>
 
-<%= form_for @import, url: execute_shop_shipping_methods_url(@shop.id), method: :post do |f| %>
-  <% if @import.errors.full_messages.any? %>
-    <ul>
-      <% @import.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
+<div class="row">
+  <div class="col-md-4">
+    <%= form_for @import, url: execute_shop_shipping_methods_url(@shop.id), method: :post do |f| %>
+      <% if @import.errors.full_messages.any? %>
+        <ul>
+          <% @import.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
       <% end %>
-    </ul>
-  <% end %>
 
-  <div class="selectbox correios-services">
-    <label>
-      <%= f.label :service_code %>
-      <%= f.select :service_code, options_for_select(@correios_services.map {|k,v| [v,k]}), { prompt: "Selecione o serviço", class: "form-control", include_blank: true } %>
-    </label>
+      <div class="form-group correios-services">
+        <%= f.label :service_code %>
+        <%= f.text_field :service_code, class: "form-control" %>
+        <div class="help-block">
+          <%= render "shared/correios_services" %>
+        </div>
+      </div>
+
+      <div class="form-group correios-services">
+        <%= f.label :delivery_type %>
+        <%= f.select :delivery_type, options_for_select(@delivery_types.map {|t| [t.name,t.id]}), { prompt: "Selecione o tipo de entrega" }, { class: "form-control" } %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :sender_zipcode, "Cep origem" %>
+        <%= f.text_field :sender_zipcode, class: 'form-control' %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :safety_margin, "Margem de segurança" %>
+        <%= f.select :safety_margin, options_for_select([['5%', 5], ['10%', 10], ['15%', 15], ['20%', 20], ['25%', 25]]), { prompt: "Selecione uma margem de segurança", include_blank: true }, { class: "form-control" } %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :password_code, "Código administrativo" %>
+        <%= text_field_tag(:enterprise_code, @shop.correios_code, {class: 'form-control', disabled: @shop.correios_code.present? }) %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :password_pass, "Senha" %>
+        <%= text_field_tag(:enterprise_pass, @shop.correios_password, {class: 'form-control', disabled: @shop.correios_password.present? }) %>
+      </div>
+
+      <input type="submit" value="Importar" class="btn btn-primary">
+    <% end %>
   </div>
-
-  <div class="selectbox correios-services">
-    <label>
-      <%= f.label :delivery_type %>
-      <%= f.select :delivery_type, options_for_select(@delivery_types.map {|t| [t.name,t.id]}), { prompt: "Selecione o tipo de entrega", class: "form-control" } %>
-    </label>
-  </div>
-
-  <div class="form-group">
-    <%= f.label :sender_zipcode, "Cep origem" %>
-    <%= f.text_field :sender_zipcode, class: 'form-control' %>
-  </div>
-
-  <div class="form-group">
-    <%= f.label :safety_margin, "Margem de segurança" %>
-    <%= f.select :safety_margin, options_for_select([['5%', 5], ['10%', 10], ['15%', 15], ['20%', 20], ['25%', 25]]), { prompt: "Selecione uma margem de segurança", include_blank: true } %>
-  </div>
-
-  <div class="form-group">
-    <%= f.label :password_code, "Código administrativo" %>
-    <%= text_field_tag(:enterprise_code, @shop.correios_code, {class: 'form-control', disabled: @shop.correios_code.present? }) %>
-  </div>
-
-  <div class="form-group">
-    <%= f.label :password_pass, "Senha" %>
-    <%= text_field_tag(:enterprise_pass, @shop.correios_password, {class: 'form-control', disabled: @shop.correios_password.present? }) %>
-  </div>
-
-  <div>
-    <%= f.submit "Importar", class: 'btn btn-default' %>
-  </div>
-
-<% end %>
+</div>

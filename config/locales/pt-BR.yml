@@ -222,7 +222,6 @@ pt-BR:
         forward_to_correios: 'Encaminhar consulta ao Correios'
         correios_code: 'Código da Empresa no Correios'
         correios_password: 'Senha no Correios'
-        correios_services: 'Serviços Habilitados'
         express_shipping_name: 'Nome para entrega expressa'
         normal_shipping_name: 'Nome para entrega normal'
         backup_method_id: Forma de entrega de backup
@@ -231,11 +230,12 @@ pt-BR:
         name: 'Nome'
         description: 'Descrição'
         express: 'Entrega expressa?'
-        delivery_type_id: 'Tipo de Entrega'
+        delivery_type_id: 'Tipo de entrega'
         enabled: 'Habilitar'
-        min_weigth: 'Peso Mínimo'
-        max_weigth: 'Peso Máximo'
+        min_weigth: 'Peso mínimo'
+        max_weigth: 'Peso máximo'
         notice: 'Mensagem de aviso'
+        service: "Código do serviço"
       period:
         name: 'Nome'
         limit_time: 'Horário Limite'

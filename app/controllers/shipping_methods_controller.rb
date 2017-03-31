@@ -4,7 +4,6 @@ class ShippingMethodsController < ApplicationController
     @method = @shop.methods.find_by!(id: params[:id])
   end
   before_filter :set_delivery_types, only: [:edit, :new, :create, :update, :duplicate, :import, :import2, :execute]
-  before_filter :set_correios_services, only: [:edit, :new, :create, :update, :duplicate, :import, :import2, :execute]
 
   def index
     @methods = @shop.methods.order(:id)
@@ -128,10 +127,6 @@ class ShippingMethodsController < ApplicationController
 
   def set_delivery_types
     @delivery_types = @shop.delivery_types
-  end
-
-  def set_correios_services
-    @correios_services = @shop.allowed_correios_services
   end
 
   def method_params
