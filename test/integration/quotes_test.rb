@@ -82,7 +82,7 @@ class QuotesTest < ActionDispatch::IntegrationTest
 
     assert_equal "Normal", quotations["A1B2C3-01"][0]["name"]
     assert_equal 18.3, quotations["A1B2C3-01"][0]["price"]
-    assert_equal 5, quotations["A1B2C3-01"][0]["deadline"]
+    assert_equal 7, quotations["A1B2C3-01"][0]["deadline"]
     assert_equal "41106", quotations["A1B2C3-01"][0]["slug"]
     assert_equal "Normal", quotations["A1B2C3-01"][0]["delivery_type"]
     assert_equal "normal", quotations["A1B2C3-01"][0]["delivery_type_slug"]
@@ -148,19 +148,19 @@ class QuotesTest < ActionDispatch::IntegrationTest
 
     assert_equal 2, quotations["A1B2C3-01"].size
     assert_equal 18.3, quotations["A1B2C3-01"][0]["price"]
-    assert_equal 5, quotations["A1B2C3-01"][0]["deadline"]
+    assert_equal 7, quotations["A1B2C3-01"][0]["deadline"]
     assert_equal 26.0, quotations["A1B2C3-01"][1]["price"]
     assert_equal 1, quotations["A1B2C3-01"][1]["deadline"]
 
     assert_equal 2, quotations["A1B2C3-02"].size
     assert_equal 16.3, quotations["A1B2C3-02"][0]["price"]
-    assert_equal 8, quotations["A1B2C3-02"][0]["deadline"]
+    assert_equal 9, quotations["A1B2C3-02"][0]["deadline"]
     assert_equal 27.0, quotations["A1B2C3-02"][1]["price"]
     assert_equal 1, quotations["A1B2C3-02"][1]["deadline"]
 
     assert_equal 2, quotations["A1B2C3-03"].size
     assert_equal 17.3, quotations["A1B2C3-03"][0]["price"]
-    assert_equal 7, quotations["A1B2C3-03"][0]["deadline"]
+    assert_equal 8, quotations["A1B2C3-03"][0]["deadline"]
     assert_equal 26.5, quotations["A1B2C3-03"][1]["price"]
     assert_equal 1, quotations["A1B2C3-03"][1]["deadline"]
   end

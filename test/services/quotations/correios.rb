@@ -28,7 +28,7 @@ module CorreiosQuotationsTest
     assert_equal "A1B2C3-01", quotations[0].package
     assert_equal "Normal", quotations[0].name
     assert_equal 18.3, quotations[0].price
-    assert_equal 5, quotations[0].deadline
+    assert_equal 7, quotations[0].deadline
     assert_equal "41106", quotations[0].slug
     assert_equal "Normal", quotations[0].delivery_type
     assert_equal "Correios", quotations[0].deliver_company

@@ -85,7 +85,9 @@ class Correios
 
     Quotation.transaction do
       allowed.compact.map do |option|
-        deadline = deadline_business_day(option[:erro] == '010' ? option[:prazo_entrega].to_i + 7 : option[:prazo_entrega].to_i)
+        deadline = option[:prazo_entrega].to_i
+        deadline += 7 if option[:erro] == '010'
+        deadline = deadline_business_day(option[:codigo], deadline)
         shipping_method = @shop.shipping_methods_correios.
           where(service: option[:codigo]).first
 
@@ -115,14 +117,16 @@ class Correios
     order_total_price
   end
 
-  def deadline_business_day(deadline)
+  def deadline_business_day(service, deadline)
+    business_days = service.to_s =~ /41[0-9]{3}/ ? 5 : 6
+    days_without_deliver = 7 - business_days
     today = Time.current.wday
-    return deadline if deadline + today < 7
+    return deadline if deadline + today < (business_days + 1)
 
-    partial = 6 - today
-    full_weeks = (deadline - partial) / 6
-    rest = (deadline - partial) % 6
-    deadline + full_weeks + (rest > 0 ? 1 : 0)
+    partial = business_days - today
+    full_weeks = (deadline - partial) / business_days
+    rest = (deadline - partial) % business_days
+    deadline + (full_weeks * days_without_deliver) + (rest > 0 ? days_without_deliver : 0)
   end
 
   private
