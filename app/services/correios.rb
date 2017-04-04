@@ -115,6 +115,16 @@ class Correios
     order_total_price
   end
 
+  def deadline_business_day(deadline)
+    today = Time.current.wday
+    return deadline if deadline + today < 7
+
+    partial = 6 - today
+    full_weeks = (deadline - partial) / 6
+    rest = (deadline - partial) % 6
+    deadline + full_weeks + (rest > 0 ? 1 : 0)
+  end
+
   private
 
   def send_message(method_id, message, cart_id)
@@ -179,15 +189,6 @@ class Correios
       methods = methods.where("id NOT IN (?)", blocked_methods.pluck(:id))
     end
     methods.any?
-  end
-
-  def deadline_business_day(deadline)
-    today = Time.current.wday
-    return deadline if deadline + today < 7
-
-    partial = 6 - today
-    full_weeks = (deadline - partial) / 7
-    deadline + 1 + full_weeks
   end
 
   def fallback_quote(params)

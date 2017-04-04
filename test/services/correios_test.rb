@@ -85,6 +85,47 @@ class CorreiosTest < ActiveSupport::TestCase
     assert_nil quotations[1].notice
   end
 
+  test "#deadline_business_day" do
+    setup do
+      Timecop.freeze(2017, 4, 04, 17, 54, 55)
+    end
+
+    teardown do
+      Timecop.return
+    end
+
+    expected_deadline_business_day = {
+      1 => 1, #day 5
+      2 => 2, #day 6
+      3 => 3, #day 7
+      4 => 4, #day 8
+
+      5 => 6, #day 10
+      6 => 7, #day 11
+      7 => 8, #day 12
+      8 => 9, #day 13
+      9 => 10, #day 14
+      10 => 11, #day 15
+
+      11 => 13, #day 17
+      12 => 14, #day 18
+      13 => 15, #day 19
+      14 => 16, #day 20
+      15 => 17, #day 21
+      16 => 18, #day 22
+
+      17 => 20, #day 24
+      18 => 21, #day 25
+      19 => 22, #day 26
+      20 => 23, #day 27
+    }
+    shop = create_shop
+
+    (1..20).each do |deadline|
+      assert_equal expected_deadline_business_day[deadline], Correios.new(shop, Rails.logger).deadline_business_day(deadline)
+    end
+  end
+
   def create_shop(attributes = {})
     Shop.create!(attributes.reverse_merge(
       name: "Loja",
