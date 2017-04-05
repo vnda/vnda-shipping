@@ -1,16 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<soap:Envelope
-  xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <soap:Body>
-    <CalcPrecoPrazoResponse
-      xmlns="http://tempuri.org/">
+    <CalcPrecoPrazoResponse xmlns="http://tempuri.org/">
       <CalcPrecoPrazoResult>
         <Servicos>
           <cServico>
             <Codigo>41106</Codigo>
-            <Valor>18,30</Valor>
+            <Valor>17,30</Valor>
             <PrazoEntrega>6</PrazoEntrega>
             <ValorMaoPropria>0,00</ValorMaoPropria>
             <ValorAvisoRecebimento>0,00</ValorAvisoRecebimento>
@@ -19,12 +15,12 @@
             <EntregaSabado>N</EntregaSabado>
             <Erro>0</Erro>
             <MsgErro />
-            <ValorSemAdicionais>18,30</ValorSemAdicionais>
+            <ValorSemAdicionais>17,30</ValorSemAdicionais>
             <obsFim />
           </cServico>
           <cServico>
             <Codigo>40010</Codigo>
-            <Valor>26,00</Valor>
+            <Valor>26,50</Valor>
             <PrazoEntrega>1</PrazoEntrega>
             <ValorMaoPropria>0,00</ValorMaoPropria>
             <ValorAvisoRecebimento>0,00</ValorAvisoRecebimento>
@@ -33,7 +29,7 @@
             <EntregaSabado>S</EntregaSabado>
             <Erro>0</Erro>
             <MsgErro />
-            <ValorSemAdicionais>26,00</ValorSemAdicionais>
+            <ValorSemAdicionais>26,50</ValorSemAdicionais>
             <obsFim />
           </cServico>
         </Servicos>

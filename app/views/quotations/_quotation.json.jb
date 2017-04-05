@@ -1,0 +1,16 @@
+json = {
+  name: quotation.name,
+  price: quotation.price.to_f,
+  deadline: quotation.deadline,
+  slug: quotation.slug,
+  delivery_type: quotation.delivery_type,
+  delivery_type_slug: quotation.delivery_type_slug,
+  deliver_company: quotation.deliver_company,
+  notice: quotation.notice,
+  quotation_id: quotation.quotation_id,
+  skus: quotation.skus
+}
+
+json[:package] = quotation.package if quotation.package
+
+json

@@ -1,5 +1,6 @@
 class Correios
-  URL = 'http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx?WSDL'
+  URL = 'http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx?WSDL'.freeze
+  FALLBACK_SHOP_NAME = "fallback".freeze
 
   #deprecated
   SERVICES = {
@@ -23,26 +24,30 @@ class Correios
   MIN_HEIGHT = 2
   MIN_LENGTH = 16
 
-  def initialize(shop)
+  def initialize(shop, logger)
     @shop = shop
+    @logger = logger
   end
 
   def quote(request)
-    @cart_id = request[:cart_id]
-    box = package_dimensions(request[:products])
-    cubic_weight = (box[:length].to_f* box[:height].to_f * box[:width].to_f) / 6000.0
     weight = request[:products].sum { |i| i[:weight].to_f * i[:quantity].to_i }
-    if cubic_weight > 10.0 and cubic_weight < weight
+    if weight > 30
+      log("package too heavy (#{weight})", :warn)
+      return fallback_quote(request)
+    end
+
+    box = package_dimensions(request[:products])
+    cubic_weight = (box[:length].to_f * box[:height].to_f * box[:width].to_f) / 6000.0
+    if cubic_weight > 10.0 && cubic_weight < weight
       weight = cubic_weight
     end
-    return [] if weight > 30
 
     begin
-      response = send_message(:calc_preco_prazo,
+      response = send_message(:calc_preco_prazo, {
         'nCdEmpresa' => @shop.correios_code,
         'sDsSenha' => @shop.correios_password,
-        'nCdServico' => @shop.enabled_correios_service.join(?,),
-        'sCepOrigem' => request[:origin_zip],
+        'nCdServico' => @shop.enabled_correios_service(request).join(?,),
+        'sCepOrigem' => @shop.zip.presence || request[:origin_zip],
         'sCepDestino' => request[:shipping_zip],
         'nVlPeso' => weight,
         'nCdFormato' => 1,
@@ -53,47 +58,55 @@ class Correios
         'sCdMaoPropria' => 'N',
         'sCdAvisoRecebimento' => 'N',
         'nVlValorDeclarado' => declared_value(request)
-      )
+      }, request[:cart_id])
     rescue Wasabi::Resolver::HTTPError, Excon::Errors::Timeout
-      return @shop.fallback_quote(request)
+      return fallback_quote(request)
     end
 
     services = response.body[:calc_preco_prazo_response][:calc_preco_prazo_result][:servicos][:c_servico]
     services = [services] unless services.is_a?(Array)
 
     success, error = services.partition { |s| s[:erro] == '0' || s[:erro] == "010"}
-    return @shop.fallback_quote(request) if success.empty? && error.any?
+    return fallback_quote(request) if success.empty? && error.any?
 
     error.each do |e|
       if e[:erro] == '-3'
         raise InvalidZip
       else
-        Rails.logger.error("#{e[:erro]}: #{e[:msg_erro]}")
+        log("#{e[:erro]}: #{e[:msg_erro]}", :error)
         @shop.add_shipping_error(e[:msg_erro])
-        #raise ShippingProblem, e[:msg_erro]
       end
     end
 
     allowed, blocked = success.partition { |s| check_blocked_zip(request[:shipping_zip], s) }
     blocked.each do |s|
-      Rails.logger.error("Block rule found for service #{s[:codigo]} #{@shop.allowed_correios_services[s[:codigo]] || SERVICES[s[:codigo].to_i]}") #SERVICES is deprecated
+      log("Block rule found for service #{s[:codigo]}", :error)
     end
 
-    result = []
-    allowed.compact.each do |option|
-      deadline = deadline_business_day(option[:erro] == '010'? option[:prazo_entrega].to_i + 7 : option[:prazo_entrega].to_i)
+    Quotation.transaction do
+      allowed.compact.map do |option|
+        deadline = option[:prazo_entrega].to_i
+        deadline += 7 if option[:erro] == '010'
+        deadline = deadline_business_day(option[:codigo], deadline)
+        shipping_method = @shop.shipping_methods_correios.
+          where(service: option[:codigo]).first
 
-      result << Quotation.new(
-        name: shipping_name(option[:codigo]),
-        price: parse_price(option[:valor]),
-        deadline: deadline,
-        slug: (@shop.allowed_correios_services[option[:codigo]] || option[:codigo]).parameterize,
-        delivery_type: shipping_type(option[:codigo]),
-        deliver_company: "Correios",
-        cotation_id: ''
-      )
+        quotation = Quotation.find_or_initialize_by(
+          shop_id: @shop.id,
+          cart_id: request[:cart_id],
+          package: request[:package],
+          delivery_type: shipping_type(shipping_method, option[:codigo])
+        )
+        quotation.shipping_method_id = shipping_method.id if shipping_method
+        quotation.name = shipping_name(shipping_method, option[:codigo])
+        quotation.price = parse_price(option[:valor])
+        quotation.deadline = deadline
+        quotation.slug = option[:codigo]
+        quotation.deliver_company = "Correios"
+        quotation.skus = request[:products].map { |product| product[:sku] }
+        quotation.tap(&:save!)
+      end
     end
-    result
   end
 
   def declared_value(request)
@@ -104,16 +117,28 @@ class Correios
     order_total_price
   end
 
+  def deadline_business_day(service, deadline)
+    business_days = service.to_s =~ /41[0-9]{3}/ ? 5 : 6
+    days_without_deliver = 7 - business_days
+    today = Time.current.wday
+    return deadline if deadline + today < (business_days + 1)
+
+    partial = business_days - today
+    full_weeks = (deadline - partial) / business_days
+    rest = (deadline - partial) % business_days
+    deadline + (full_weeks * days_without_deliver) + (rest > 0 ? days_without_deliver : 0)
+  end
+
   private
 
-  def send_message(method_id, message)
+  def send_message(method_id, message, cart_id)
     client = Savon.client(wsdl: URL, convert_request_keys_to: :none, open_timeout: 5, read_timeout: 5)
     request_xml = client.operation(method_id).build(message: message).to_s
-    Rails.logger.info("Request: #{request_xml}")
+    log("Request: #{request_xml}")
     response = client.call(method_id, message: message)
-    Rails.logger.info("Response: #{response.to_xml}")
+    log("Response: #{response.to_xml}")
 
-    QuoteHistory.register(@shop.id, @cart_id, {
+    QuoteHistory.register(@shop.id, cart_id, {
       :external_request => request_xml,
       :external_response => response.to_xml
     })
@@ -122,7 +147,8 @@ class Correios
   end
 
   def package_dimensions(items)
-    whl = (@shop.volume_for(items)**(1/3.0)).ceil
+    whl = (@shop.volume_for(items) ** (1 / 3.0)).ceil
+
     {
       width: [whl, MIN_WIDTH].max,
       height: [whl, MIN_HEIGHT].max,
@@ -134,24 +160,23 @@ class Correios
     str.gsub(/[.,]/, '.' => '', ',' => '.').to_f
   end
 
-  def shipping_name(code)
-    method_name = @shop.shipping_methods_correios.where(service: code.to_s)
-    return method_name.pluck(:name).first if method_name.any?
+  def shipping_name(shipping_method, code)
+    return shipping_method.name if shipping_method
 
-    #deprecated
+    # DEPRECATED should not get here since shipping_method won't be nil
     config_name = if EXPRESS.include?(code.to_i)
       @shop.express_shipping_name
     else
       @shop.normal_shipping_name
     end
 
-    config_name.presence || @shop.allowed_correios_services[code] || SERVICES[code.to_i] #SERVICES is deprecated
+    config_name.presence || code
   end
 
-  #deprecated
-  def shipping_type(code)
-    method_name = @shop.shipping_methods_correios.where(service: code.to_s)
-    return method_name.first.delivery_type.name if method_name.any?
+  def shipping_type(shipping_method, code)
+    return shipping_method.delivery_type.name if shipping_method
+
+    # DEPRECATED should not get here since shipping_method won't be nil
     if EXPRESS.include?(code.to_i)
       "Expressa"
     else
@@ -161,7 +186,8 @@ class Correios
 
   def check_blocked_zip(zip, response)
     methods = @shop.shipping_methods_correios.where(service: response[:codigo].to_s)
-    return true if methods.empty? #to compatibility to old config method
+    return true if methods.empty? # to compatibility to old config method
+
     blocked_methods = methods.joins(:block_rules).merge(BlockRule.for_zip(zip.to_i))
     if blocked_methods.any?
       methods = methods.where("id NOT IN (?)", blocked_methods.pluck(:id))
@@ -169,12 +195,13 @@ class Correios
     methods.any?
   end
 
-  def deadline_business_day(deadline)
-    today = Time.current.wday
-    return deadline if deadline + today < 7
-    partial = 6 - today
-    full_weeks = (deadline - partial) / 7
-    deadline + 1 + full_weeks
+  def fallback_quote(params)
+    shop = Shop.where(name: FALLBACK_SHOP_NAME).first unless @shop.name == FALLBACK_SHOP_NAME
+    return [] unless shop
+    Quotations.new(shop, params, @logger).to_a
   end
 
+  def log(message, level = :info)
+    @logger.tagged("Correios") { @logger.public_send(level, message) }
+  end
 end

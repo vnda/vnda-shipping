@@ -3,8 +3,9 @@ class Intelipost
 
   URL = 'https://api.intelipost.com.br/api/v1/quote_by_product'.freeze
 
-  def initialize(shop)
+  def initialize(shop, logger)
     @shop = shop
+    @logger = logger
   end
 
   def quote(params)
@@ -19,19 +20,21 @@ class Intelipost
     rescue Zlib::GzipFile::Error
       data = JSON.parse(response[:body])
     end
-    Rails.logger.info("Intelipost response data #{data}")
 
-    cotation_id = data['content']['id']
     deliveries = data['content']['delivery_options'].map do |o|
-      Quotation.new(
-        cotation_id: cotation_id,
+      Quotation.create!(
+        shop_id: @shop.id,
+        cart_id: params[:cart_id],
+        package: params[:package],
+        quotation_id: data['content']['id'],
         name: o['description'],
         price: o['final_shipping_cost'],
         deadline: o['delivery_estimate_business_days'],
         slug: o['delivery_method_name'].parameterize,
         deliver_company: o['logistic_provider_name'],
-        delivery_type: find_delivery_type(o['delivery_method_type'], o['description'])
-      ) if is_number?(o['delivery_estimate_business_days'])
+        delivery_type: find_delivery_type(o['delivery_method_type'], o['description']),
+        skus: params[:products].map { |product| product[:sku] }
+      ) if number?(o['delivery_estimate_business_days'])
     end
     deliveries.compact!
     deliveries
@@ -39,11 +42,9 @@ class Intelipost
 
   private
 
-  def is_number?(delivery_days)
+  def number?(delivery_days)
     if /\A\d+\z/.match(delivery_days.to_s)
-      if delivery_days.to_i > 0
-        return true
-      end
+      return true if delivery_days.to_i > 0
     end
     false
   end
@@ -64,7 +65,7 @@ class Intelipost
 
   def normalize_params(params)
     normalized_params = {
-      origin_zip_code: params[:origin_zip].insert(5, "-"),
+      origin_zip_code: (@shop.zip.presence || params[:origin_zip]).insert(5, "-"),
       destination_zip_code: params[:shipping_zip].insert(5, "-"),
       additional_information: {},
       products: params[:products].map do |product|
@@ -89,21 +90,27 @@ class Intelipost
   end
 
   def request(params)
+    params = normalize_params(params).to_json
+    log(params)
+
     response = Excon.post(URL,
       headers: {
         "Content-Type" => "application/json",
         "Accept" => "application/json",
         "Api-Key" => @shop.intelipost_token
       },
-      body: normalize_params(params).to_json
+      body: params
     )
   rescue Excon::Errors::BadRequest => ex
-    Rails.logger.info("Intelipost request: #{params.to_json}")
-    Rails.logger.info("Intelipost response #{ex.response[:body]}")
+    log(ex.response[:body])
 
     json = JSON.parse(ex.response[:body])
 
     @shop.add_shipping_error(json['messages']['text'])
     raise ShippingProblem, json['messages']['text']
+  end
+
+  def log(message)
+    @logger.tagged(self.class.name) { @logger.info(message) }
   end
 end

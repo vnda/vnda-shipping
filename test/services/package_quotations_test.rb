@@ -2,21 +2,11 @@ require "test_helper"
 
 class PackageQuotationsTest < ActiveSupport::TestCase
   test "calculates for multiple packages" do
-    # stub_request(:get, "http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx?WSDL").
-    #   to_return(status: 200,
-    #     body: Rails.root.join("test/fixtures/calc_preco_prazo.wsdl").read,
-    #     headers: { "Content-Type" => "text/xml; charset=utf-8" })
-
-    # stub_request(:post, "http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx").
-    #   with({ body: Rails.root.join("test/fixtures/calc_preco_prazo-child-1.request.xml").read.strip }, { body: Rails.root.join("test/fixtures/calc_preco_prazo.request.xml").read.strip }).
-    #   to_return(status: 200,
-    #     body: Rails.root.join("test/fixtures/calc_preco_prazo.response.xml").read,
-    #     headers: { "Content-Type" => "text/xml; charset=utf-8" })
-
     marketplace = create_shop(
       forward_to_correios: true,
       correios_code: "correioscode",
-      correios_password: "correiosp@ss"
+      correios_password: "correiosp@ss",
+      zip: "03320000"
     )
 
     child_1 = create_shop(
@@ -25,7 +15,8 @@ class PackageQuotationsTest < ActiveSupport::TestCase
       correios_code: "loja1code",
       correios_password: "loja1p@ss",
       marketplace_id: marketplace.id,
-      marketplace_tag: "child-1"
+      marketplace_tag: "child-1",
+      zip: "03320000"
     )
 
     child_2 = create_shop(
@@ -34,7 +25,8 @@ class PackageQuotationsTest < ActiveSupport::TestCase
       correios_code: "loja2code",
       correios_password: "loja2p@ss",
       marketplace_id: marketplace.id,
-      marketplace_tag: "child-2"
+      marketplace_tag: "child-2",
+      zip: "03320000"
     )
 
     products = [
@@ -43,33 +35,43 @@ class PackageQuotationsTest < ActiveSupport::TestCase
       { width: 9.0, height: 5.0, length: 24.0, quantity: 1, tags: ["calca", "child-2"] }
     ]
 
-    child_1_quotations = [express_quotation(price: 10, deadline: 10), normal_quotation(price: 5, deadline: 20)]
-    marketplace_quotations = [express_quotation(price: 9, deadline: 10), normal_quotation(price: 6, deadline: 19)]
-    child_2_quotations = [express_quotation(price: 8, deadline: 11), normal_quotation(price: 7, deadline: 15)]
+    marketplace_quotations = [express_quotation(shop_id: marketplace.id, price: 9, deadline: 10, package_suffix: 1), normal_quotation(shop_id: marketplace.id, price: 6, deadline: 19, package_suffix: 1)]
+    child_1_quotations = [express_quotation(shop_id: child_1.id, price: 10, deadline: 10, package_suffix: 2), normal_quotation(shop_id: child_1.id, price: 5, deadline: 20, package_suffix: 2)]
+    child_2_quotations = [express_quotation(shop_id: child_2.id, price: 8, deadline: 11, package_suffix: 3), normal_quotation(shop_id: child_2.id, price: 7, deadline: 15, package_suffix: 3)]
 
     quotations_mock = MiniTest::Mock.new
-    quotations_mock.expect(:to_a, child_1_quotations)
     quotations_mock.expect(:to_a, marketplace_quotations)
+    quotations_mock.expect(:to_a, child_1_quotations)
     quotations_mock.expect(:to_a, child_2_quotations)
 
     quotations_class_mock = MiniTest::Mock.new
-    quotations_class_mock.expect(:new, quotations_mock, [child_1, { origin_zip: "03320000", products: [products[0]], shipping_zip: "80035120" }])
-    quotations_class_mock.expect(:new, quotations_mock, [marketplace, { origin_zip: "03320000", products: [products[1]], shipping_zip: "80035120" }])
-    quotations_class_mock.expect(:new, quotations_mock, [child_2, { origin_zip: "03320000", products: [products[2]], shipping_zip: "80035120" }])
+    quotations_class_mock.expect(:new, quotations_mock, [marketplace, { package: "A1B2C3-01", products: [products[1]], shipping_zip: "80035120" }, Rails.logger])
+    quotations_class_mock.expect(:new, quotations_mock, [child_1, { package: "A1B2C3-02", products: [products[0]], shipping_zip: "80035120" }, Rails.logger])
+    quotations_class_mock.expect(:new, quotations_mock, [child_2, { package: "A1B2C3-03", products: [products[2]], shipping_zip: "80035120" }, Rails.logger])
 
     quotations = PackageQuotations.
-      new(marketplace, origin_zip: "03320000", shipping_zip: "80035120", products: products).
-      to_a(quotations_class_mock)
+      new(marketplace, { package_prefix: "A1B2C3", shipping_zip: "80035120", products: products }, Rails.logger).
+      to_h(quotations_class_mock)
 
-    assert_equal 2, quotations.size
+    assert_equal ["A1B2C3-1", "A1B2C3-2", "A1B2C3-3", :total_packages, :total_quotations], quotations.keys
 
-    assert_equal "expressa", quotations[0].slug
-    assert_equal 27, quotations[0].price
-    assert_equal 11, quotations[0].deadline
+    assert_equal 2, quotations["A1B2C3-1"].size
 
-    assert_equal "normal", quotations[1].slug
-    assert_equal 18, quotations[1].price
-    assert_equal 20, quotations[1].deadline
+    assert_equal "expressa", quotations["A1B2C3-1"][0].slug
+    assert_equal 9, quotations["A1B2C3-1"][0].price
+    assert_equal 10, quotations["A1B2C3-1"][0].deadline
+
+    assert_equal 2, quotations["A1B2C3-2"].size
+
+    assert_equal "expressa", quotations["A1B2C3-2"][0].slug
+    assert_equal 10, quotations["A1B2C3-2"][0].price
+    assert_equal 10, quotations["A1B2C3-2"][0].deadline
+
+    assert_equal 2, quotations["A1B2C3-3"].size
+
+    assert_equal "expressa", quotations["A1B2C3-3"][0].slug
+    assert_equal 8, quotations["A1B2C3-3"][0].price
+    assert_equal 11, quotations["A1B2C3-3"][0].deadline
   end
 
   def create_shop(attributes = {})
@@ -77,24 +79,24 @@ class PackageQuotationsTest < ActiveSupport::TestCase
   end
 
   def express_quotation(attributes)
-    Quotation.new({
+    Quotation.create!({
+      cart_id: 1,
+      package: "A1B2C3-#{attributes[:package_suffix]}",
       name: "Expressa",
       slug: "expressa",
       delivery_type: "Expressa",
-      deliver_company: "",
-      notice: "",
-      cotation_id: nil
-    }.merge(attributes))
+      skus: ["A1"]
+    }.merge(attributes.except(:package_suffix)))
   end
 
   def normal_quotation(attributes)
-    Quotation.new({
+    Quotation.create!({
+      cart_id: 1,
+      package: "A1B2C3-#{attributes[:package_suffix]}",
       name: "Normal",
       slug: "normal",
       delivery_type: "Normal",
-      deliver_company: "",
-      notice: "",
-      cotation_id: nil
-    }.merge(attributes))
+      skus: ["A2"]
+    }.merge(attributes.except(:package_suffix)))
   end
 end

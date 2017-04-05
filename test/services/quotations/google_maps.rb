@@ -4,7 +4,7 @@ module GoogleMapsQuotationsTest
   test "quotations using google maps" do
     stub_google_maps_requests
 
-    shop = create_shop
+    shop = create_shop(zip: "03320000")
 
     shipping_method = shop.methods.create!(
       name: "CEP80035120",
@@ -23,12 +23,13 @@ module GoogleMapsQuotationsTest
     shipping_method.map_rules.first.update(price: 10)
 
     params = {
-      origin_zip: "03320000",
+      cart_id: 1,
+      package: "A1B2C3-1",
       shipping_zip: "80035120",
-      products: [{ width: 7.0, height: 2.0, length: 14.0, quantity: 1 }]
+      products: [{ width: 7.0, height: 2.0, length: 14.0, quantity: 1, sku: "A1" }]
     }
 
-    quotations = Quotations.new(shop, params).to_a
+    quotations = Quotations.new(shop, params, Rails.logger).to_a
     assert_equal 1, quotations.size
 
     assert_instance_of Quotation, quotations[0]
@@ -37,10 +38,10 @@ module GoogleMapsQuotationsTest
     assert_equal 0, quotations[0].deadline
     assert_equal "cep80035120", quotations[0].slug
     assert_equal "Normal", quotations[0].delivery_type
-    assert_equal "", quotations[0].deliver_company
-    assert_equal "", quotations[0].cotation_id
+    assert_nil quotations[0].deliver_company
+    assert_nil quotations[0].quotation_id
     assert_equal "normal", quotations[0].delivery_type_slug
-    assert_equal "", quotations[0].notice
+    assert_nil quotations[0].notice
   end
 
   def stub_google_maps_requests

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170201180418) do
+ActiveRecord::Schema.define(version: 20170329201700) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -80,6 +80,29 @@ ActiveRecord::Schema.define(version: 20170201180418) do
 
   add_index "places", ["shipping_method_id"], name: "index_places_on_shipping_method_id", using: :btree
 
+  create_table "quotations", force: :cascade do |t|
+    t.integer  "shop_id",                                                   null: false
+    t.integer  "cart_id",                                                   null: false
+    t.string   "package",                                                   null: false
+    t.string   "name",                                                      null: false
+    t.decimal  "price",              precision: 10, scale: 2, default: 0.0, null: false
+    t.integer  "deadline",                                    default: 0,   null: false
+    t.string   "slug",                                                      null: false
+    t.string   "delivery_type"
+    t.string   "delivery_type_slug"
+    t.string   "deliver_company"
+    t.text     "notice"
+    t.string   "quotation_id"
+    t.datetime "created_at",                                                null: false
+    t.datetime "updated_at",                                                null: false
+    t.string   "skus",                                        default: [],  null: false, array: true
+    t.integer  "shipping_method_id"
+  end
+
+  add_index "quotations", ["cart_id"], name: "index_quotations_on_cart_id", using: :btree
+  add_index "quotations", ["shipping_method_id"], name: "index_quotations_on_shipping_method_id", using: :btree
+  add_index "quotations", ["shop_id"], name: "index_quotations_on_shop_id", using: :btree
+
   create_table "quote_histories", force: :cascade do |t|
     t.integer  "shop_id"
     t.integer  "cart_id"
@@ -116,7 +139,7 @@ ActiveRecord::Schema.define(version: 20170201180418) do
     t.string   "slug",             limit: 255,                                                                          null: false
     t.boolean  "express",                      default: false,                                                          null: false
     t.boolean  "enabled",                      default: false,                                                          null: false
-    t.numrange "weigth_range",                 default: BigDecimal(0.0)..BigDecimal(1000.0),                            null: false
+    t.numrange "weigth_range",                 default: BigDecimal("0.0")..BigDecimal("1000.0"),                        null: false
     t.integer  "delivery_type_id"
     t.string   "data_origin",      limit: 255, default: "local",                                                        null: false
     t.string   "service",          limit: 255
@@ -144,8 +167,12 @@ ActiveRecord::Schema.define(version: 20170201180418) do
     t.string  "order_prefix",             limit: 255, default: ""
     t.boolean "declare_value",                        default: true
     t.boolean "order_by_price",                       default: true
+    t.integer "marketplace_id",                       default: 0,     null: false
+    t.string  "marketplace_tag"
+    t.string  "zip"
   end
 
+  add_index "shops", ["marketplace_id"], name: "index_shops_on_marketplace_id", using: :btree
   add_index "shops", ["name"], name: "index_shops_on_name", unique: true, using: :btree
   add_index "shops", ["token"], name: "index_shops_on_token", unique: true, using: :btree
 

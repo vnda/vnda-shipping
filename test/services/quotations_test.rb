@@ -15,13 +15,21 @@ class QuotationsTest < ActiveSupport::TestCase
   include PlacesQuotationsTest
   include SortQuotationsTest
 
+  setup do
+    Timecop.freeze(2017, 3, 27, 17, 54, 55)
+  end
+
+  teardown do
+    Timecop.return
+  end
+
   test "raises an error if no valid parameters" do
     assert_raises Quotations::BadParams do
-      Quotations.new(create_shop, {})
+      Quotations.new(create_shop, {}, Rails.logger)
     end
   end
 
   def create_shop(attributes = {})
-    Shop.create!({ name: 'Loja', token: "a1b2c3" }.reverse_merge(attributes))
+    Shop.create!({ name: 'Loja', token: "a1b2c3", zip: "03320000" }.reverse_merge(attributes))
   end
 end

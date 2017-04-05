@@ -16,7 +16,7 @@ if defined?(::NewRelic)
 
   PackageQuotations.class_eval do
     include ::NewRelic::Agent::MethodTracer
-    add_method_tracer :to_a
+    add_method_tracer :to_h
   end
 
   ZipCodeLocation.class_eval do

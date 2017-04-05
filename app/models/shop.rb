@@ -9,15 +9,20 @@ class Shop < ActiveRecord::Base
   has_many :shipping_errors, class_name: 'ShippingError', dependent: :destroy
   has_many :shipping_friendly_errors, dependent: :destroy
   has_many :quotes, class_name: 'QuoteHistory', dependent: :destroy
+  has_many :quotations
   has_many :zipcode_spreadsheets
 
+  before_validation :clean_zip
   before_create { self.token = SecureRandom.hex }
   after_create :create_delivery_types
   after_create :create_correios_methods, if: :forward_to_correios?
 
-  validates :name, presence: true, uniqueness: true
-  validates :axado_token, presence: true, if: :forward_to_axado?
-  validates :correios_code, :correios_password, presence: true, if: :forward_to_correios?
+  validates_presence_of :name, :zip
+  validates_presence_of :axado_token, if: :forward_to_axado?
+  validates_presence_of :correios_code, :correios_password, if: :forward_to_correios?
+  validates_uniqueness_of :name, allow_blank: true
+  validates_format_of :zip, with: /\A\d+\z/, allow_blank: true
+  validates_length_of :zip, is: 8, allow_blank: true
 
   def friendly_message_for(message)
     shipping_friendly_errors.order(:created_at).each do |friendly_message|
@@ -30,6 +35,7 @@ class Shop < ActiveRecord::Base
     unless shipping_errors.where(message: message).size > 0
       shipping_errors << ShippingError.new(message: message)
     end
+    message
   end
 
   def places_for_shipping_method(shipping_method_id)
@@ -103,18 +109,26 @@ class Shop < ActiveRecord::Base
   end
 
   def shipping_methods_correios
-    methods.where(data_origin: "correios").where(enabled: true)
+    methods.where(data_origin: "correios").where(enabled: true).order(:id)
   end
 
-  def enabled_correios_service
-    shipping_methods_correios.pluck(:service)
-  end
+  def enabled_correios_service(params = {})
+    services = shipping_methods_correios
 
-  def allowed_correios_services
-    services = {}
-    JSON.load(correios_custom_services).map{|service| services.merge!(service) } if correios_custom_services.present?
-    services = Correios::SERVICES if services.empty?
-    services
+    if params.present? && name.include?("taglivros")
+      cart_tags = params[:products].
+        flat_map{ |product| product[:shipping_tags] }.
+        map{|tag| tag.nil? ? "diversos" : tag }.
+        uniq
+
+      services = if !cart_tags.include?("diversos") && (cart_tags.include?("livro") || cart_tags.include?("kit"))
+        services.where(service: "20010")
+      else
+        services.where.not(service: "20010")
+      end
+    end
+
+    services.pluck(:service)
   end
 
   def delivery_day_status(date, zip, period_name)
@@ -136,6 +150,10 @@ class Shop < ActiveRecord::Base
   end
 
   protected
+
+  def clean_zip
+    self.zip = zip.gsub(/\D+/, "") if zip?
+  end
 
   def create_delivery_types
     delivery_types.where(name: "Normal").first_or_create(enabled: true)

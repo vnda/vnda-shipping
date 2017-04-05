@@ -1,11 +1,12 @@
 class Quotations
   BadParams = Class.new(StandardError)
 
-  def initialize(shop, params)
+  def initialize(shop, params, logger)
     raise BadParams unless params[:shipping_zip] && params[:products]
 
     @shop = shop
-    @params = params
+    @params = params.dup
+    @logger = logger
     @zip = @params.delete(:shipping_zip).gsub(/\D+/, "")
   end
 
@@ -24,7 +25,7 @@ class Quotations
 
     if available_shipping_methods.where(data_origin: "places").any?
       quotations << available_shipping_methods.for_places_origin(@zip.to_i).
-        select("shipping_methods.*, 0 AS price, 0 AS deadline")
+        select("shipping_methods.*, 0 AS price, deadline")
     end
 
     weight = greater_weight(@params[:products])
@@ -34,12 +35,12 @@ class Quotations
 
     if @shop.forward_to_correios? && @shop.enabled_correios_service.any?
       if quotations.empty? || !correios_completed?(@shop, quotations)
-        quotations += Correios.new(@shop).quote(@params.merge(shipping_zip: @zip))
+        quotations += Correios.new(@shop, @logger).quote(@params.merge(shipping_zip: @zip))
       end
     end
 
     if @shop.forward_to_intelipost?
-      quotations += Intelipost.new(@shop).quote(@params.merge(shipping_zip: @zip))
+      quotations += Intelipost.new(@shop, @logger).quote(@params.merge(shipping_zip: @zip))
     end
 
     quotations = group_lower_prices(quotations) if quotations.present?
@@ -67,7 +68,7 @@ class Quotations
   def correios_completed?(shop, quotations)
     correios_delivery_types = @shop.methods.where(enabled: true, data_origin: "correios").map{|m| m.delivery_type.name }.uniq
     if correios_delivery_types.any?
-      delivery_types_quoted = quotations.map{|q| q.delivery_type}
+      delivery_types_quoted = quotations.map { |q| q.delivery_type }
       return (correios_delivery_types - delivery_types_quoted).empty?
     end
     true
@@ -94,26 +95,26 @@ class Quotations
 
   def quotation_for(shipping_methods)
     shipping_methods.map do |shipping_method|
-      attributes = {
+      quotation = Quotation.new(
+        shop_id: @shop.id,
+        cart_id: @params[:cart_id],
+        shipping_method_id: shipping_method.id,
         name: shipping_method.name,
         deadline: shipping_method.deadline,
         slug: shipping_method.slug,
         delivery_type: shipping_method.delivery_type.name,
-        notice: shipping_method.notice
-      }
-
-      case shipping_method.data_origin
-      when "places"
-        PlaceQuotation.new(attributes.merge(
-          shipping_method_id: shipping_method.id
-        ))
-      else
-        Quotation.new(attributes.merge(
-          price: shipping_method.price,
-          deliver_company: "",
-          cotation_id: "",
-        ))
-      end
+        notice: shipping_method.notice,
+        package: @params[:package],
+        price: shipping_method.price,
+        skus: @params[:products].map { |product| product[:sku] }
+      )
+      log(quotation.attributes.to_json)
+      quotation.save!
+      quotation
     end
+  end
+
+  def log(message)
+    @logger.tagged(self.class.name) { @logger.info(message) }
   end
 end

@@ -35,27 +35,21 @@
       </div>
       <div class="col-md-4">
         <div class="form-group">
-          <div class="selectbox">
-            <label>
-              <%= f.label :delivery_type_id %>
-              <%= f.collection_select :delivery_type_id, @delivery_types, :id, :name, {prompt: "Selecione o tipo de entrega"}, {class: "form-control"} %>
-            </label>
-          </div>
+          <%= f.label :delivery_type_id %>
+          <%= f.collection_select :delivery_type_id, @delivery_types, :id, :name, {prompt: "Selecione o tipo de entrega"}, {class: "form-control"} %>
         </div>
 
         <div class="form-group">
-          <div class="selectbox">
-            <label>
-              <%= f.label :data_origin %>
-              <%= f.select :data_origin, @shop.enabled_origins, {prompt: "Selecione o tipo de entrega"}, class: "form-control" %>
-            </label>
-          </div>
+          <%= f.label :data_origin %>
+          <%= f.select :data_origin, @shop.enabled_origins, {prompt: "Selecione o tipo de entrega"}, class: "form-control" %>
+        </div>
 
-          <div class="selectbox correios-services items-container">
-            <label>
-              <%= f.label :service %>
-              <%= f.select :service, @correios_services.map{|k,v| [v,k]}, {prompt: "Selecione o tipo de entrega"}, class: "form-control" %>
-            </label>
+        <div class="form-group correios-services items-container">
+          <%= f.label :service %>
+          <%= f.text_field :service, class: "form-control" %>
+
+          <div class="help-block">
+            <%= render "shared/correios_services" %>
           </div>
         </div>
       </div>

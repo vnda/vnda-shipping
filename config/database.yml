@@ -9,7 +9,7 @@ development:
 
 test:
   <<: *default
-  database: dev_vnda_shipping_test
+  database: shipping_test
 
 production:
   encoding: utf8

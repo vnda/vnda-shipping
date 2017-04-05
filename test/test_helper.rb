@@ -24,4 +24,18 @@ class ActiveSupport::TestCase
   register_spec_type self do |desc|
     desc < ActiveRecord::Base if desc.is_a? Class
   end
+
+  def request_fixture
+    webmock_fixture("request")
+  end
+
+  def response_fixture
+    webmock_fixture("response")
+  end
+
+  def webmock_fixture(type)
+    dir = self.class.name.titleize.parameterize("_")
+    prefix = name.sub(/^test_\d+_/, "").titleize.parameterize
+    Rails.root.join("test/fixtures/#{dir}/#{prefix}-#{type}.xml").read.strip
+  end
 end

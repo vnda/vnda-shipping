@@ -33,15 +33,16 @@ Rails.application.routes.draw do
     resources :quote_histories, only: [:index, :show]
   end
 
-  match '/quote', to: 'api#quote', via: [:get, :post], format: :json
-  match '/local', to: 'api#local', via: :get, format: :json
-  match '/places', to: 'api#places', via: :get, format: :json
+  match '/quote', to: 'api#quote', via: [:get, :post], defaults: { format: :json }
+  get '/local', to: 'api#local', defaults: { format: :json }
+  get '/places', to: 'api#places', defaults: { format: :json }
   get '/shipping_methods', to: 'api#shipping_methods'
 
-  match '/delivery_date', to: 'api#delivery_date', via: [:get, :post], format: :json
-  match '/delivery_periods', to: 'api#delivery_periods', via: :get, format: :json
-  match '/delivery_types', to: 'api#delivery_types', via: [:get, :post], format: :json
+  match '/delivery_date', to: 'api#delivery_date', via: [:get, :post], defaults: { format: :json }
+  get '/delivery_periods', to: 'api#delivery_periods', defaults: { format: :json }
+  match '/delivery_types', to: 'api#delivery_types', via: [:get, :post], defaults: { format: :json }
   get '/quotation_details/:cart_id', to: 'api#quotation_details'
+  get '/quotations/:package_code/:delivery_type_slug', to: 'api#quotation', defaults: { format: :json }
 
   post '/intelipost/:shop_token/create', to: 'api#create_intelipost'
   post '/intelipost/:shop_token/shipped', to: 'api#shipped'

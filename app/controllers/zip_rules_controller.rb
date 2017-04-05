@@ -3,10 +3,10 @@ class ZipRulesController < ApplicationController
   def index
     @shop = Shop.find(params[:shop_id])
     @method = ShippingMethod.find(params[:shipping_method_id])
-    
-    @zip_rules = @method.zip_rules.empty? ? 
+
+    @zip_rules = @method.zip_rules.empty? ?
       [@method.zip_rules.build] :
-      @method.zip_rules.order('id desc').page(params[:page]).per(5)    
+      @method.zip_rules.order('id desc').page(params[:page]).per_page(5)    
   end
 
   def create
@@ -22,7 +22,7 @@ class ZipRulesController < ApplicationController
   end
 
   def destroy
-    @zip_rule = ZipRule.find(params[:id])  
+    @zip_rule = ZipRule.find(params[:id])
     @zip_rule.destroy
     flash.now[:notice] = I18n.t('notices.zip_rule.destroy')
   end

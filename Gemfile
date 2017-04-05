@@ -20,6 +20,7 @@ gem 'will_paginate', '~> 3.1.0'
 gem 'will_paginate-bootstrap'
 
 gem 'sinatra', require: false
+gem 'thor', '0.19.1', require: false
 
 group :development do
   gem "byebug"
@@ -28,8 +29,10 @@ group :development do
 end
 
 group :test do
-  gem 'minitest-spec-rails'
+  gem 'minitest', '5.10.1'
+  gem 'minitest-spec-rails', '5.4.0'
   gem 'webmock', '2.3.2'
+  gem 'timecop', '0.8.1'
 
   gem 'simplecov', require: false
 end
