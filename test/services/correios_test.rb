@@ -86,85 +86,66 @@ class CorreiosTest < ActiveSupport::TestCase
   end
 
   test "#deadline_business_day for sedex" do
-    setup do
-      Timecop.freeze(2017, 4, 04, 17, 54, 55)
-    end
+    Timecop.freeze(2017, 4, 04, 17, 54, 55) do
+      shop = create_shop
 
-    teardown do
-      Timecop.return
-    end
+      correios = Correios.new(shop, Rails.logger)
 
-    expected_deadline_business_day = {
-      1 => 1, #day 5
-      2 => 2, #day 6
-      3 => 3, #day 7
-      4 => 4, #day 8
+      assert_equal 1, correios.deadline_business_day(40000, 1)
+      assert_equal 2, correios.deadline_business_day(40000, 2)
+      assert_equal 3, correios.deadline_business_day(40000, 3)
+      assert_equal 4, correios.deadline_business_day(40000, 4)
 
-      5 => 6, #day 10
-      6 => 7, #day 11
-      7 => 8, #day 12
-      8 => 9, #day 13
-      9 => 10, #day 14
-      10 => 11, #day 15
+      assert_equal 6, correios.deadline_business_day(40000, 5)
+      assert_equal 7, correios.deadline_business_day(40000, 6)
+      assert_equal 8, correios.deadline_business_day(40000, 7)
+      assert_equal 9, correios.deadline_business_day(40000, 8)
+      assert_equal 10, correios.deadline_business_day(40000, 9)
+      assert_equal 11, correios.deadline_business_day(40000, 10)
 
-      11 => 13, #day 17
-      12 => 14, #day 18
-      13 => 15, #day 19
-      14 => 16, #day 20
-      15 => 17, #day 21
-      16 => 18, #day 22
+      assert_equal 13, correios.deadline_business_day(40000, 11)
+      assert_equal 14, correios.deadline_business_day(40000, 12)
+      assert_equal 15, correios.deadline_business_day(40000, 13)
+      assert_equal 16, correios.deadline_business_day(40000, 14)
+      assert_equal 17, correios.deadline_business_day(40000, 15)
+      assert_equal 18, correios.deadline_business_day(40000, 16)
 
-      17 => 20, #day 24
-      18 => 21, #day 25
-      19 => 22, #day 26
-      20 => 23, #day 27
-    }
-    shop = create_shop
-
-    (1..20).each do |deadline|
-      assert_equal expected_deadline_business_day[deadline], Correios.new(shop, Rails.logger).deadline_business_day(40000, deadline)
+      assert_equal 20, correios.deadline_business_day(40000, 17)
+      assert_equal 21, correios.deadline_business_day(40000, 18)
+      assert_equal 22, correios.deadline_business_day(40000, 19)
+      assert_equal 23, correios.deadline_business_day(40000, 20)
     end
   end
 
   test "#deadline_business_day for pac" do
-    setup do
-      Timecop.freeze(2017, 4, 04, 17, 54, 55)
-    end
+    Timecop.freeze(2017, 4, 04, 17, 54, 55) do
+      shop = create_shop
+      correios = Correios.new(shop, Rails.logger)
 
-    teardown do
-      Timecop.return
-    end
+      assert_equal 1, correios.deadline_business_day(41000, 1)
+      assert_equal 2, correios.deadline_business_day(41000, 2)
+      assert_equal 3, correios.deadline_business_day(41000, 3)
 
-    expected_deadline_business_day = {
-      1 => 1, #day 5
-      2 => 2, #day 6
-      3 => 3, #day 7
+      assert_equal 6, correios.deadline_business_day(41000, 4)
+      assert_equal 7, correios.deadline_business_day(41000, 5)
+      assert_equal 8, correios.deadline_business_day(41000, 6)
+      assert_equal 9, correios.deadline_business_day(41000, 7)
+      assert_equal 10, correios.deadline_business_day(41000, 8)
 
-      4 => 6, #day 10
-      5 => 7, #day 11
-      6 => 8, #day 12
-      7 => 9, #day 13
-      8 => 10, #day 14
+      assert_equal 13, correios.deadline_business_day(41000, 9)
+      assert_equal 14, correios.deadline_business_day(41000, 10)
+      assert_equal 15, correios.deadline_business_day(41000, 11)
+      assert_equal 16, correios.deadline_business_day(41000, 12)
+      assert_equal 17, correios.deadline_business_day(41000, 13)
 
-      9 => 13, #day 17
-      10 => 14, #day 18
-      11 => 15, #day 19
-      12 => 16, #day 20
-      13 => 17, #day 21
+      assert_equal 20, correios.deadline_business_day(41000, 14)
+      assert_equal 21, correios.deadline_business_day(41000, 15)
+      assert_equal 22, correios.deadline_business_day(41000, 16)
+      assert_equal 23, correios.deadline_business_day(41000, 17)
+      assert_equal 24, correios.deadline_business_day(41000, 18)
 
-      14 => 20, #day 24
-      15 => 21, #day 25
-      16 => 22, #day 26
-      17 => 23, #day 27
-      18 => 24, #day 28
-
-      19 => 27, #day 1
-      20 => 28, #day 2
-    }
-    shop = create_shop
-
-    (1..20).each do |deadline|
-      assert_equal expected_deadline_business_day[deadline], Correios.new(shop, Rails.logger).deadline_business_day(41000, deadline)
+      assert_equal 27, correios.deadline_business_day(41000, 19)
+      assert_equal 28, correios.deadline_business_day(41000, 20)
     end
   end
 

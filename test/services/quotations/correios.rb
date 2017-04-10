@@ -2,8 +2,6 @@ module CorreiosQuotationsTest
   extend ActiveSupport::Testing::Declarative
 
   test "returns quotations using correios" do
-    stub_correios_requests
-
     shop = create_shop(
       forward_to_correios: true,
       correios_code: "correioscode",
@@ -11,14 +9,7 @@ module CorreiosQuotationsTest
       zip: "03320000"
     )
 
-    params = {
-      cart_id: 1,
-      package: "A1B2C3-01",
-      shipping_zip: "80035120",
-      products: [{ width: 7.0, height: 2.0, length: 14.0, quantity: 1, sku: "A1" }]
-    }
-
-    quotations = Quotations.new(shop, params, Rails.logger).to_a
+    quotations = new_correios_quotations(shop)
     assert_equal 2, quotations.size
 
     assert_instance_of Quotation, quotations[0]
@@ -50,6 +41,34 @@ module CorreiosQuotationsTest
     assert_nil quotations[1].quotation_id
     assert_equal "expressa", quotations[1].delivery_type_slug
     assert_nil quotations[1].notice
+  end
+
+  test "increments returned deadline for correios quotations" do
+    shop = create_shop(
+      forward_to_correios: true,
+      correios_code: "correioscode",
+      correios_password: "correiosp@ss",
+      zip: "03320000"
+    )
+
+    quotations = new_correios_quotations(shop, additional_deadline: 10)
+    assert_equal 2, quotations.size
+
+    assert_equal 17, quotations[0].deadline
+    assert_equal 11, quotations[1].deadline
+  end
+
+  def new_correios_quotations(shop, params = {})
+    stub_correios_requests
+
+    params = params.reverse_merge(
+      cart_id: 1,
+      package: "A1B2C3-01",
+      shipping_zip: "80035120",
+      products: [{ width: 7.0, height: 2.0, length: 14.0, quantity: 1, sku: "A1" }]
+    )
+
+    Quotations.new(shop, params, Rails.logger).to_a
   end
 
   def stub_correios_requests

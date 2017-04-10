@@ -3,28 +3,9 @@ module PlacesQuotationsTest
 
   test "quotations using places" do
     shop = create_shop(zip: "03320000")
+    shipping_method = create_shipping_method(shop)
 
-    shipping_method = shop.methods.create!(
-      name: "Retirar na loja",
-      description: "Retirar na loja",
-      express: false,
-      enabled: true,
-      min_weigth: 0,
-      max_weigth: 100,
-      delivery_type_id: shop.delivery_types.first.id,
-      data_origin: "places"
-    )
-
-    shipping_method.places.create!(name: "Loja", range: (80000000...81000000), deadline: 8)
-
-    params = {
-      cart_id: 1,
-      package: "A1B2C3-01",
-      shipping_zip: "80035120",
-      products: [{ width: 7.0, height: 2.0, length: 14.0, quantity: 1, sku: "A1" }]
-    }
-
-    quotations = Quotations.new(shop, params, Rails.logger).to_a
+    quotations = new_places_quotations(shop)
     assert_equal 1, quotations.size
 
     assert_instance_of Quotation, quotations[0]
@@ -41,5 +22,42 @@ module PlacesQuotationsTest
     assert_nil quotations[0].quotation_id
     assert_equal "normal", quotations[0].delivery_type_slug
     assert_nil quotations[0].notice
+  end
+
+  test "increments returned deadline for places quotations" do
+    shop = create_shop(zip: "03320000")
+    create_shipping_method(shop)
+
+    quotations = new_places_quotations(shop, additional_deadline: 10)
+    assert_equal 1, quotations.size
+
+    assert_equal 18, quotations[0].deadline
+  end
+
+  def new_places_quotations(shop, params = {})
+    params = params.reverse_merge(
+      cart_id: 1,
+      package: "A1B2C3-01",
+      shipping_zip: "80035120",
+      products: [{ width: 7.0, height: 2.0, length: 14.0, quantity: 1, sku: "A1" }]
+    )
+
+    Quotations.new(shop, params, Rails.logger).to_a
+  end
+
+  def create_shipping_method(shop)
+    shipping_method = shop.methods.create!(
+      name: "Retirar na loja",
+      description: "Retirar na loja",
+      express: false,
+      enabled: true,
+      min_weigth: 0,
+      max_weigth: 100,
+      delivery_type_id: shop.delivery_types.first.id,
+      data_origin: "places"
+    )
+
+    shipping_method.places.create!(name: "Loja", range: (80000000...81000000), deadline: 8)
+    shipping_method
   end
 end

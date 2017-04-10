@@ -165,6 +165,31 @@ class QuotesTest < ActionDispatch::IntegrationTest
     assert_equal 1, quotations["A1B2C3-03"][1]["deadline"]
   end
 
+  test "increments deadline for all quotations" do
+    stub_correios
+
+    shop = create_shop(
+      forward_to_correios: true,
+      correios_code: "correioscode",
+      correios_password: "correiosp@ss",
+      zip: "03320000"
+    )
+
+    post "/quote", token: shop.token, cart_id: 1, package_prefix: "A1B2C3",
+      shipping_zip: "80035120", products: [{ width: 7.0, height: 2.0,
+        length: 14.0, quantity: 1, sku: "A1" }], additional_deadline: 10
+
+    assert_equal 200, status
+
+    quotations = JSON.load(body)
+
+    assert_equal ["A1B2C3-01"], quotations.keys
+    assert_equal 2, quotations["A1B2C3-01"].size
+
+    assert_equal 17, quotations["A1B2C3-01"][0]["deadline"]
+    assert_equal 11, quotations["A1B2C3-01"][1]["deadline"]
+  end
+
   def create_shop(attributes = {})
     Shop.create!({ name: 'Loja', token: "a1b2c3", zip: "03320000" }.merge(attributes))
   end
