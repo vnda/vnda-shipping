@@ -59,7 +59,8 @@ class Correios
         'sCdAvisoRecebimento' => 'N',
         'nVlValorDeclarado' => declared_value(request)
       }, request[:cart_id])
-    rescue Wasabi::Resolver::HTTPError, Excon::Errors::Timeout, Excon::Error::Socket
+    rescue Wasabi::Resolver::HTTPError, Excon::Errors::Error => e
+      Rollbar.error(e)
       return fallback_quote(request)
     end
 
