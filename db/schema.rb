@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170329201700) do
+ActiveRecord::Schema.define(version: 20170412194335) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -170,6 +170,11 @@ ActiveRecord::Schema.define(version: 20170329201700) do
     t.integer "marketplace_id",                       default: 0,     null: false
     t.string  "marketplace_tag"
     t.string  "zip"
+    t.boolean "forward_to_tnt",                       default: false, null: false
+    t.string  "tnt_email"
+    t.string  "tnt_delivery_type"
+    t.string  "tnt_cnpj"
+    t.string  "tnt_ie"
   end
 
   add_index "shops", ["marketplace_id"], name: "index_shops_on_marketplace_id", using: :btree

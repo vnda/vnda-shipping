@@ -42,6 +42,7 @@
         <%= f.text_field :correios_password, class: 'form-control' %>
       </div>
     </fieldset>
+
     <fieldset class="col-md-4">
       <legend>Axado</legend>
       <div class="checkbox">
@@ -71,6 +72,32 @@
       <div class="form-group">
         <%= f.label :intelipost_token %>
         <%= f.text_field :intelipost_token, class: 'form-control' %>
+      </div>
+    </fieldset>
+
+    <fieldset class="col-md-4">
+      <legend>TNT/Mercúrio</legend>
+      <div class="checkbox">
+        <label>
+          <%= f.check_box :forward_to_tnt %>
+          <%= Shop.human_attribute_name(:forward_to_tnt) %>
+        </label>
+      </div>
+      <div class="form-group">
+        <%= f.label :tnt_email %>
+        <%= f.text_field :tnt_email, class: 'form-control' %>
+      </div>
+      <div class="form-group">
+        <%= f.label :tnt_cnpj %>
+        <%= f.text_field :tnt_cnpj, class: 'form-control' %>
+      </div>
+      <div class="form-group">
+        <%= f.label :tnt_ie %>
+        <%= f.text_field :tnt_ie, class: 'form-control' %>
+      </div>
+      <div class="form-group">
+        <%= f.label :tnt_delivery_type %>
+        <%= f.text_field :tnt_delivery_type, class: 'form-control' %>
       </div>
     </fieldset>
   </div>
