@@ -43,6 +43,10 @@ class Quotations
       quotations += Intelipost.new(@shop, @logger).quote(@params.merge(shipping_zip: @zip))
     end
 
+    if @shop.forward_to_tnt?
+      quotations += Tnt.new(@shop, @logger).quote(@params.merge(shipping_zip: @zip))
+    end
+
     quotations = group_lower_prices(quotations) if quotations.present?
 
     if @params[:additional_deadline].present?

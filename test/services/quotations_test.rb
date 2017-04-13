@@ -6,6 +6,7 @@ require_relative "quotations/intelipost"
 require_relative "quotations/local"
 require_relative "quotations/places"
 require_relative "quotations/sort"
+require_relative "quotations/tnt"
 
 class QuotationsTest < ActiveSupport::TestCase
   include CorreiosQuotationsTest
@@ -14,6 +15,7 @@ class QuotationsTest < ActiveSupport::TestCase
   include LocalQuotationsTest
   include PlacesQuotationsTest
   include SortQuotationsTest
+  include TntQuotationsTest
 
   setup do
     Timecop.freeze(2017, 3, 27, 17, 54, 55)

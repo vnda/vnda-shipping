@@ -1,0 +1,131 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://service.calculoFrete.mercurio.com" xmlns:ns2="http://model.expedicao.lms.mercurio.com" xmlns:ns1="http://model.vendas.lms.mercurio.com" xmlns:soapenc12="http://www.w3.org/2003/05/soap-encoding" xmlns:tns="http://service.calculoFrete.mercurio.com" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap11="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc11="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope">
+  <wsdl:types>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://model.vendas.lms.mercurio.com">
+<xsd:complexType name="CotacaoWebService">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="cdDivisaoCliente" nillable="true" type="xsd:long"/>
+<xsd:element minOccurs="0" name="cepDestino" nillable="true" type="xsd:string"/>
+<xsd:element minOccurs="0" name="cepOrigem" nillable="true" type="xsd:string"/>
+<xsd:element minOccurs="0" name="login" nillable="true" type="xsd:string"/>
+<xsd:element minOccurs="0" name="nrIdentifClienteDest" nillable="true" type="xsd:string"/>
+<xsd:element minOccurs="0" name="nrIdentifClienteRem" nillable="true" type="xsd:string"/>
+<xsd:element minOccurs="0" name="nrInscricaoEstadualDestinatario" nillable="true" type="xsd:string"/>
+<xsd:element minOccurs="0" name="nrInscricaoEstadualRemetente" nillable="true" type="xsd:string"/>
+<xsd:element minOccurs="0" name="psReal" nillable="true" type="xsd:string"/>
+<xsd:element minOccurs="0" name="senha" nillable="true" type="xsd:string"/>
+<xsd:element minOccurs="0" name="tpFrete" nillable="true" type="xsd:string"/>
+<xsd:element minOccurs="0" name="tpPessoaDestinatario" nillable="true" type="xsd:string"/>
+<xsd:element minOccurs="0" name="tpPessoaRemetente" nillable="true" type="xsd:string"/>
+<xsd:element minOccurs="0" name="tpServico" nillable="true" type="xsd:string"/>
+<xsd:element minOccurs="0" name="tpSituacaoTributariaDestinatario" nillable="true" type="xsd:string"/>
+<xsd:element minOccurs="0" name="tpSituacaoTributariaRemetente" nillable="true" type="xsd:string"/>
+<xsd:element minOccurs="0" name="vlMercadoria" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:schema>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://service.calculoFrete.mercurio.com">
+<xsd:element name="calculaFrete">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="in0" nillable="true" type="ns1:CotacaoWebService"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:complexType name="ArrayOfString">
+<xsd:sequence>
+<xsd:element maxOccurs="unbounded" minOccurs="0" name="string" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:element name="calculaFreteResponse">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="out" nillable="true" type="ns2:CalculoFreteWebServiceRetorno"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+</xsd:schema>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://model.expedicao.lms.mercurio.com">
+<xsd:complexType name="CalculoFreteWebServiceRetorno">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="errorList" nillable="true" type="tns:ArrayOfString"/>
+<xsd:element minOccurs="0" name="nmDestinatario" nillable="true" type="xsd:string"/>
+<xsd:element minOccurs="0" name="nmMunicipioDestino" nillable="true" type="xsd:string"/>
+<xsd:element minOccurs="0" name="nmMunicipioOrigem" nillable="true" type="xsd:string"/>
+<xsd:element minOccurs="0" name="nmRemetente" nillable="true" type="xsd:string"/>
+<xsd:element minOccurs="0" name="nrDDDFilialDestino" nillable="true" type="xsd:string"/>
+<xsd:element minOccurs="0" name="nrDDDFilialOrigem" nillable="true" type="xsd:string"/>
+<xsd:element minOccurs="0" name="nrTelefoneFilialDestino" nillable="true" type="xsd:string"/>
+<xsd:element minOccurs="0" name="nrTelefoneFilialOrigem" nillable="true" type="xsd:string"/>
+<xsd:element minOccurs="0" name="parcelas" nillable="true" type="ns2:ArrayOfParcelasFreteWebService"/>
+<xsd:element minOccurs="0" name="prazoEntrega" nillable="true" type="xsd:long"/>
+<xsd:element minOccurs="0" name="servicosAdicionais" nillable="true" type="ns2:ArrayOfServicoAdicionalWebService"/>
+<xsd:element minOccurs="0" name="vlDesconto" nillable="true" type="xsd:string"/>
+<xsd:element minOccurs="0" name="vlICMSubstituicaoTributaria" nillable="true" type="xsd:string"/>
+<xsd:element minOccurs="0" name="vlImposto" nillable="true" type="xsd:string"/>
+<xsd:element minOccurs="0" name="vlTotalCtrc" nillable="true" type="xsd:string"/>
+<xsd:element minOccurs="0" name="vlTotalFrete" nillable="true" type="xsd:string"/>
+<xsd:element minOccurs="0" name="vlTotalServico" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="ArrayOfServicoAdicionalWebService">
+<xsd:sequence>
+<xsd:element maxOccurs="unbounded" minOccurs="0" name="ServicoAdicionalWebService" nillable="true" type="ns2:ServicoAdicionalWebService"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="ServicoAdicionalWebService">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="dsComplemento" nillable="true" type="xsd:string"/>
+<xsd:element minOccurs="0" name="nmServico" nillable="true" type="xsd:string"/>
+<xsd:element minOccurs="0" name="sgMoeda" nillable="true" type="xsd:string"/>
+<xsd:element minOccurs="0" name="vlServico" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="ArrayOfParcelasFreteWebService">
+<xsd:sequence>
+<xsd:element maxOccurs="unbounded" minOccurs="0" name="ParcelasFreteWebService" nillable="true" type="ns2:ParcelasFreteWebService"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="ParcelasFreteWebService">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="dsParcela" nillable="true" type="xsd:string"/>
+<xsd:element minOccurs="0" name="vlParcela" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="calculaFreteResponse">
+    <wsdl:part name="parameters" element="tns:calculaFreteResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="calculaFreteRequest">
+    <wsdl:part name="parameters" element="tns:calculaFrete">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="CalculoFretePortType">
+    <wsdl:operation name="calculaFrete">
+      <wsdl:input name="calculaFreteRequest" message="tns:calculaFreteRequest">
+    </wsdl:input>
+      <wsdl:output name="calculaFreteResponse" message="tns:calculaFreteResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="CalculoFreteHttpBinding" type="tns:CalculoFretePortType">
+    <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="calculaFrete">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="calculaFreteRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="calculaFreteResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="CalculoFrete">
+    <wsdl:port name="CalculoFreteHttpPort" binding="tns:CalculoFreteHttpBinding">
+      <wsdlsoap:address location="http://ws.tntbrasil.com.br/servicos/CalculoFrete"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

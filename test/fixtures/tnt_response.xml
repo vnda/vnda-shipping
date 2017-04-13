@@ -1,0 +1,166 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <soap:Body>
+    <ns1:calculaFreteResponse xmlns:ns1="http://service.calculoFrete.mercurio.com">
+      <ns1:out>
+        <errorList xmlns="http://model.expedicao.lms.mercurio.com"/>
+        <nmDestinatario xmlns="http://model.expedicao.lms.mercurio.com" xsi:nil="true"/>
+        <nmMunicipioDestino xmlns="http://model.expedicao.lms.mercurio.com">Passo Fundo</nmMunicipioDestino>
+        <nmMunicipioOrigem xmlns="http://model.expedicao.lms.mercurio.com">Porto Alegre</nmMunicipioOrigem>
+        <nmRemetente xmlns="http://model.expedicao.lms.mercurio.com">VNDA S.A</nmRemetente>
+        <nrDDDFilialDestino xmlns="http://model.expedicao.lms.mercurio.com">54</nrDDDFilialDestino>
+        <nrDDDFilialOrigem xmlns="http://model.expedicao.lms.mercurio.com">51</nrDDDFilialOrigem>
+        <nrTelefoneFilialDestino xmlns="http://model.expedicao.lms.mercurio.com">33160500</nrTelefoneFilialDestino>
+        <nrTelefoneFilialOrigem xmlns="http://model.expedicao.lms.mercurio.com">33565000</nrTelefoneFilialOrigem>
+        <parcelas xmlns="http://model.expedicao.lms.mercurio.com">
+          <ParcelasFreteWebService>
+            <dsParcela>Frete peso</dsParcela>
+            <vlParcela>21.05</vlParcela>
+          </ParcelasFreteWebService>
+          <ParcelasFreteWebService>
+            <dsParcela>Frete Valor</dsParcela>
+            <vlParcela>0.14</vlParcela>
+          </ParcelasFreteWebService>
+          <ParcelasFreteWebService>
+            <dsParcela>GRIS</dsParcela>
+            <vlParcela>0.07</vlParcela>
+          </ParcelasFreteWebService>
+        </parcelas>
+        <prazoEntrega xmlns="http://model.expedicao.lms.mercurio.com">1</prazoEntrega>
+        <servicosAdicionais xmlns="http://model.expedicao.lms.mercurio.com">
+          <ServicoAdicionalWebService>
+            <dsComplemento>20% sobre o valor do frete com m&#xED;nimo de R$ 18,83.</dsComplemento>
+            <nmServico>Agendamento de entrega</nmServico>
+            <sgMoeda>R$</sgMoeda>
+            <vlServico>20.00</vlServico>
+          </ServicoAdicionalWebService>
+          <ServicoAdicionalWebService>
+            <dsComplemento>Custo + 44%.</dsComplemento>
+            <nmServico>Capatazia</nmServico>
+            <sgMoeda>R$</sgMoeda>
+            <vlServico>44.00</vlServico>
+          </ServicoAdicionalWebService>
+          <ServicoAdicionalWebService>
+            <dsComplemento>R$ 0,00 - 2 seguran&#xE7;as - unidirecional - por km rodado.</dsComplemento>
+            <nmServico>Escolta</nmServico>
+            <sgMoeda>R$</sgMoeda>
+            <vlServico>0.00</vlServico>
+          </ServicoAdicionalWebService>
+          <ServicoAdicionalWebService>
+            <dsComplemento>R$ 0,00 unidirecional - por km rodado.</dsComplemento>
+            <nmServico>Escolta - Seguran&#xE7;a adicional</nmServico>
+            <sgMoeda>R$</sgMoeda>
+            <vlServico>0.00</vlServico>
+          </ServicoAdicionalWebService>
+          <ServicoAdicionalWebService>
+            <dsComplemento>R$ 1.752,72 por per&#xED;odo.</dsComplemento>
+            <nmServico>Estadia de veiculo conjunto</nmServico>
+            <sgMoeda>R$</sgMoeda>
+            <vlServico>1752.72</vlServico>
+          </ServicoAdicionalWebService>
+          <ServicoAdicionalWebService>
+            <dsComplemento>R$ 1.140,33 por per&#xED;odo.</dsComplemento>
+            <nmServico>Estadia de ve&#xED;culo 3/4</nmServico>
+            <sgMoeda>R$</sgMoeda>
+            <vlServico>1140.33</vlServico>
+          </ServicoAdicionalWebService>
+          <ServicoAdicionalWebService>
+            <dsComplemento>R$ 1.425,24 por per&#xED;odo.</dsComplemento>
+            <nmServico>Estadia de ve&#xED;culo carreta</nmServico>
+            <sgMoeda>R$</sgMoeda>
+            <vlServico>1425.24</vlServico>
+          </ServicoAdicionalWebService>
+          <ServicoAdicionalWebService>
+            <dsComplemento>R$ 1.140,33 por per&#xED;odo.</dsComplemento>
+            <nmServico>Estadia de ve&#xED;culo toco</nmServico>
+            <sgMoeda>R$</sgMoeda>
+            <vlServico>1140.33</vlServico>
+          </ServicoAdicionalWebService>
+          <ServicoAdicionalWebService>
+            <dsComplemento>R$ 1.140,33 por per&#xED;odo.</dsComplemento>
+            <nmServico>Estadia de ve&#xED;culo truck</nmServico>
+            <sgMoeda>R$</sgMoeda>
+            <vlServico>1140.33</vlServico>
+          </ServicoAdicionalWebService>
+          <ServicoAdicionalWebService>
+            <dsComplemento xsi:nil="true"/>
+            <nmServico>Gest&#xE3;o de opera&#xE7;&#xF5;es log&#xED;sticas na sede da empresa</nmServico>
+            <sgMoeda>R$</sgMoeda>
+            <vlServico>0.00</vlServico>
+          </ServicoAdicionalWebService>
+          <ServicoAdicionalWebService>
+            <dsComplemento xsi:nil="true"/>
+            <nmServico>Gest&#xE3;o de opera&#xE7;&#xF5;es log&#xED;sticas na sede do cliente/terceiros</nmServico>
+            <sgMoeda>R$</sgMoeda>
+            <vlServico>0.00</vlServico>
+          </ServicoAdicionalWebService>
+          <ServicoAdicionalWebService>
+            <dsComplemento>R$ 41,88 por pallet padr&#xE3;o PBR.</dsComplemento>
+            <nmServico>Paletiza&#xE7;&#xE3;o</nmServico>
+            <sgMoeda>R$</sgMoeda>
+            <vlServico>41.88</vlServico>
+          </ServicoAdicionalWebService>
+          <ServicoAdicionalWebService>
+            <dsComplemento>0,29% sobre o valor da mercadoria por per&#xED;odo.</dsComplemento>
+            <nmServico>Seguro da carga em perman&#xEA;ncia</nmServico>
+            <sgMoeda>R$</sgMoeda>
+            <vlServico>0.29</vlServico>
+          </ServicoAdicionalWebService>
+          <ServicoAdicionalWebService>
+            <dsComplemento>R$ 0,32 por kg/dia com m&#xED;nimo de R$ 32,33 com car&#xEA;ncia de 3 dias.</dsComplemento>
+            <nmServico>Taxa de fiel deposit&#xE1;rio</nmServico>
+            <sgMoeda>R$</sgMoeda>
+            <vlServico>0.32</vlServico>
+          </ServicoAdicionalWebService>
+          <ServicoAdicionalWebService>
+            <dsComplemento>R$ 0,32 por kg/dia com m&#xED;nimo de R$ 32,33 com car&#xEA;ncia de 7 dias e decurso de prazo de 15 dias.</dsComplemento>
+            <nmServico>Taxa de perman&#xEA;ncia de carga</nmServico>
+            <sgMoeda>R$</sgMoeda>
+            <vlServico>0.32</vlServico>
+          </ServicoAdicionalWebService>
+          <ServicoAdicionalWebService>
+            <dsComplemento xsi:nil="true"/>
+            <nmServico>Valor por km ve&#xED;culo dedicado 3/4 ou van</nmServico>
+            <sgMoeda>R$</sgMoeda>
+            <vlServico>2.62</vlServico>
+          </ServicoAdicionalWebService>
+          <ServicoAdicionalWebService>
+            <dsComplemento xsi:nil="true"/>
+            <nmServico>Valor por km ve&#xED;culo dedicado carreta</nmServico>
+            <sgMoeda>R$</sgMoeda>
+            <vlServico>3.64</vlServico>
+          </ServicoAdicionalWebService>
+          <ServicoAdicionalWebService>
+            <dsComplemento>3,21% sobre o valor do frete.</dsComplemento>
+            <nmServico>Valor por km ve&#xED;culo dedicado toco ou truck</nmServico>
+            <sgMoeda>R$</sgMoeda>
+            <vlServico>3.21</vlServico>
+          </ServicoAdicionalWebService>
+          <ServicoAdicionalWebService>
+            <dsComplemento>R$ 816,63 por entrega - R$ 2,62 por km excedente (100 km).</dsComplemento>
+            <nmServico>Ve&#xED;culo dedicado 3/4 ou van</nmServico>
+            <sgMoeda>R$</sgMoeda>
+            <vlServico>816.63</vlServico>
+          </ServicoAdicionalWebService>
+          <ServicoAdicionalWebService>
+            <dsComplemento>R$ 1.496,48 por entrega - R$ 3,64 por km excedente (100 km).</dsComplemento>
+            <nmServico>Ve&#xED;culo dedicado carreta</nmServico>
+            <sgMoeda>R$</sgMoeda>
+            <vlServico>1496.48</vlServico>
+          </ServicoAdicionalWebService>
+          <ServicoAdicionalWebService>
+            <dsComplemento>R$ 879,31 por entrega - R$ 3,21 por km excedente (100 km).</dsComplemento>
+            <nmServico>Ve&#xED;culo dedicado toco ou truck</nmServico>
+            <sgMoeda>R$</sgMoeda>
+            <vlServico>879.31</vlServico>
+          </ServicoAdicionalWebService>
+        </servicosAdicionais>
+        <vlDesconto xmlns="http://model.expedicao.lms.mercurio.com">0.00</vlDesconto>
+        <vlICMSubstituicaoTributaria xmlns="http://model.expedicao.lms.mercurio.com">0</vlICMSubstituicaoTributaria>
+        <vlImposto xmlns="http://model.expedicao.lms.mercurio.com">0</vlImposto>
+        <vlTotalCtrc xmlns="http://model.expedicao.lms.mercurio.com">21.26</vlTotalCtrc>
+        <vlTotalFrete xmlns="http://model.expedicao.lms.mercurio.com">21.26</vlTotalFrete>
+        <vlTotalServico xmlns="http://model.expedicao.lms.mercurio.com">0.00</vlTotalServico>
+      </ns1:out>
+    </ns1:calculaFreteResponse>
+  </soap:Body>
+</soap:Envelope>
