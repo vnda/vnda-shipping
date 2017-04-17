@@ -29,7 +29,7 @@ class CorreiosTest < ActiveSupport::TestCase
     assert_equal "Expressa", quotations[0].name
     assert_equal 26.8, quotations[0].price
     assert_equal 1, quotations[0].deadline
-    assert_equal "40010", quotations[0].slug
+    assert_equal "sedex", quotations[0].slug
     assert_equal "Expressa", quotations[0].delivery_type
     assert_equal "Correios", quotations[0].deliver_company
     assert_nil quotations[0].quotation_id

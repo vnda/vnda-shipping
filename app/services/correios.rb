@@ -102,7 +102,7 @@ class Correios
         quotation.name = shipping_name(shipping_method, option[:codigo])
         quotation.price = parse_price(option[:valor])
         quotation.deadline = deadline
-        quotation.slug = option[:codigo]
+        quotation.slug = shipping_method ? shipping_method.slug : option[:codigo]
         quotation.deliver_company = "Correios"
         quotation.skus = request[:products].map { |product| product[:sku] }
         quotation.tap(&:save!)

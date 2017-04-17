@@ -20,7 +20,7 @@ module CorreiosQuotationsTest
     assert_equal "Normal", quotations[0].name
     assert_equal 18.3, quotations[0].price
     assert_equal 7, quotations[0].deadline
-    assert_equal "41106", quotations[0].slug
+    assert_equal "pac", quotations[0].slug
     assert_equal "Normal", quotations[0].delivery_type
     assert_equal "Correios", quotations[0].deliver_company
     assert_nil quotations[0].quotation_id
@@ -35,7 +35,7 @@ module CorreiosQuotationsTest
     assert_equal "Expressa", quotations[1].name
     assert_equal 26, quotations[1].price
     assert_equal 1, quotations[1].deadline
-    assert_equal "40010", quotations[1].slug
+    assert_equal "sedex", quotations[1].slug
     assert_equal "Expressa", quotations[1].delivery_type
     assert_equal "Correios", quotations[1].deliver_company
     assert_nil quotations[1].quotation_id
