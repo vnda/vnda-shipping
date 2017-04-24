@@ -48,10 +48,8 @@ class Quotations
     end
 
     quotations = group_lower_prices(quotations) if quotations.present?
-
-    if @params[:additional_deadline].present?
-      quotations = apply_additional_deadline(quotations)
-    end
+    quotations = apply_additional_deadline(quotations) if @params[:additional_deadline].present?
+    quotations = apply_picking_time(quotations)
 
     quotations = quotations.sort_by { |quote| quote.price } if @shop.order_by_price?
     QuoteHistory.register(@shop.id, @params[:cart_id], quotations: quotations.to_json)
@@ -88,6 +86,13 @@ class Quotations
   def apply_additional_deadline(quotations)
     quotations.each do |quote|
       quote.deadline = quote.deadline.to_i + @params[:additional_deadline].to_i
+    end
+  end
+
+  def apply_picking_time(quotations)
+    return quotations unless @shop.picking_times.where(enabled: true).any?
+    quotations.each do |quote|
+      quote.deadline = PickingTime.next_time(@shop.id) + quote.deadline.to_i
     end
   end
 
