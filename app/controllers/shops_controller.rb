@@ -14,6 +14,7 @@ class ShopsController < ApplicationController
 
     respond_to do |format|
       if @shop.save
+        save_picking_times
         format.html { success_redirect shop_shipping_methods_path(@shop), notice: I18n.t(:create, scope: [:flashes, :store]) }
         format.json { render json:  @shop.token, status: 201 }
       else
@@ -30,6 +31,7 @@ class ShopsController < ApplicationController
   def update
     @shop = Shop.find(params[:id])
     if @shop.update(shop_params)
+      save_picking_times
       success_redirect shops_path
     else
       render :edit
@@ -58,5 +60,16 @@ class ShopsController < ApplicationController
         :forward_to_tnt, :tnt_email, :tnt_cnpj, :tnt_ie, :tnt_delivery_type,
         :express_shipping_name, :backup_method_id, :marketplace_id, :zip).
       merge(correios_custom_services: (params[:shop][:correios_custom_services] || []).map { |i| JSON.parse(i) }.to_json)
+  end
+
+  def save_picking_times
+    PickingTime::WEEKDAYS.each do |weekday|
+      hour = params[:shop][:picking_times][weekday]
+
+      picking = @shop.picking_times.find_or_create_by(weekday: weekday)
+      picking.enabled = hour.present?
+      picking.hour = hour.presence || ""
+      picking.save!
+    end
   end
 end

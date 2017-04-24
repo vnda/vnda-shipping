@@ -18,6 +18,7 @@ gem 'sidekiq'
 gem 'jb', '0.4.1'
 gem 'will_paginate', '~> 3.1.0'
 gem 'will_paginate-bootstrap'
+gem 'nickel', '0.1.6'
 
 gem 'sinatra', require: false
 gem 'thor', '0.19.1', require: false

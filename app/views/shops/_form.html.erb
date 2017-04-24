@@ -16,6 +16,20 @@
         <%= f.text_field :zip, class: 'form-control', maxlength: 8 %>
       </div>
     </div>
+
+    <div class="col-md-6">
+      <%= f.fields_for(:picking_times) do |f| %>
+        <div class="form-inline">
+          <% PickingTime::WEEKDAYS.each do |weekday| %>
+            <div class="control-group">
+              <%= f.label weekday, :style => "min-width: 80px;" %>
+              <%= f.select weekday, options_for_select([["Sem coleta", ""]].concat(PickingTime::HOURS), @shop.picking_times.find_by_weekday(weekday).try(:hour)), { :as => weekday }, :class => "form-control input-medium" %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+
   </div>
 
   <hr>

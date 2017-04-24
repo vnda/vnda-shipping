@@ -11,6 +11,7 @@ class Shop < ActiveRecord::Base
   has_many :quotes, class_name: 'QuoteHistory', dependent: :destroy
   has_many :quotations
   has_many :zipcode_spreadsheets
+  has_many :picking_times
 
   before_validation :clean_zip
   before_create { self.token = SecureRandom.hex }
