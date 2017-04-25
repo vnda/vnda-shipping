@@ -16,6 +16,10 @@
           <%= f.label :description %>
           <%= f.text_field :description, class: 'form-control' %>
         </div>
+        <div class="form-group">
+          <%= f.label :notice %>
+          <%= f.text_area :notice, class: 'form-control' %>
+        </div>
       </div>
       <div class="col-md-4">
         <div class="form-group">
@@ -31,6 +35,10 @@
             <%= f.number_field :max_weigth, class: 'form-control', min: 0, max: 1000, step: 0.001 %>
             <div class="input-group-addon">kg</div>
           </div>
+        </div>
+        <div class="form-group">
+          <%= f.label :days_off %>
+          <%= f.select :days_off, t(:'date.day_names').zip((0..6).to_a), {include_blank: false}, {multiple: true, class: "form-control", size: 7} %>
         </div>
       </div>
       <div class="col-md-4">
@@ -55,14 +63,6 @@
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-md-4">
-        <div class="form-group">
-          <%= f.label :notice %>
-          <%= f.text_area :notice, class: 'form-control' %>
-        </div>
-      </div>
-    </div>
     <br>
     <table class="table table-form block-rules items-container">
       <thead>

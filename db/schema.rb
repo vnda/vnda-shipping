@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170424135006) do
+ActiveRecord::Schema.define(version: 20170425011304) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -155,6 +155,7 @@ ActiveRecord::Schema.define(version: 20170424135006) do
     t.string   "mid",              limit: 255
     t.text     "notice"
     t.integer  "norder"
+    t.text     "days_off"
   end
 
   add_index "shipping_methods", ["shop_id"], name: "index_shipping_methods_on_shop_id", using: :btree

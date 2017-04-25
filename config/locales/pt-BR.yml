@@ -236,6 +236,7 @@ pt-BR:
         max_weigth: 'Peso máximo'
         notice: 'Mensagem de aviso'
         service: "Código do serviço"
+        days_off: "Dias sem entrega"
       period:
         name: 'Nome'
         limit_time: 'Horário Limite'

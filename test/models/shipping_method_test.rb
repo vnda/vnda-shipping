@@ -74,6 +74,30 @@ describe ShippingMethod do
       @shipping_method.map_rules[0].region.wont_equal(region)
     end
   end
+
+  describe "#next_delivery_date" do
+    setup do
+      Timecop.freeze(2017, 4, 25, 9, 21, 55)
+    end
+
+    teardown do
+      Timecop.return
+    end
+
+    it "return current date if days off is empty" do
+      @shipping_method.next_delivery_date.day.must_equal(25)
+    end
+
+    it "return current date when all days is blocked" do
+      @shipping_method.days_off = ["", "0", "1" "2", "3", "4", "5", "6"]
+      @shipping_method.next_delivery_date.day.must_equal(25)
+    end
+
+    it "return next delivery date" do
+      @shipping_method.days_off = ["2", "3", "4"]
+      @shipping_method.next_delivery_date.day.must_equal(28)
+    end
+  end
 end
 
 # == Schema Information

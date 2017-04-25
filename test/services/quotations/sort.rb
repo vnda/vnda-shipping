@@ -51,6 +51,7 @@ module SortQuotationsTest
     quotation_1.expect(:price, 10)
     quotation_1.expect(:as_json, {}, [{}])
     quotation_1.expect(:price, 10)
+    quotation_1.expect(:shipping_method_id, nil)
 
     quotation_2 = MiniTest::Mock.new
     quotation_2.expect(:delivery_type_slug, "expressa")
@@ -58,6 +59,7 @@ module SortQuotationsTest
     quotation_2.expect(:price, 9)
     quotation_2.expect(:as_json, {}, [{}])
     quotation_2.expect(:price, 9)
+    quotation_2.expect(:shipping_method_id, nil)
 
     instance = MiniTest::Mock.new
     instance.expect(:quote, [quotation_1, quotation_2], [{ products: [{ quantity: 1 }], shipping_zip: "90540140" }])

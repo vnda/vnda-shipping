@@ -6,6 +6,8 @@ class ShippingMethod < ActiveRecord::Base
   has_many :places, dependent: :destroy
   has_many :block_rules, dependent: :destroy
 
+  serialize :days_off
+
   accepts_nested_attributes_for :zip_rules, allow_destroy: true, reject_if: :all_blank
   accepts_nested_attributes_for :map_rules, allow_destroy: true, reject_if: :all_blank
   accepts_nested_attributes_for :block_rules, allow_destroy: true, reject_if: :all_blank
@@ -88,6 +90,13 @@ class ShippingMethod < ActiveRecord::Base
     Place.retrieve_from_vnda_places_for(shop).each do |place_json|
       places.create(name: place_json['name']) unless places.find_by_name(place_json['name'])
     end
+  end
+
+  def next_delivery_date(now = nil)
+    now ||= Time.now
+    return now if days_off.blank? || days_off.reject(&:blank?).empty? || days_off.size == 8
+    return now unless days_off.include?(now.wday.to_s)
+    next_delivery_date(now + 1.day)
   end
 
   protected
