@@ -10,7 +10,6 @@
       <%= link_to 'vnda-shipping', root_path, class: 'navbar-brand' %>
     </div>
     <div class="collapse navbar-collapse" id="navbar-collapse">
-
       <% if @shop && @shop.persisted? %>
         <ul class="nav navbar-nav">
           <%= content_tag :li, class: ('active' if params[:controller] == 'shipping_methods') do %>

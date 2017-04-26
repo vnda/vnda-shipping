@@ -31,6 +31,7 @@ Rails.application.routes.draw do
     end
     resources :periods
     resources :quote_histories, only: [:index, :show]
+    get :sellers
   end
 
   match '/quote', to: 'api#quote', via: [:get, :post], defaults: { format: :json }

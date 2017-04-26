@@ -2,11 +2,14 @@ class ShopsController < ApplicationController
   protect_from_forgery except: [:create]
 
   def index
-    @shops = Shop.includes(:marketplace).order(:name)
+    @shops = Shop.
+      joins("LEFT JOIN shops marketplaces ON (marketplaces.id = shops.marketplace_id)").
+      where("marketplaces.id IS NULL").
+      order("(SELECT 1 FROM shops sellers WHERE sellers.marketplace_id = shops.id LIMIT 1)")
   end
 
   def new
-    @shop = Shop.new
+    @shop = Shop.new(params.permit(:marketplace_id))
   end
 
   def create
@@ -47,6 +50,11 @@ class ShopsController < ApplicationController
     @shop = Shop.find(params[:id])
     @shop.update!(order_by_price: params[:enabled])
     head :ok
+  end
+
+  def sellers
+    @shop = Shop.find(params[:shop_id])
+    @shops = @shop.shops.order(:name)
   end
 
   private
