@@ -47,7 +47,7 @@ class Tnt
     client = Savon.client(wsdl: URL)
     message = {
       "in0" => {
-        "cdDivisaoCliente" => "1",
+        "cdDivisaoCliente" => @shop.tnt_service_id,
         "cepDestino" => params[:shipping_zip],
         "cepOrigem" => @shop.zip.presence || request[:origin_zip],
         "login" => @shop.tnt_email,

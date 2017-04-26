@@ -65,7 +65,7 @@ class ShopsController < ApplicationController
       permit(:name, :intelipost_token, :forward_to_intelipost, :axado_token,
         :forward_to_axado, :order_prefix, :declare_value, :forward_to_correios,
         :correios_code, :correios_password, :normal_shipping_name,
-        :forward_to_tnt, :tnt_email, :tnt_cnpj, :tnt_ie, :tnt_delivery_type,
+        :forward_to_tnt, :tnt_email, :tnt_cnpj, :tnt_ie, :tnt_delivery_type, :tnt_service_id,
         :express_shipping_name, :backup_method_id, :marketplace_id, :zip).
       merge(correios_custom_services: (params[:shop][:correios_custom_services] || []).map { |i| JSON.parse(i) }.to_json)
   end
