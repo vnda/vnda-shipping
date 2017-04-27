@@ -1,7 +1,7 @@
-require "test_helper"
+require "rails_helper"
 
-class CorreiosTest < ActiveSupport::TestCase
-  test "use only enabled services" do
+RSpec.describe Correios do
+  it "use only enabled services" do
     stub_request(:get, "http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx?WSDL").
       to_return(status: 200,
         body: Rails.root.join("test/fixtures/calc_preco_prazo.wsdl").read,
@@ -18,9 +18,15 @@ class CorreiosTest < ActiveSupport::TestCase
       cart_id: 1,
       package: "A1B2C3",
       shipping_zip: "90540140",
-      products: [
-        { width: 7.0, height: 2.0, length: 14.0, quantity: 1, sku: "A1", tags: ["camiseta"] }
-      ]
+      products: [{
+        width: 7.0,
+        height: 2.0,
+        length: 14.0,
+        quantity: 1,
+        sku: "A1",
+        tags: ["camiseta"],
+        price: 100
+      }]
     )
 
     assert_equal 1, quotations.size
@@ -37,7 +43,7 @@ class CorreiosTest < ActiveSupport::TestCase
     assert_nil quotations[0].notice
   end
 
-  test "fallback_quote" do
+  it "fallback_quote" do
     create_fallback_shop
 
     stub_request(:get, "http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx?WSDL").
@@ -85,7 +91,7 @@ class CorreiosTest < ActiveSupport::TestCase
     assert_nil quotations[1].notice
   end
 
-  test "#deadline_business_day for sedex" do
+  it "#deadline_business_day for sedex" do
     Timecop.freeze(2017, 4, 04, 17, 54, 55) do
       shop = create_shop
 
@@ -117,7 +123,7 @@ class CorreiosTest < ActiveSupport::TestCase
     end
   end
 
-  test "#deadline_business_day for pac" do
+  it "#deadline_business_day for pac" do
     Timecop.freeze(2017, 4, 04, 17, 54, 55) do
       shop = create_shop
       correios = Correios.new(shop, Rails.logger)
