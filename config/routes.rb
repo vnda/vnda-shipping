@@ -6,8 +6,8 @@ Rails.application.routes.draw do
 
   root to: 'shops#index'
 
-  get "/shops/:token/sellers", to: "api#sellers", defaults: { format: :json }
-  patch "/shops/:token/sellers", to: "api#update_seller", defaults: { format: :json }
+  get "/shops/:token/sellers", to: "api#sellers", constraints: { token: /.{32}/ }, defaults: { format: :json }
+  patch "/shops/:token/sellers", to: "api#update_seller", constraints: { token: /.{32}/ }, defaults: { format: :json }
 
   resources :shops do
     patch :set_shipping_order, on: :member
