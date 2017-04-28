@@ -209,6 +209,7 @@ pt-BR:
       shop: 'Loja'
       shipping_method: 'Forma de Entrega'
       period: 'Período de Entrega'
+      delivery_type: "Tipo de Entrega"
     attributes:
       shop:
         marketplace_id: 'Marketplace'
@@ -242,6 +243,8 @@ pt-BR:
         limit_time: 'Horário Limite'
         days_off: 'Dias sem entrega'
         days_ago: 'Dias de antecedência'
+      delivery_type:
+        name: "Nome"
   notices:
     shipping_methods:
       create: 'Forma de entrega criada com sucesso'
