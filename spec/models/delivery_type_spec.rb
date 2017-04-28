@@ -16,6 +16,16 @@ describe DeliveryType do
 
     expect(delivery_type).to_not be_valid
     expect(delivery_type.errors[:name]).to eq(["já está em uso"])
+
+    delivery_type.name = "EXPRESSA"
+
+    expect(delivery_type).to_not be_valid
+    expect(delivery_type.errors[:name]).to eq(["já está em uso"])
+
+    delivery_type.name = " Expressa "
+
+    expect(delivery_type).to_not be_valid
+    expect(delivery_type.errors[:name]).to eq(["já está em uso"])
   end
 
   it "validates with valid attributes" do
