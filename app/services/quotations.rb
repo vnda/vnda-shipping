@@ -48,7 +48,7 @@ class Quotations
     end
 
     quotations = group_lower_prices(quotations) if quotations.present?
-    quotations = apply_additional_deadline(quotations) if @params[:additional_deadline].present?
+    quotations = apply_additional_deadline(quotations)
     quotations = apply_picking_time(quotations)
     quotations = check_weekday(quotations)
 
@@ -85,9 +85,13 @@ class Quotations
   end
 
   def apply_additional_deadline(quotations)
+    additional_deadline = @params[:products].map { |product| product[:handling_days].to_i }.max
+
     quotations.each do |quote|
-      quote.deadline = quote.deadline.to_i + @params[:additional_deadline].to_i
-    end
+      quote.deadline = quote.deadline + additional_deadline
+    end if additional_deadline > 0
+
+    quotations
   end
 
   def apply_picking_time(quotations)
@@ -95,6 +99,8 @@ class Quotations
     quotations.each do |quote|
       quote.deadline = PickingTime.next_time(@shop.id) + quote.deadline.to_i
     end
+
+    quotations
   end
 
   def check_weekday(quotations)

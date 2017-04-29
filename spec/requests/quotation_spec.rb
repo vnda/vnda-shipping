@@ -1,20 +1,20 @@
-require 'test_helper'
+require 'rails_helper'
 
-class QuotationTest < ActionDispatch::IntegrationTest
-  test "unauthorized if no token" do
+RSpec.describe "Quotation" do
+  it "unauthorized if no token" do
     get "/quotations/foo/bar", token: nil
-    assert_equal 401, status
+    expect(response.status).to eq(401)
   end
 
-  test "404 if no quotation" do
+  it "404 if no quotation" do
     shop = create_shop
 
-    assert_raise ActiveRecord::RecordNotFound do
+    expect do
       get "/quotations/foo/bar", token: shop.token
-    end
+    end.to raise_error(ActiveRecord::RecordNotFound)
   end
 
-  test "200 if quotation" do
+  it "200 if quotation" do
     shop = create_shop(
       forward_to_correios: true,
       correios_code: "correioscode",
@@ -49,17 +49,17 @@ class QuotationTest < ActionDispatch::IntegrationTest
 
     get "/quotations/A1B2C3-1/expressa", token: shop.token
 
-    assert_equal 200, status
+    expect(response.status).to eq(200)
 
     quotation = JSON.load(body)
 
-    assert_equal "A1B2C3-1", quotation["package"]
-    assert_equal "Expressa", quotation["name"]
-    assert_equal 20.0, quotation["price"]
-    assert_equal 4, quotation["deadline"]
-    assert_equal "sedex", quotation["slug"]
-    assert_equal "Expressa", quotation["delivery_type"]
-    assert_equal "expressa", quotation["delivery_type_slug"]
+    expect(quotation["package"]).to eq("A1B2C3-1")
+    expect(quotation["name"]).to eq("Expressa")
+    expect(quotation["price"]).to eq(20.0)
+    expect(quotation["deadline"]).to eq(4)
+    expect(quotation["slug"]).to eq("sedex")
+    expect(quotation["delivery_type"]).to eq("Expressa")
+    expect(quotation["delivery_type_slug"]).to eq("expressa")
   end
 
   def create_shop(attributes = {})

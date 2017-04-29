@@ -41,7 +41,7 @@ RSpec.describe Quotations, "intelipost" do
       zip: "03320000"
     )
 
-    quotations = new_intelipost_quotations(shop, additional_deadline: 10)
+    quotations = new_intelipost_quotations(shop, products: [new_product(handling_days: 10)])
     assert_equal 2, quotations.size
 
     assert_equal 15, quotations[0].deadline
@@ -59,10 +59,14 @@ RSpec.describe Quotations, "intelipost" do
       cart_id: 1,
       package: "A1B2C3-1",
       shipping_zip: "80035120",
-      products: [{ width: 7.0, height: 2.0, length: 14.0, quantity: 1, sku: "A1" }]
+      products: [new_product]
     )
 
     Quotations.new(shop, params, Rails.logger).to_a
+  end
+
+  def new_product(params = {})
+    params.reverse_merge(width: 7.0, height: 2.0, length: 14.0, quantity: 1, sku: "A1")
   end
 
   def stub_intelipost_requests

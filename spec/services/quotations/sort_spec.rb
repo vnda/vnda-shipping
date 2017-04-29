@@ -43,10 +43,10 @@ RSpec.describe Quotations, "sort" do
   end
 
   def mock_correios
-    quotation_1 = double("quotation_1", delivery_type_slug: "normal", price: 10, as_json: {},
+    quotation_1 = double("quotation_1", delivery_type_slug: "normal", price: 10, deadline: 11,
       shipping_method_id: nil)
 
-    quotation_2 = double("quotation_2", delivery_type_slug: "expressa", price: 9, as_json: {},
+    quotation_2 = double("quotation_2", delivery_type_slug: "expressa", price: 9, deadline: 8,
       shipping_method_id: nil)
 
     correios = double("correios")

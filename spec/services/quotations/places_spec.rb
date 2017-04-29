@@ -28,14 +28,18 @@ RSpec.describe Quotations, "places" do
     shop = create_shop(zip: "03320000")
     create_shipping_method(shop)
 
-    quotations = new_places_quotations(shop, additional_deadline: 10)
-    assert_equal 1, quotations.size
+    quotations = new_places_quotations(shop, products: [new_product(handling_days: 10)])
+    expect(quotations.size).to eq(1)
 
-    assert_equal 18, quotations[0].deadline
+    expect(quotations[0].deadline).to eq(18)
   end
 
   def create_shop(attributes = {})
     Shop.create!(attributes.merge(name: 'Loja', token: "a1b2c3", zip: "03320000"))
+  end
+
+  def new_product(params = {})
+    params.reverse_merge(width: 7.0, height: 2.0, length: 14.0, quantity: 1, sku: "A1")
   end
 
   def new_places_quotations(shop, params = {})

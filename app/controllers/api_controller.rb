@@ -155,7 +155,6 @@ class APIController < ActionController::Base
       :origin_zip, # TODO remove after all shops have zip set
       :shipping_zip,
       :order_total_price,
-      :additional_deadline,
       :additional_price,
       :cart_id,
       :package_prefix,
@@ -167,6 +166,7 @@ class APIController < ActionController::Base
         :width,
         :weight,
         :quantity,
+        :handling_days,
         tags: [],
         shipping_tags: []
       ]

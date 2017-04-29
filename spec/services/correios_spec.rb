@@ -1,10 +1,13 @@
 require "rails_helper"
 
 RSpec.describe Correios do
+  before { Timecop.travel(2017, 4, 28, 22, 23, 24) }
+  after { Timecop.return }
+
   it "use only enabled services" do
     stub_request(:get, "http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx?WSDL").
       to_return(status: 200,
-        body: Rails.root.join("test/fixtures/calc_preco_prazo.wsdl").read,
+        body: Rails.root.join("spec/fixtures/calc_preco_prazo.wsdl").read,
         headers: { "Content-Type" => "text/xml; charset=utf-8" })
 
     stub_request(:post, "http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx").
@@ -48,7 +51,7 @@ RSpec.describe Correios do
 
     stub_request(:get, "http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx?WSDL").
       to_return(status: 200,
-        body: Rails.root.join("test/fixtures/calc_preco_prazo.wsdl").read,
+        body: Rails.root.join("spec/fixtures/calc_preco_prazo.wsdl").read,
         headers: { "Content-Type" => "text/xml; charset=utf-8" })
 
     stub_request(:post, "http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx").

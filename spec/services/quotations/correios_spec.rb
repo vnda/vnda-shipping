@@ -1,6 +1,9 @@
 require "rails_helper"
 
 RSpec.describe Quotations, "correios" do
+  before { Timecop.travel(2017, 4, 28, 22, 23, 24) }
+  after { Timecop.return }
+
   it "returns quotations using correios" do
     shop = create_shop(
       forward_to_correios: true,
@@ -51,11 +54,11 @@ RSpec.describe Quotations, "correios" do
       zip: "03320000"
     )
 
-    quotations = new_correios_quotations(shop, additional_deadline: 10)
-    assert_equal 2, quotations.size
+    quotations = new_correios_quotations(shop, products: [new_product(handling_days: 10)])
+    expect(quotations.size).to eq(2)
 
-    assert_equal 17, quotations[0].deadline
-    assert_equal 11, quotations[1].deadline
+    expect(quotations[0].deadline).to eq(17)
+    expect(quotations[1].deadline).to eq(11)
   end
 
   def create_shop(attributes = {})
@@ -69,22 +72,26 @@ RSpec.describe Quotations, "correios" do
       cart_id: 1,
       package: "A1B2C3-01",
       shipping_zip: "80035120",
-      products: [{ width: 7.0, height: 2.0, length: 14.0, quantity: 1, sku: "A1" }]
+      products: [new_product]
     )
 
     Quotations.new(shop, params, Rails.logger).to_a
   end
 
+  def new_product(params = {})
+    params.reverse_merge(width: 7.0, height: 2.0, length: 14.0, quantity: 1, sku: "A1")
+  end
+
   def stub_correios_requests
     stub_request(:get, "http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx?WSDL").
       to_return(status: 200,
-        body: Rails.root.join("test/fixtures/calc_preco_prazo.wsdl").read,
+        body: Rails.root.join("spec/fixtures/calc_preco_prazo.wsdl").read,
         headers: { "Content-Type" => "text/xml; charset=utf-8" })
 
     stub_request(:post, "http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx").
-      with(body: Rails.root.join("test/fixtures/calc_preco_prazo.request.xml").read.strip).
+      with(body: Rails.root.join("spec/fixtures/calc_preco_prazo.request.xml").read.strip).
       to_return(status: 200,
-        body: Rails.root.join("test/fixtures/calc_preco_prazo.response.xml").read,
+        body: Rails.root.join("spec/fixtures/calc_preco_prazo.response.xml").read,
         headers: { "Content-Type" => "text/xml; charset=utf-8" })
   end
 end

@@ -22,10 +22,10 @@ RSpec.describe Quotations, "googlemaps" do
   it "increments returned deadline for googlemaps quotations" do
     shop = create_shop(zip: "03320000")
 
-    quotations = new_googlemaps_quotations(shop, additional_deadline: 10)
-    assert_equal 1, quotations.size
+    quotations = new_googlemaps_quotations(shop, products: [new_product(handling_days: 10)])
+    expect(quotations.size).to eq(1)
 
-    assert_equal 10, quotations[0].deadline
+    expect(quotations[0].deadline).to eq(10)
   end
 
   def create_shop(attributes = {})
@@ -47,7 +47,7 @@ RSpec.describe Quotations, "googlemaps" do
       mid: "a1b2c3"
     )
 
-    kml = Rails.root.join("test/fixtures/80035120.kml").read
+    kml = Rails.root.join("spec/fixtures/80035120.kml").read
     shipping_method.build_or_update_map_rules_from(Nokogiri::XML(kml))
     shipping_method.map_rules.first.update(price: 10)
 
@@ -55,16 +55,20 @@ RSpec.describe Quotations, "googlemaps" do
       cart_id: 1,
       package: "A1B2C3-1",
       shipping_zip: "80035120",
-      products: [{ width: 7.0, height: 2.0, length: 14.0, quantity: 1, sku: "A1" }]
+      products: [new_product]
     )
 
     Quotations.new(shop, params, Rails.logger).to_a
   end
 
+  def new_product(params = {})
+    params.reverse_merge(width: 7.0, height: 2.0, length: 14.0, quantity: 1, sku: "A1")
+  end
+
   def stub_google_maps_requests
     stub_request(:get, "https://maps.googleapis.com/maps/api/geocode/json?components=postal_code:80035120&key&region=br").
       to_return(status: 200,
-        body: Rails.root.join("test/fixtures/80035120.json").read,
+        body: Rails.root.join("spec/fixtures/80035120.json").read,
         headers: { "Content-Type" => "application/json" })
   end
 end

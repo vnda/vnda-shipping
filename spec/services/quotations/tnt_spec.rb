@@ -37,14 +37,18 @@ RSpec.describe Quotations, "tnt" do
       zip: "03320000"
     )
 
-    quotations = new_tnt_quotations(shop, additional_deadline: 10)
-    assert_equal 1, quotations.size
+    quotations = new_tnt_quotations(shop, products: [new_product(handling_days: 10)])
+    expect(quotations.size).to eq(1)
 
-    assert_equal 11, quotations[0].deadline
+    expect(quotations[0].deadline).to eq(11)
   end
 
   def create_shop(attributes = {})
     Shop.create!(attributes.reverse_merge(name: 'Loja', token: "a1b2c3", zip: "03320000"))
+  end
+
+  def new_product(params = {})
+    params.reverse_merge(width: 7.0, height: 2.0, length: 14.0, quantity: 1, sku: "A1")
   end
 
   def new_tnt_quotations(shop, params = {})
@@ -63,13 +67,13 @@ RSpec.describe Quotations, "tnt" do
   def stub_tnt_requests
     stub_request(:get, "http://ws.tntbrasil.com.br/servicos/CalculoFrete?wsdl").
       to_return(status: 200,
-        body: Rails.root.join("test/fixtures/tnt_wsdl.xml").read,
+        body: Rails.root.join("spec/fixtures/tnt_wsdl.xml").read,
         headers: { "Content-Type" => "text/xml; charset=utf-8" })
 
     stub_request(:post, "http://ws.tntbrasil.com.br/servicos/CalculoFrete").
-      with(body: Rails.root.join("test/fixtures/tnt_request.xml").read.strip).
+      with(body: Rails.root.join("spec/fixtures/tnt_request.xml").read.strip).
       to_return(status: 200,
-        body: Rails.root.join("test/fixtures/tnt_response.xml").read,
+        body: Rails.root.join("spec/fixtures/tnt_response.xml").read,
         headers: { "Content-Type" => "text/xml; charset=utf-8" })
   end
 end

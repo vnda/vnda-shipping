@@ -2,7 +2,6 @@
 params = {
   "shipping_zip" => "80035120",
   "order_total_price" => 186.0,
-  "additional_deadline" => nil,
   "additional_price" => nil,
   "products" => [
     {
@@ -12,7 +11,8 @@ params = {
       "length" => 16,
       "width" => 11,
       "weight" => 0.35,
-      "quantity" => 2
+      "quantity" => 2,
+      "handling_days" => 0
     },
     {
       "sku" => "1508B",
@@ -21,14 +21,14 @@ params = {
       "length" => 16,
       "width" => 11,
       "weight" => 0.4,
-      "quantity" => 2
+      "quantity" => 2,
+      "handling_days" => 0
     }
   ],
   "token" => "04ca2b612050002cdee6fcbd8d5cd3f0",
   "api" => {
     "shipping_zip" => "34000000",
     "order_total_price" => 186.0,
-    "additional_deadline" => nil,
     "additional_price" => nil,
     "products" => [
       {
@@ -38,7 +38,8 @@ params = {
         "length" => 16,
         "width" => 11,
         "weight" => 0.35,
-        "quantity" => 2
+        "quantity" => 2,
+        "handling_days" => 0
       },
       {
         "sku" => "1508B",
@@ -47,7 +48,8 @@ params = {
         "length" => 16,
         "width" => 11,
         "weight" => 0.4,
-        "quantity" => 2
+        "quantity" => 2,
+        "handling_days" => 0
       }
     ]
   }
