@@ -1,7 +1,7 @@
-module CorreiosQuotationsTest
-  extend ActiveSupport::Testing::Declarative
+require "rails_helper"
 
-  test "returns quotations using correios" do
+RSpec.describe Quotations, "correios" do
+  it "returns quotations using correios" do
     shop = create_shop(
       forward_to_correios: true,
       correios_code: "correioscode",
@@ -43,7 +43,7 @@ module CorreiosQuotationsTest
     assert_nil quotations[1].notice
   end
 
-  test "increments returned deadline for correios quotations" do
+  it "increments returned deadline for correios quotations" do
     shop = create_shop(
       forward_to_correios: true,
       correios_code: "correioscode",
@@ -56,6 +56,10 @@ module CorreiosQuotationsTest
 
     assert_equal 17, quotations[0].deadline
     assert_equal 11, quotations[1].deadline
+  end
+
+  def create_shop(attributes = {})
+    Shop.create!(attributes.merge(name: 'Loja', token: "a1b2c3", zip: "03320000"))
   end
 
   def new_correios_quotations(shop, params = {})

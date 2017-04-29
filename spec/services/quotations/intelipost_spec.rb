@@ -1,7 +1,7 @@
-module IntelipostQuotationsTest
-  extend ActiveSupport::Testing::Declarative
+require "rails_helper"
 
-  test "returns quotations using intelipost" do
+RSpec.describe Quotations, "intelipost" do
+  it "returns quotations using intelipost" do
     shop = create_shop(
       forward_to_intelipost: true,
       intelipost_token: "intel1tok3n",
@@ -34,7 +34,7 @@ module IntelipostQuotationsTest
     assert_nil quotations[1].notice
   end
 
-  test "increments returned deadline for intelipost quotations" do
+  it "increments returned deadline for intelipost quotations" do
     shop = create_shop(
       forward_to_intelipost: true,
       intelipost_token: "intel1tok3n",
@@ -46,6 +46,10 @@ module IntelipostQuotationsTest
 
     assert_equal 15, quotations[0].deadline
     assert_equal 11, quotations[1].deadline
+  end
+
+  def create_shop(attributes = {})
+    Shop.create!(attributes.merge(name: 'Loja', token: "a1b2c3", zip: "03320000"))
   end
 
   def new_intelipost_quotations(shop, params = {})

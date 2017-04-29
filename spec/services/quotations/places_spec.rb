@@ -1,7 +1,7 @@
-module PlacesQuotationsTest
-  extend ActiveSupport::Testing::Declarative
+require "rails_helper"
 
-  test "quotations using places" do
+RSpec.describe Quotations, "places" do
+  it "quotations using places" do
     shop = create_shop(zip: "03320000")
     shipping_method = create_shipping_method(shop)
 
@@ -24,7 +24,7 @@ module PlacesQuotationsTest
     assert_nil quotations[0].notice
   end
 
-  test "increments returned deadline for places quotations" do
+  it "increments returned deadline for places quotations" do
     shop = create_shop(zip: "03320000")
     create_shipping_method(shop)
 
@@ -32,6 +32,10 @@ module PlacesQuotationsTest
     assert_equal 1, quotations.size
 
     assert_equal 18, quotations[0].deadline
+  end
+
+  def create_shop(attributes = {})
+    Shop.create!(attributes.merge(name: 'Loja', token: "a1b2c3", zip: "03320000"))
   end
 
   def new_places_quotations(shop, params = {})

@@ -1,13 +1,14 @@
-module TntQuotationsTest
-  extend ActiveSupport::Testing::Declarative
+require "rails_helper"
 
-  test "returns quotations using tnt" do
+RSpec.describe Quotations, "tnt" do
+  it "returns quotations using tnt" do
     shop = create_shop(
       forward_to_tnt: true,
       tnt_email: "foo@bar.com",
       tnt_cnpj: "12345678901234",
       tnt_ie: "12345",
       tnt_delivery_type: "Normal",
+      tnt_service_id: 1,
       zip: "03320000"
     )
 
@@ -25,13 +26,14 @@ module TntQuotationsTest
     assert_nil quotations[0].notice
   end
 
-  test "increments returned deadline for tnt quotations" do
+  it "increments returned deadline for tnt quotations" do
     shop = create_shop(
       forward_to_tnt: true,
       tnt_email: "foo@bar.com",
       tnt_cnpj: "12345678901234",
       tnt_ie: "12345",
       tnt_delivery_type: "Normal",
+      tnt_service_id: 1,
       zip: "03320000"
     )
 
@@ -39,6 +41,10 @@ module TntQuotationsTest
     assert_equal 1, quotations.size
 
     assert_equal 11, quotations[0].deadline
+  end
+
+  def create_shop(attributes = {})
+    Shop.create!(attributes.reverse_merge(name: 'Loja', token: "a1b2c3", zip: "03320000"))
   end
 
   def new_tnt_quotations(shop, params = {})

@@ -1,7 +1,7 @@
-module LocalQuotationsTest
-  extend ActiveSupport::Testing::Declarative
+require "rails_helper"
 
-  test "quotations using local" do
+RSpec.describe Quotations, "local" do
+  it "quotations using local" do
     shop = create_shop
 
     quotations = new_local_quotations(shop)
@@ -17,13 +17,17 @@ module LocalQuotationsTest
     assert_nil quotations[0].notice
   end
 
-  test "increments returned deadline for local quotations" do
+  it "increments returned deadline for local quotations" do
     shop = create_shop
 
     quotations = new_local_quotations(shop, additional_deadline: 10)
     assert_equal 1, quotations.size
 
     assert_equal 11, quotations[0].deadline
+  end
+
+  def create_shop(attributes = {})
+    Shop.create!(attributes.merge(name: 'Loja', token: "a1b2c3", zip: "03320000"))
   end
 
   def new_local_quotations(shop, params = {})

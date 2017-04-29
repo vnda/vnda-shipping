@@ -1,7 +1,7 @@
-module GoogleMapsQuotationsTest
-  extend ActiveSupport::Testing::Declarative
+require "rails_helper"
 
-  test "quotations using google maps" do
+RSpec.describe Quotations, "googlemaps" do
+  it "quotations using google maps" do
     shop = create_shop(zip: "03320000")
 
     quotations = new_googlemaps_quotations(shop)
@@ -19,13 +19,17 @@ module GoogleMapsQuotationsTest
     assert_nil quotations[0].notice
   end
 
-  test "increments returned deadline for googlemaps quotations" do
+  it "increments returned deadline for googlemaps quotations" do
     shop = create_shop(zip: "03320000")
 
     quotations = new_googlemaps_quotations(shop, additional_deadline: 10)
     assert_equal 1, quotations.size
 
     assert_equal 10, quotations[0].deadline
+  end
+
+  def create_shop(attributes = {})
+    Shop.create!(attributes.merge(name: 'Loja', token: "a1b2c3", zip: "03320000"))
   end
 
   def new_googlemaps_quotations(shop, params = {})
