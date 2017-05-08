@@ -6,7 +6,6 @@ gem 'rails', '4.2.7.1'
 gem 'pg'
 gem 'excon'
 gem 'savon'
-gem 'dotenv-rails'
 gem 'rollbar', '2.14.0'
 gem 'puma', '3.5.2'
 gem 'httparty', '0.13.5'
@@ -19,11 +18,13 @@ gem 'jb', '0.4.1'
 gem 'will_paginate', '~> 3.1.0'
 gem 'will_paginate-bootstrap'
 gem 'nickel', '0.1.6'
+gem 'appsignal', '2.2.0'
 
 gem 'sinatra', require: false
 gem 'thor', '0.19.1', require: false
 
 group :development do
+  gem 'dotenv-rails'
   gem "byebug"
   gem 'pry'
   gem "bullet"
@@ -41,10 +42,6 @@ end
 group :development, :test do
   gem 'rspec-rails', '3.5.2'
   gem 'awesome_print', '1.7.0'
-end
-
-group :development, :staging, :production do
-  gem 'newrelic_rpm', '3.18.0.329'
 end
 
 group :production do
