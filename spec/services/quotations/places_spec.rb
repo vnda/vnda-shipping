@@ -12,7 +12,7 @@ RSpec.describe Quotations, "places" do
     assert_equal shop.id, quotations[0].shop_id
     assert_equal 1, quotations[0].cart_id
     assert_equal shipping_method.id, quotations[0].shipping_method_id
-    assert_equal "A1B2C3-01", quotations[0].package
+    expect(quotations[0].package).to eq(nil)
     assert_equal "Retirar na loja", quotations[0].name
     assert_equal 0, quotations[0].price
     assert_equal 8, quotations[0].deadline
@@ -45,7 +45,6 @@ RSpec.describe Quotations, "places" do
   def new_places_quotations(shop, params = {})
     params = params.reverse_merge(
       cart_id: 1,
-      package: "A1B2C3-01",
       shipping_zip: "80035120",
       products: [{ width: 7.0, height: 2.0, length: 14.0, quantity: 1, sku: "A1" }]
     )

@@ -88,6 +88,56 @@ describe Shop do
       expect(subject.volume_for(items)).to eq(900)
     end
   end
+
+  describe "#enabled_correios_service" do
+    it "returns an empty array if no service is enabled for correios" do
+      expect(subject.enabled_correios_service).to eq([])
+    end
+
+    it "returns an array of service codes enabled for correios" do
+      subject.forward_to_correios = true
+      subject.correios_code = "code"
+      subject.correios_password = "pass"
+      subject.save!
+
+      expect(subject.enabled_correios_service).to eq(["41106", "40010"])
+    end
+
+    it "returns an array of service codes enabled for correios" do
+      subject.forward_to_correios = true
+      subject.correios_code = "code"
+      subject.correios_password = "pass"
+      subject.save!
+
+      expect(subject.enabled_correios_service).to eq(["41106", "40010"])
+    end
+
+    context "when taglivros" do # custom cases, we shouldn't have this kind of stuff here
+      it "returns an empty array of service codes if 20010 is not enabled for correios" do
+        subject.name = "taglivros"
+        subject.forward_to_correios = true
+        subject.correios_code = "code"
+        subject.correios_password = "pass"
+        subject.save!
+
+        expect(subject.enabled_correios_service("kit-1")).to eq([])
+        expect(subject.enabled_correios_service("livro-1")).to eq([])
+      end
+
+      it "returns an array of with only 20010 if it's enabled for correios is enabled for correios" do
+        subject.name = "taglivros"
+        subject.forward_to_correios = true
+        subject.correios_code = "code"
+        subject.correios_password = "pass"
+        subject.save!
+
+        subject.methods.where(slug: "pac").update_all(service: "20010")
+
+        expect(subject.enabled_correios_service("kit-1")).to eq(["20010"])
+        expect(subject.enabled_correios_service("livro-1")).to eq(["20010"])
+      end
+    end
+  end
 end
 
 # == Schema Information

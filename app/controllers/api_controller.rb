@@ -58,11 +58,7 @@ class APIController < ActionController::Base
   end
 
   def quote
-    if @shop.name.include?("taglivros")
-      @quotations = TaglivrosPackage.new(@shop, request_params, logger).to_h
-    else
-      @quotations = PackageQuotations.new(@shop, request_params, logger).to_h
-    end
+    @quotations = PackageQuotations.new(@shop, allowed_params, logger).to_h
 
     logger.info(@quotations.to_json)
     unless @quotations[:total_quotations] > 0
@@ -152,27 +148,15 @@ class APIController < ActionController::Base
     head :unauthorized
   end
 
-  def request_params
+  def allowed_params
     params.permit(
       :origin_zip, # TODO remove after all shops have zip set
       :shipping_zip,
       :order_total_price,
       :additional_price,
       :cart_id,
-      :package_prefix,
-      products: [
-        :sku,
-        :price,
-        :height,
-        :length,
-        :width,
-        :weight,
-        :quantity,
-        :handling_days,
-        tags: [],
-        shipping_tags: []
-      ]
-    )
+      products: {}
+    ).tap { |whitelisted| whitelisted[:products] = params[:products] }
   end
 
   def find_local(collection)

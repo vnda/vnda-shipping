@@ -28,7 +28,7 @@ class Tnt
       quotation = Quotation.find_or_initialize_by(
         shop_id: @shop.id,
         cart_id: params[:cart_id],
-        package: params[:package],
+        package: params[:package].presence,
         delivery_type: @shop.tnt_delivery_type
       )
       quotation.name = "TNT"

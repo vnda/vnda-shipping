@@ -19,7 +19,7 @@ RSpec.describe Correios do
 
     quotations = Correios.new(shop, Rails.logger).quote(
       cart_id: 1,
-      package: "A1B2C3",
+      package: "foo",
       shipping_zip: "90540140",
       products: [{
         width: 7.0,
@@ -27,7 +27,6 @@ RSpec.describe Correios do
         length: 14.0,
         quantity: 1,
         sku: "A1",
-        tags: ["camiseta"],
         price: 100
       }]
     )
@@ -65,7 +64,7 @@ RSpec.describe Correios do
       package: "A1B2C3",
       shipping_zip: "90540140",
       products: [
-        { width: 7.0, height: 2.0, length: 14.0, quantity: 1, sku: "A1", tags: ["camiseta"] }
+        { width: 7.0, height: 2.0, length: 14.0, quantity: 1, sku: "A1" }
       ]
     )
 

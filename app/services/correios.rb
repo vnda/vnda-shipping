@@ -46,7 +46,7 @@ class Correios
       response = send_message(:calc_preco_prazo, {
         'nCdEmpresa' => @shop.correios_code,
         'sDsSenha' => @shop.correios_password,
-        'nCdServico' => @shop.enabled_correios_service(request).join(?,),
+        'nCdServico' => @shop.enabled_correios_service(request["package"]).join(?,),
         'sCepOrigem' => @shop.zip.presence || request[:origin_zip],
         'sCepDestino' => request[:shipping_zip],
         'nVlPeso' => weight,
@@ -95,7 +95,7 @@ class Correios
         quotation = Quotation.find_or_initialize_by(
           shop_id: @shop.id,
           cart_id: request[:cart_id],
-          package: request[:package],
+          package: request[:package].presence,
           delivery_type: shipping_type(shipping_method, parsed_code)
         )
         quotation.shipping_method_id = shipping_method.id if shipping_method
