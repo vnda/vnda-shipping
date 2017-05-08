@@ -86,23 +86,23 @@ class Correios
 
     Quotation.transaction do
       allowed.compact.map do |option|
+        parsed_code = "%05d" % option[:codigo]
         deadline = option[:prazo_entrega].to_i
         deadline += 7 if option[:erro] == '010'
-        deadline = deadline_business_day(option[:codigo], deadline)
-        shipping_method = @shop.shipping_methods_correios.
-          where(service: option[:codigo]).first
+        deadline = deadline_business_day(parsed_code, deadline)
+        shipping_method = @shop.shipping_methods_correios.where(service: parsed_code).first
 
         quotation = Quotation.find_or_initialize_by(
           shop_id: @shop.id,
           cart_id: request[:cart_id],
           package: request[:package],
-          delivery_type: shipping_type(shipping_method, option[:codigo])
+          delivery_type: shipping_type(shipping_method, parsed_code)
         )
         quotation.shipping_method_id = shipping_method.id if shipping_method
-        quotation.name = shipping_name(shipping_method, option[:codigo])
+        quotation.name = shipping_name(shipping_method, parsed_code)
         quotation.price = parse_price(option[:valor])
         quotation.deadline = deadline
-        quotation.slug = shipping_method ? shipping_method.slug : option[:codigo]
+        quotation.slug = shipping_method ? shipping_method.slug : parsed_code
         quotation.deliver_company = "Correios"
         quotation.skus = request[:products].map { |product| product[:sku] }
         quotation.tap(&:save!)
