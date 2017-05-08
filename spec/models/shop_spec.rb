@@ -1,83 +1,82 @@
-require 'test_helper'
+require "rails_helper"
 
 describe Shop do
   let(:shop_params) { { id: 1, name: "Loja Teste", zip: "03320000" } }
-  let(:shop) { Shop.new(shop_params) }
+  subject { Shop.new(shop_params) }
 
   it "is valid with valid params" do
-    shop.must_be :valid?
+    expect(subject).to be_valid
   end
 
   it "is invalid without a name" do
-    shop_params.delete :name
+    shop_params.delete(:name)
 
-    shop.wont_be :valid?
-    shop.errors[:name].must_be :present?
+    expect(subject).to_not be_valid
+    expect(subject.errors[:name]).to eq(["não pode ficar em branco"])
   end
 
   it "is invalid if axado is checked and axado_token is empty" do
     shop_params.merge!( {forward_to_axado: true})
 
-    shop.wont_be :valid?
-    shop.errors[:axado_token].must_be :present?
+    expect(subject).to_not be_valid
+    expect(subject.errors[:axado_token]).to eq(["não pode ficar em branco"])
   end
 
   it "is valid if forward_to_axado is checked and axado_token is present" do
     shop_params.merge!( {forward_to_axado: true, axado_token: "12345678"})
 
-    shop.must_be :valid?
+    expect(subject).to be_valid
   end
 
   it "is invalid if forward_to_correios is checked and correios_code or correios_password is empty" do
     shop_params.merge!( {forward_to_correios: true})
 
-    shop.wont_be :valid?
-    shop.errors[:correios_password].must_be :present?
-    shop.errors[:correios_code].must_be :present?
+    expect(subject).to_not be_valid
+    expect(subject.errors[:correios_password]).to eq(["não pode ficar em branco"])
+    expect(subject.errors[:correios_code]).to eq(["não pode ficar em branco"])
   end
 
   it "is valid if correios is checked and correios_token is present" do
     shop_params.merge!( {forward_to_correios: true, correios_code: "12345678", correios_password: "abcdef"})
 
-    shop.must_be :valid?
+    expect(subject).to be_valid
   end
 
   it "creates default delivery types" do
-    shop.delivery_types.count.must_equal 0
-    shop.save!
-    shop.delivery_types.count.must_equal 2
+    expect do
+      subject.save!
+    end.to change { subject.delivery_types.count }.from(0).to(2)
   end
 
   it "does not create correios shipping methods" do
-    shop.forward_to_correios = false
+    subject.forward_to_correios = false
 
-    shop.save!
-    shop.methods.count.must_equal 0
+    expect do
+      subject.save!
+    end.to_not change { subject.methods.count }.from(0)
   end
 
   it "creates correios shipping methods" do
-    shop.forward_to_correios = true
-    shop.correios_code = "a"
-    shop.correios_password = "b"
+    subject.forward_to_correios = true
+    subject.correios_code = "a"
+    subject.correios_password = "b"
 
-    shop.methods.count.must_equal 0
-    shop.save!
-    shop.methods.count.must_equal 2
+    expect do
+      subject.save!
+    end.to change { subject.methods.count }.from(0).to(2)
   end
 
   describe "before creating" do
     it "generates a token" do
-      shop.token.must_be :nil?
-      shop.save!
-      shop.token.wont_be :nil?
+      expect do
+        subject.save!
+      end.to change { subject.token }.from(nil).to(/\w{32}/)
     end
   end
 
   describe "#volume_for" do
     it "returns zero if no items" do
-      volume = shop.volume_for([])
-
-      volume.must_equal(0)
+      expect(subject.volume_for([])).to eq(0)
     end
 
     it "returns volume for all given items" do
@@ -85,9 +84,8 @@ describe Shop do
         { width: 7.0, height: 2.0, length: 14.0, quantity: 1 },
         { width: 11.0, height: 2.0, length: 16.0, quantity: 2 }
       ]
-      volume = shop.volume_for(items)
 
-      volume.must_equal(900)
+      expect(subject.volume_for(items)).to eq(900)
     end
   end
 end
