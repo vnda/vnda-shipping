@@ -15,7 +15,7 @@ RSpec.describe Correios do
       to_return(status: 200, body: response_fixture)
 
     shop = create_shop
-    shop.methods.first.toggle!(:enabled)
+    shop.methods.where(slug: "pac").first.toggle!(:enabled)
 
     quotations = Correios.new(shop, Rails.logger).quote(
       cart_id: 1,

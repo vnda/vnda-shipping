@@ -21,7 +21,8 @@ RSpec.describe "Quotation" do
       correios_password: "correiosp@ss"
     )
 
-    normal, express = shop.methods[0..1]
+    normal = shop.methods.where(slug: "pac").first!
+    express = shop.methods.where(slug: "sedex").first!
 
     shop.quotations.create!(
       cart_id: 1,
