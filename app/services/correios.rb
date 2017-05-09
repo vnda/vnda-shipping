@@ -187,7 +187,8 @@ class Correios
   end
 
   def check_blocked_zip(zip, response)
-    methods = @shop.shipping_methods_correios.where(service: response[:codigo].to_s)
+    parsed_code = "%05d" % response[:codigo].to_s
+    methods = @shop.shipping_methods_correios.where(service: parsed_code)
     return true if methods.empty? # to compatibility to old config method
 
     blocked_methods = methods.joins(:block_rules).merge(BlockRule.for_zip(zip.to_i))
