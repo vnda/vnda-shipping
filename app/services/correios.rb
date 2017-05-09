@@ -59,7 +59,8 @@ class Correios
         'sCdAvisoRecebimento' => 'N',
         'nVlValorDeclarado' => declared_value(request)
       }, request[:cart_id])
-    rescue Wasabi::Resolver::HTTPError, Excon::Errors::Timeout
+    rescue Wasabi::Resolver::HTTPError, Excon::Errors::Error => e
+      Rollbar.error(e)
       return fallback_quote(request)
     end
 
@@ -85,23 +86,23 @@ class Correios
 
     Quotation.transaction do
       allowed.compact.map do |option|
+        parsed_code = "%05d" % option[:codigo]
         deadline = option[:prazo_entrega].to_i
         deadline += 7 if option[:erro] == '010'
-        deadline = deadline_business_day(option[:codigo], deadline)
-        shipping_method = @shop.shipping_methods_correios.
-          where(service: option[:codigo]).first
+        deadline = deadline_business_day(parsed_code, deadline)
+        shipping_method = @shop.shipping_methods_correios.where(service: parsed_code).first
 
         quotation = Quotation.find_or_initialize_by(
           shop_id: @shop.id,
           cart_id: request[:cart_id],
           package: request[:package],
-          delivery_type: shipping_type(shipping_method, option[:codigo])
+          delivery_type: shipping_type(shipping_method, parsed_code)
         )
         quotation.shipping_method_id = shipping_method.id if shipping_method
-        quotation.name = shipping_name(shipping_method, option[:codigo])
+        quotation.name = shipping_name(shipping_method, parsed_code)
         quotation.price = parse_price(option[:valor])
         quotation.deadline = deadline
-        quotation.slug = option[:codigo]
+        quotation.slug = shipping_method ? shipping_method.slug : parsed_code
         quotation.deliver_company = "Correios"
         quotation.skus = request[:products].map { |product| product[:sku] }
         quotation.tap(&:save!)
@@ -111,10 +112,11 @@ class Correios
 
   def declared_value(request)
     return 0 unless @shop.declare_value
-    order_total_price = request[:order_total_price].to_f
-    return 17.0 if order_total_price < 17.0
-    return 9999.99 if order_total_price > 9999.99
-    order_total_price
+
+    value = request[:products].sum { |product| product[:price].to_f }
+    return 17.0 if value < 17.0
+    return 9999.99 if value > 9999.99
+    value
   end
 
   def deadline_business_day(service, deadline)

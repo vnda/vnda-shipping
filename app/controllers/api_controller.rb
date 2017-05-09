@@ -146,6 +146,8 @@ class APIController < ActionController::Base
       name = (env["HTTP_X_STORE"] || "unknown-host").split(':').first
       @shop = Shop.find_by!(name: name) if name.present?
     end
+
+    Appsignal.tag_request(shop_id: @shop.id)
   rescue ActiveRecord::RecordNotFound
     head :unauthorized
   end
@@ -155,7 +157,6 @@ class APIController < ActionController::Base
       :origin_zip, # TODO remove after all shops have zip set
       :shipping_zip,
       :order_total_price,
-      :additional_deadline,
       :additional_price,
       :cart_id,
       :package_prefix,
@@ -167,6 +168,7 @@ class APIController < ActionController::Base
         :width,
         :weight,
         :quantity,
+        :handling_days,
         tags: [],
         shipping_tags: []
       ]

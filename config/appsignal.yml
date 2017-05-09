@@ -1,0 +1,19 @@
+default: &defaults
+  push_api_key: "<%= ENV['APPSIGNAL_PUSH_API_KEY'] %>"
+  name: "shipping"
+
+development:
+  <<: *defaults
+  active: true
+
+test:
+  <<: *defaults
+  active: false
+
+production:
+  <<: *defaults
+  active: true
+
+staging:
+  <<: *defaults
+  active: true

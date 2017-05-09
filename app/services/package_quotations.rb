@@ -11,10 +11,10 @@ class PackageQuotations
     build_packages
   end
 
-  def to_h(quotations_class = Quotations)
+  def to_h
     quotations = @packages.flat_map do |shop, (package, products)|
       params = @params.merge(package: package, shipping_zip: @zip, products: products)
-      quotations_class.new(shop, params, @logger).to_a
+      Quotations.new(shop, params, @logger).to_a
     end
 
     log("number of quotations: #{quotations.size}")

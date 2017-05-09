@@ -43,7 +43,7 @@ module Axado
       cep_origem:       @shop.zip.presence || r[:origin_zip],
       cep_destino:      r[:shipping_zip],
       valor_notafiscal: r[:order_total_price],
-      prazo_adicional:  r[:additional_deadline],
+      prazo_adicional:  r[:products].map { |product| product.handling_days.to_i }.max,
       preco_adicional:  r[:additional_price],
       volumes: r[:products].map do |i|
         {

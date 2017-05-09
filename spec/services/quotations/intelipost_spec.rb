@@ -1,23 +1,14 @@
-module IntelipostQuotationsTest
-  extend ActiveSupport::Testing::Declarative
+require "rails_helper"
 
-  test "returns quotations using intelipost" do
-    stub_intelipost_requests
-
+RSpec.describe Quotations, "intelipost" do
+  it "returns quotations using intelipost" do
     shop = create_shop(
       forward_to_intelipost: true,
       intelipost_token: "intel1tok3n",
       zip: "03320000"
     )
 
-    params = {
-      cart_id: 1,
-      package: "A1B2C3-1",
-      shipping_zip: "80035120",
-      products: [{ width: 7.0, height: 2.0, length: 14.0, quantity: 1, sku: "A1" }]
-    }
-
-    quotations = Quotations.new(shop, params, Rails.logger).to_a
+    quotations = new_intelipost_quotations(shop)
     assert_equal 2, quotations.size
 
     assert_instance_of Quotation, quotations[0]
@@ -41,6 +32,41 @@ module IntelipostQuotationsTest
     assert_equal "1181269286", quotations[1].quotation_id
     assert_equal "expressa", quotations[1].delivery_type_slug
     assert_nil quotations[1].notice
+  end
+
+  it "increments returned deadline for intelipost quotations" do
+    shop = create_shop(
+      forward_to_intelipost: true,
+      intelipost_token: "intel1tok3n",
+      zip: "03320000"
+    )
+
+    quotations = new_intelipost_quotations(shop, products: [new_product(handling_days: 10)])
+    assert_equal 2, quotations.size
+
+    assert_equal 15, quotations[0].deadline
+    assert_equal 11, quotations[1].deadline
+  end
+
+  def create_shop(attributes = {})
+    Shop.create!(attributes.merge(name: 'Loja', token: "a1b2c3", zip: "03320000"))
+  end
+
+  def new_intelipost_quotations(shop, params = {})
+    stub_intelipost_requests
+
+    params = params.reverse_merge(
+      cart_id: 1,
+      package: "A1B2C3-1",
+      shipping_zip: "80035120",
+      products: [new_product]
+    )
+
+    Quotations.new(shop, params, Rails.logger).to_a
+  end
+
+  def new_product(params = {})
+    params.reverse_merge(width: 7.0, height: 2.0, length: 14.0, quantity: 1, sku: "A1")
   end
 
   def stub_intelipost_requests

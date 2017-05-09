@@ -90,6 +90,13 @@ class ShippingMethod < ActiveRecord::Base
     end
   end
 
+  def next_delivery_date(now = nil)
+    now ||= Time.now
+    return now if days_off.compact.blank? || days_off.size == 7
+    return now unless days_off.include?(now.wday)
+    next_delivery_date(now + 1.day)
+  end
+
   protected
 
   def set_weight

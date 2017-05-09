@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170329201700) do
+ActiveRecord::Schema.define(version: 20170426212131) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -68,6 +68,15 @@ ActiveRecord::Schema.define(version: 20170329201700) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "picking_times", force: :cascade do |t|
+    t.boolean "enabled", default: true,    null: false
+    t.string  "weekday",                   null: false
+    t.string  "hour",    default: "18:00", null: false
+    t.integer "shop_id"
+  end
+
+  add_index "picking_times", ["enabled", "weekday"], name: "index_picking_times_on_enabled_and_weekday", using: :btree
 
   create_table "places", force: :cascade do |t|
     t.integer   "shipping_method_id",                         null: false
@@ -146,6 +155,7 @@ ActiveRecord::Schema.define(version: 20170329201700) do
     t.string   "mid",              limit: 255
     t.text     "notice"
     t.integer  "norder"
+    t.integer  "days_off",                     default: [],      null: false, array: true
   end
 
   add_index "shipping_methods", ["shop_id"], name: "index_shipping_methods_on_shop_id", using: :btree
@@ -170,6 +180,12 @@ ActiveRecord::Schema.define(version: 20170329201700) do
     t.integer "marketplace_id",                       default: 0,     null: false
     t.string  "marketplace_tag"
     t.string  "zip"
+    t.boolean "forward_to_tnt",                       default: false, null: false
+    t.string  "tnt_email"
+    t.string  "tnt_delivery_type"
+    t.string  "tnt_cnpj"
+    t.string  "tnt_ie"
+    t.integer "tnt_service_id"
   end
 
   add_index "shops", ["marketplace_id"], name: "index_shops_on_marketplace_id", using: :btree

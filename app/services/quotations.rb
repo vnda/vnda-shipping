@@ -43,11 +43,14 @@ class Quotations
       quotations += Intelipost.new(@shop, @logger).quote(@params.merge(shipping_zip: @zip))
     end
 
-    quotations = group_lower_prices(quotations) if quotations.present?
-
-    if @params[:additional_deadline].present?
-      quotations = apply_additional_deadline(quotations)
+    if @shop.forward_to_tnt?
+      quotations += Tnt.new(@shop, @logger).quote(@params.merge(shipping_zip: @zip))
     end
+
+    quotations = group_lower_prices(quotations) if quotations.present?
+    quotations = apply_additional_deadline(quotations)
+    quotations = apply_picking_time(quotations)
+    quotations = check_weekday(quotations)
 
     quotations = quotations.sort_by { |quote| quote.price } if @shop.order_by_price?
     QuoteHistory.register(@shop.id, @params[:cart_id], quotations: quotations.to_json)
@@ -82,8 +85,31 @@ class Quotations
   end
 
   def apply_additional_deadline(quotations)
+    additional_deadline = @params[:products].map { |product| product[:handling_days].to_i }.max
+
     quotations.each do |quote|
-      quote.deadline = quote.deadline.to_i + @params[:additional_deadline].to_i
+      quote.deadline = quote.deadline + additional_deadline
+    end if additional_deadline > 0
+
+    quotations
+  end
+
+  def apply_picking_time(quotations)
+    return quotations unless @shop.picking_times.where(enabled: true).any?
+    quotations.each do |quote|
+      quote.deadline = PickingTime.next_time(@shop.id) + quote.deadline.to_i
+    end
+
+    quotations
+  end
+
+  def check_weekday(quotations)
+    quotations.each do |quote|
+      if quote.shipping_method_id.present?
+        shipping_method = ShippingMethod.find(quote.shipping_method_id)
+        delivery_date = shipping_method.next_delivery_date(quote.deadline.days.from_now)
+        quote.deadline = (delivery_date.end_of_day - Time.now).round / 60 / 60 / 24
+      end
     end
   end
 

@@ -6,6 +6,7 @@ json = {
   delivery_type: quotation.delivery_type,
   delivery_type_slug: quotation.delivery_type_slug,
   deliver_company: quotation.deliver_company,
+  shipping_method_id: quotation.shipping_method_id,
   notice: quotation.notice,
   quotation_id: quotation.quotation_id,
   skus: quotation.skus
