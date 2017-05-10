@@ -15,8 +15,9 @@ class ZipCodeLocation < ActiveRecord::Base
   end
 
   def self.try_to_create_new_location(zip_code)
-    response = RestClient.get(GMAPS_GEOCODING_API_URL, { params: { components: "postal_code:#{zip_code}", region: 'br', key: GMAPS_GEOCODING_API_KEY } })
-    response = JSON.parse(response).with_indifferent_access
+    response = gmaps_geocode(zip_code)
+    # tentativa com primeiro conjunto do cep(bug da api)
+    response = gmaps_geocode(zip_code[0..4]) if response[:status].eql?('ZERO_RESULTS')
 
     if response[:status].eql?('ZERO_RESULTS')
       Rails.logger.info("Google Maps API response: [ZERO_RESULTS] #{response}")
@@ -47,4 +48,12 @@ class ZipCodeLocation < ActiveRecord::Base
   def self.normalize_zip_code(zip_code)
     zip_code.to_s.sub('-', '')
   end
+
+  private
+
+  def self.gmaps_geocode(zip_code)
+    response = RestClient.get(GMAPS_GEOCODING_API_URL, { params: { components: "postal_code:#{zip_code}", region: 'br', key: GMAPS_GEOCODING_API_KEY } })
+    JSON.parse(response).with_indifferent_access
+  end
+
 end
