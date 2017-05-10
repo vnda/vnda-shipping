@@ -76,6 +76,16 @@ class APIController < ActionController::Base
     render json: @shop.places_for_shipping_method(params[:shipping_method_id]).to_json(only: :name)
   end
 
+  def update_place_name
+    Place.includes(:shipping_method).where(
+      name: params[:from],
+      shipping_methods: {shop_id: @shop.id}
+    ).each do |place|
+      place.update_attribute(:name, params[:to])
+    end
+    head :ok
+  end
+
   def shipping_methods
     render json: @shop.methods
   end
