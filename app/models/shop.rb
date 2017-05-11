@@ -117,7 +117,7 @@ class Shop < ActiveRecord::Base
     services = shipping_methods_correios
 
     if package.present? && name.include?("taglivros")
-      services = if package.starts_with?("kit-") || package.starts_with?("livro-")
+      services = if package.starts_with?("kit-") || package.starts_with?("livro")
         services.where(service: "20010")
       else
         services.where.not(service: "20010")
