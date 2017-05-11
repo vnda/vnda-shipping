@@ -113,16 +113,11 @@ class Shop < ActiveRecord::Base
     methods.where(data_origin: "correios").where(enabled: true).order(:id)
   end
 
-  def enabled_correios_service(params = {})
+  def enabled_correios_service(package = nil)
     services = shipping_methods_correios
 
-    if params.present? && name.include?("taglivros")
-      cart_tags = params[:products].
-        flat_map{ |product| product[:shipping_tags] }.
-        map{|tag| tag.nil? ? "diversos" : tag }.
-        uniq
-
-      services = if !cart_tags.include?("diversos") && (cart_tags.include?("livro") || cart_tags.include?("kit"))
+    if package.present? && name.include?("taglivros")
+      services = if package.starts_with?("kit-") || package.starts_with?("livro-")
         services.where(service: "20010")
       else
         services.where.not(service: "20010")

@@ -33,7 +33,7 @@ class Quotations
       quotation_for(data_origin_methods.for_weigth(weight))
     end
 
-    if @shop.forward_to_correios? && @shop.enabled_correios_service.any?
+    if @shop.forward_to_correios? && @shop.enabled_correios_service(@params["package"]).any?
       if quotations.empty? || !correios_completed?(@shop, quotations)
         quotations += Correios.new(@shop, @logger).quote(@params.merge(shipping_zip: @zip))
       end
@@ -121,21 +121,23 @@ class Quotations
 
   def quotation_for(shipping_methods)
     shipping_methods.map do |shipping_method|
-      quotation = Quotation.new(
+      quotation = Quotation.find_or_initialize_by(
         shop_id: @shop.id,
         cart_id: @params[:cart_id],
-        shipping_method_id: shipping_method.id,
-        name: shipping_method.name,
-        deadline: shipping_method.deadline,
-        slug: shipping_method.slug,
-        delivery_type: shipping_method.delivery_type.name,
-        notice: shipping_method.notice,
-        package: @params[:package],
-        price: shipping_method.price,
-        skus: @params[:products].map { |product| product[:sku] }
+        package: @params[:package].presence,
+        delivery_type: shipping_method.delivery_type.name
       )
-      log(quotation.attributes.to_json)
+
+      quotation.shipping_method_id = shipping_method.id
+      quotation.name = shipping_method.name
+      quotation.deadline = shipping_method.deadline
+      quotation.slug = shipping_method.slug
+      quotation.notice = shipping_method.notice
+      quotation.price = shipping_method.price
+      quotation.skus = @params[:products].map { |product| product[:sku] }
       quotation.save!
+
+      log(quotation.attributes.to_json)
       quotation
     end
   end

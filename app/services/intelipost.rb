@@ -22,19 +22,22 @@ class Intelipost
     end
 
     deliveries = data['content']['delivery_options'].map do |o|
-      Quotation.create!(
-        shop_id: @shop.id,
-        cart_id: params[:cart_id],
-        package: params[:package],
-        quotation_id: data['content']['id'],
-        name: o['description'],
-        price: o['final_shipping_cost'],
-        deadline: o['delivery_estimate_business_days'],
-        slug: o['delivery_method_name'].parameterize,
-        deliver_company: o['logistic_provider_name'],
-        delivery_type: find_delivery_type(o['delivery_method_type'], o['description']),
-        skus: params[:products].map { |product| product[:sku] }
-      ) if number?(o['delivery_estimate_business_days'])
+      if number?(o['delivery_estimate_business_days'])
+        quotation = Quotation.find_or_initialize_by(
+          shop_id: @shop.id,
+          cart_id: params[:cart_id],
+          package: params[:package].presence,
+          delivery_type: find_delivery_type(o['delivery_method_type'], o['description'])
+        )
+        quotation.quotation_id = data['content']['id']
+        quotation.name = o['description']
+        quotation.price = o['final_shipping_cost']
+        quotation.deadline = o['delivery_estimate_business_days']
+        quotation.slug = o['delivery_method_name'].parameterize
+        quotation.deliver_company = o['logistic_provider_name']
+        quotation.skus = params[:products].map { |product| product[:sku] }
+        quotation.tap(&:save!)
+      end
     end
     deliveries.compact!
     deliveries

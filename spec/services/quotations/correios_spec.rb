@@ -19,7 +19,7 @@ RSpec.describe Quotations, "correios" do
     assert_equal shop.id, quotations[0].shop_id
     assert_equal 1, quotations[0].cart_id
     assert_equal shop.methods.where(name: "Normal").first.id, quotations[0].shipping_method_id
-    assert_equal "A1B2C3-01", quotations[0].package
+    expect(quotations[0].package).to eq(nil)
     assert_equal "Normal", quotations[0].name
     assert_equal 18.3, quotations[0].price
     assert_equal 7, quotations[0].deadline
@@ -34,7 +34,7 @@ RSpec.describe Quotations, "correios" do
     assert_equal shop.id, quotations[1].shop_id
     assert_equal 1, quotations[1].cart_id
     assert_equal shop.methods.where(name: "Expressa").first.id, quotations[1].shipping_method_id
-    assert_equal "A1B2C3-01", quotations[1].package
+    expect(quotations[1].package).to eq(nil)
     assert_equal "Expressa", quotations[1].name
     assert_equal 26, quotations[1].price
     assert_equal 1, quotations[1].deadline
@@ -70,7 +70,6 @@ RSpec.describe Quotations, "correios" do
 
     params = params.reverse_merge(
       cart_id: 1,
-      package: "A1B2C3-01",
       shipping_zip: "80035120",
       products: [new_product]
     )

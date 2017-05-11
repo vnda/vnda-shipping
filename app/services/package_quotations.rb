@@ -1,31 +1,27 @@
 class PackageQuotations
+  SellerNotFound = Class.new(StandardError)
+
   def initialize(marketplace, params, logger)
     @params = params.dup
-    validate_params!(:package_prefix, :shipping_zip, :products)
+    validate_params!(:shipping_zip, :products)
 
     @marketplace = marketplace
     @logger = logger
     @zip = @params.delete(:shipping_zip).gsub(/\D+/, "")
-    @package_prefix = @params.delete(:package_prefix)
-
-    build_packages
   end
 
   def to_h
-    quotations = @packages.flat_map do |shop, (package, products)|
+    results = @params[:products].inject({}) do |memo, (package, products)|
       params = @params.merge(package: package, shipping_zip: @zip, products: products)
-      Quotations.new(shop, params, @logger).to_a
-    end
+      quotations = Quotations.new(find_shop(package), params, @logger)
 
-    log("number of quotations: #{quotations.size}")
-
-    results = quotations.group_by(&:package).inject({}) do |memo, (package, quotations)|
-      memo[package] = sum(quotations)
+      memo[package] = sum(quotations.to_a)
       memo
     end
 
+    log(results)
     results[:total_packages] = results.keys.size
-    results[:total_quotations] = quotations.size
+    results[:total_quotations] = results.sum { |_, quotations| quotations.size }
     results
   end
 
@@ -39,19 +35,14 @@ class PackageQuotations
     end
   end
 
-  def build_packages
-    products = @params[:products].map do |product|
-      product[:shop] = @marketplace.shops.includes(:marketplace).where(marketplace_tag: product[:tags]).first || @marketplace
-      product
-    end.sort_by { |product| product[:shop].marketplace ? product[:shop][:id] : 0 }
+  def find_shop(tag)
+    return @marketplace if tag.blank?
 
-    @packages = products.group_by { |product| product.delete(:shop) }.each_with_index.inject({}) do |memo, ((shop, products), i)|
-      memo[shop] = [[@package_prefix, "%02i" % (i + 1)].join("-"), products]
-      memo
-    end
+    shop = @marketplace.shops.includes(:marketplace).where(marketplace_tag: tag).first
+    return shop if shop
 
-    log("number of packages: #{@packages.size}")
-    @packages
+    log("Shop not found for tag #{tag}")
+    @marketplace
   end
 
   def sum(quotations)

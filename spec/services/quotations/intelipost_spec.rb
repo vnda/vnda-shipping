@@ -18,7 +18,7 @@ RSpec.describe Quotations, "intelipost" do
     assert_equal "correios-pac", quotations[0].slug
     assert_equal "Normal", quotations[0].delivery_type
     assert_equal "Correios", quotations[0].deliver_company
-    assert_equal "1181269286", quotations[0].quotation_id
+    expect(quotations[0].quotation_id).to eq("1181269286")
     assert_equal "normal", quotations[0].delivery_type_slug
     assert_nil quotations[0].notice
 

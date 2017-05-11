@@ -5,7 +5,7 @@ default: &default
 
 development:
   <<: *default
-  database: dev_vnda_shipping_development
+  database:  <%= ENV['DATABASE_NAME'] || "dev_vnda_shipping_development" %>
 
 test:
   <<: *default
