@@ -116,8 +116,8 @@ class Shop < ActiveRecord::Base
   def enabled_correios_service(package = nil)
     services = shipping_methods_correios
 
-    if package.present? && name.include?("taglivros")
-      services = if package.starts_with?("kit-") || package.starts_with?("livro")
+    if name.include?("taglivros")
+      services = if package.to_s.starts_with?("kit-") || package.to_s.starts_with?("livro")
         services.where(service: "20010")
       else
         services.where.not(service: "20010")
