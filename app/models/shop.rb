@@ -165,7 +165,7 @@ class Shop < ActiveRecord::Base
       max_weigth: 30,
       delivery_type_id: self.delivery_types.where(name: "Normal").first.id,
       data_origin: "correios",
-      service: "41106"
+      service: "04669"
     )
 
     methods.create!(
@@ -176,7 +176,7 @@ class Shop < ActiveRecord::Base
       max_weigth: 30,
       delivery_type_id: self.delivery_types.where(name: "Expressa").first.id,
       data_origin: "correios",
-      service: "40010"
+      service: "04162"
     )
   end
 
