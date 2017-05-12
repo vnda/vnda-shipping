@@ -52,7 +52,9 @@
       $('.progress-bar').css('width', step+'%').attr('aria-valuenow', step);
     }
 
-    $("#import_now").on("click", function(){
+    $("#import_now").on("click", function(e){
+      e.preventDefault();
+
       $('.progress-bar').css('width', current_step+'%').attr('aria-valuenow', current_step);
       $("#errors p").hide();
       $("#errors ul").html("");
