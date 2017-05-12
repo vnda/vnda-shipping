@@ -70,7 +70,7 @@ RSpec.describe "Quotes" do
 
     quotations = JSON.load(body)
     expect(quotations.keys).to eq([""])
-    assert_equal 2, quotations[""].size
+    expect(quotations[""].size).to eq(2)
 
     assert_equal "Normal", quotations[""][0]["name"]
     assert_equal 18.3, quotations[""][0]["price"]

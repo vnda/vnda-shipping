@@ -64,5 +64,5 @@ end
 ```
 
 ```ruby
-{:calc_preco_prazo_response=>{:calc_preco_prazo_result=>{:servicos=>{:c_servico=>[{:codigo=>"40010", :valor=>"33,54", :prazo_entrega=>"1", :valor_mao_propria=>"0,00", :valor_aviso_recebimento=>"0,00", :valor_valor_declarado=>"2,04", :entrega_domiciliar=>nil, :entrega_sabado=>nil, :erro=>"0", :msg_erro=>nil, :valor_sem_adicionais=>"31,50", :obs_fim=>nil}, {:codigo=>"41106", :valor=>"20,84", :prazo_entrega=>"6", :valor_mao_propria=>"0,00", :valor_aviso_recebimento=>"0,00", :valor_valor_declarado=>"2,04", :entrega_domiciliar=>"S", :entrega_sabado=>"N", :erro=>"0", :msg_erro=>nil, :valor_sem_adicionais=>"18,80", :obs_fim=>nil}]}}, :@xmlns=>"http://tempuri.org/"}}
+{:calc_preco_prazo_response=>{:calc_preco_prazo_result=>{:servicos=>{:c_servico=>[{:codigo=>"04014", :valor=>"33,54", :prazo_entrega=>"1", :valor_mao_propria=>"0,00", :valor_aviso_recebimento=>"0,00", :valor_valor_declarado=>"2,04", :entrega_domiciliar=>nil, :entrega_sabado=>nil, :erro=>"0", :msg_erro=>nil, :valor_sem_adicionais=>"31,50", :obs_fim=>nil}, {:codigo=>"04510", :valor=>"20,84", :prazo_entrega=>"6", :valor_mao_propria=>"0,00", :valor_aviso_recebimento=>"0,00", :valor_valor_declarado=>"2,04", :entrega_domiciliar=>"S", :entrega_sabado=>"N", :erro=>"0", :msg_erro=>nil, :valor_sem_adicionais=>"18,80", :obs_fim=>nil}]}}, :@xmlns=>"http://tempuri.org/"}}
 ```
