@@ -89,6 +89,31 @@ describe Shop do
     end
   end
 
+  describe "#shipping_methods_correios" do
+    it "returns an empty array if correios is not enabled" do
+      subject.save!
+
+      expect(subject.shipping_methods_correios).to eq([])
+    end
+
+    it "returns shipping methods for correios when it's enabled" do
+      subject.forward_to_correios = true
+      subject.correios_code = "code"
+      subject.correios_password = "pass"
+      subject.save!
+
+      expect(subject.shipping_methods_correios.size).to eq(2)
+
+      normal = subject.shipping_methods_correios[0]
+      expect(normal.name).to eq("Normal")
+      expect(normal.delivery_type.name).to eq("Normal")
+
+      express = subject.shipping_methods_correios[1]
+      expect(express.name).to eq("Expressa")
+      expect(express.delivery_type.name).to eq("Expressa")
+    end
+  end
+
   describe "#enabled_correios_service" do
     it "returns an empty array if no service is enabled for correios" do
       expect(subject.enabled_correios_service).to eq([])
@@ -100,16 +125,7 @@ describe Shop do
       subject.correios_password = "pass"
       subject.save!
 
-      expect(subject.enabled_correios_service).to eq(["41106", "40010"])
-    end
-
-    it "returns an array of service codes enabled for correios" do
-      subject.forward_to_correios = true
-      subject.correios_code = "code"
-      subject.correios_password = "pass"
-      subject.save!
-
-      expect(subject.enabled_correios_service).to eq(["41106", "40010"])
+      expect(subject.enabled_correios_service).to eq(["04669", "04162"])
     end
 
     context "when taglivros" do # custom cases, we shouldn't have this kind of stuff here

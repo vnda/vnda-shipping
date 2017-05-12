@@ -2,24 +2,6 @@ class Correios
   URL = 'http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx?WSDL'.freeze
   FALLBACK_SHOP_NAME = "fallback".freeze
 
-  #deprecated
-  SERVICES = {
-    40010 => 'SEDEX Varejo',
-    40045 => 'SEDEX a Cobrar Varejo',
-    40215 => 'SEDEX 10 Varejo',
-    40290 => 'SEDEX Hoje Varejo',
-    41106 => 'PAC Varejo',
-
-    40096 => 'SEDEX - Código Serviço 40096',
-    40436 => 'SEDEX - Código Serviço 40436',
-    40444 => 'SEDEX - Código Serviço 40444',
-    81019 => 'e-SEDEX - Código Serviço 81019',
-    41068 => 'PAC - Código Serviço 41068'
-  }
-
-  #deprecated
-  EXPRESS = [40010, 40045, 40215, 40290]
-
   MIN_WIDTH = 11
   MIN_HEIGHT = 2
   MIN_LENGTH = 16
@@ -86,25 +68,27 @@ class Correios
 
     Quotation.transaction do
       allowed.compact.map do |option|
-        parsed_code = "%05d" % option[:codigo]
-        deadline = option[:prazo_entrega].to_i
-        deadline += 7 if option[:erro] == '010'
-        deadline = deadline_business_day(parsed_code, deadline)
-        shipping_method = @shop.shipping_methods_correios.where(service: parsed_code).first
+        shipping_method = @shop.shipping_methods_correios.
+          where(service: option[:codigo].to_s.rjust(5, "0")).
+          first!
 
         quotation = Quotation.find_or_initialize_by(
           shop_id: @shop.id,
           cart_id: request[:cart_id],
           package: request[:package].presence,
-          delivery_type: shipping_type(shipping_method, parsed_code)
+          delivery_type: shipping_method.delivery_type.name
         )
-        quotation.shipping_method_id = shipping_method.id if shipping_method
-        quotation.name = shipping_name(shipping_method, parsed_code)
+        quotation.shipping_method_id = shipping_method.id
+        quotation.name = shipping_method.name
         quotation.price = parse_price(option[:valor])
-        quotation.deadline = deadline
-        quotation.slug = shipping_method ? shipping_method.slug : parsed_code
+        quotation.slug = shipping_method.slug
         quotation.deliver_company = "Correios"
         quotation.skus = request[:products].map { |product| product[:sku] }
+
+        deadline = option[:prazo_entrega].to_i
+        deadline += 7 if option[:erro] == '010'
+        quotation.deadline = deadline_business_day(shipping_method, deadline)
+
         quotation.tap(&:save!)
       end
     end
@@ -119,16 +103,17 @@ class Correios
     value
   end
 
-  def deadline_business_day(service, deadline)
-    business_days = service.to_s =~ /41[0-9]{3}/ ? 5 : 6
-    days_without_deliver = 7 - business_days
-    today = Time.current.wday
-    return deadline if deadline + today < (business_days + 1)
+  def deadline_business_day(shipping_method, deadline)
+    days_off = shipping_method.days_off
+    deadline_date = Date.today
+    while deadline > 0
+      deadline_date = deadline_date + 1
+      deadline_date = deadline_date + 1 while days_off.include?(deadline_date.wday)
 
-    partial = business_days - today
-    full_weeks = (deadline - partial) / business_days
-    rest = (deadline - partial) % business_days
-    deadline + (full_weeks * days_without_deliver) + (rest > 0 ? days_without_deliver : 0)
+      deadline = deadline - 1
+    end
+
+    (deadline_date - Date.today).to_i
   end
 
   private
@@ -162,33 +147,8 @@ class Correios
     str.gsub(/[.,]/, '.' => '', ',' => '.').to_f
   end
 
-  def shipping_name(shipping_method, code)
-    return shipping_method.name if shipping_method
-
-    # DEPRECATED should not get here since shipping_method won't be nil
-    config_name = if EXPRESS.include?(code.to_i)
-      @shop.express_shipping_name
-    else
-      @shop.normal_shipping_name
-    end
-
-    config_name.presence || code
-  end
-
-  def shipping_type(shipping_method, code)
-    return shipping_method.delivery_type.name if shipping_method
-
-    # DEPRECATED should not get here since shipping_method won't be nil
-    if EXPRESS.include?(code.to_i)
-      "Expressa"
-    else
-      "Normal"
-    end
-  end
-
   def check_blocked_zip(zip, response)
-    parsed_code = "%05d" % response[:codigo].to_s
-    methods = @shop.shipping_methods_correios.where(service: parsed_code)
+    methods = @shop.shipping_methods_correios.where(service: response[:codigo].to_s.rjust(5, "0"))
     return true if methods.empty? # to compatibility to old config method
 
     blocked_methods = methods.joins(:block_rules).merge(BlockRule.for_zip(zip.to_i))

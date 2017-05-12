@@ -1,6 +1,21 @@
 class Correios::Calculate
   include ActiveModel::Model
 
+  # TODO find other way to list these services
+  SERVICES = {
+    "04014" => 'SEDEX Varejo',
+    "40045" => 'SEDEX a Cobrar Varejo',
+    "40215" => 'SEDEX 10 Varejo',
+    "40290" => 'SEDEX Hoje Varejo',
+    "04510" => 'PAC Varejo',
+
+    "04162" => 'SEDEX - Código Serviço 04162',
+    "40436" => 'SEDEX - Código Serviço 40436',
+    "40444" => 'SEDEX - Código Serviço 40444',
+    "81019" => 'e-SEDEX - Código Serviço 81019',
+    "04669" => 'PAC - Código Serviço 04669'
+  }
+
   attr_accessor :shop, :delivery_type, :service_code, :enterprise_code, :enterprise_pass, :sender_zipcode, :track_ceps,
     :weight_tracks, :safety_margin, :log
 
@@ -13,7 +28,7 @@ class Correios::Calculate
 
     #options
     self.delivery_type   = DeliveryType.find(options[:delivery_type]) rescue nil
-    self.service_code    = (options[:service_code] || 41106).to_i
+    self.service_code    = options[:service_code].presence || "04510"
     self.sender_zipcode  = options[:sender_zipcode]
     self.safety_margin   = options[:safety_margin].to_f
 
@@ -161,7 +176,7 @@ class Correios::Calculate
   #end
 
   def description(min_weigth, max_weigth)
-    "Tabela #{Correios::SERVICES[service_code]} #{min_weigth} até #{max_weigth}"
+    "Tabela #{SERVICES[service_code]} #{min_weigth} até #{max_weigth}"
   end
 
   def medium_track(weight)

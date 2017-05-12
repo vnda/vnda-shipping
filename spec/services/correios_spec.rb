@@ -54,7 +54,7 @@ RSpec.describe Correios do
         headers: { "Content-Type" => "text/xml; charset=utf-8" })
 
     stub_request(:post, "http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx").
-      with(body: "<?xml version=\"1.0\" encoding=\"UTF-8\"?><env:Envelope xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:tns=\"http://tempuri.org/\" xmlns:env=\"http://schemas.xmlsoap.org/soap/envelope/\"><env:Body><tns:CalcPrecoPrazo><tns:nCdEmpresa>code</tns:nCdEmpresa><tns:sDsSenha>pass</tns:sDsSenha><tns:nCdServico>41106,40010</tns:nCdServico><tns:sCepOrigem>03320000</tns:sCepOrigem><tns:sCepDestino>90540140</tns:sCepDestino><tns:nVlPeso>0.0</tns:nVlPeso><tns:nCdFormato>1</tns:nCdFormato><tns:nVlComprimento>16</tns:nVlComprimento><tns:nVlAltura>6</tns:nVlAltura><tns:nVlLargura>11</tns:nVlLargura><tns:nVlDiametro>0</tns:nVlDiametro><tns:sCdMaoPropria>N</tns:sCdMaoPropria><tns:sCdAvisoRecebimento>N</tns:sCdAvisoRecebimento><tns:nVlValorDeclarado>17.0</tns:nVlValorDeclarado></tns:CalcPrecoPrazo></env:Body></env:Envelope>",
+      with(body: "<?xml version=\"1.0\" encoding=\"UTF-8\"?><env:Envelope xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:tns=\"http://tempuri.org/\" xmlns:env=\"http://schemas.xmlsoap.org/soap/envelope/\"><env:Body><tns:CalcPrecoPrazo><tns:nCdEmpresa>code</tns:nCdEmpresa><tns:sDsSenha>pass</tns:sDsSenha><tns:nCdServico>04669,04162</tns:nCdServico><tns:sCepOrigem>03320000</tns:sCepOrigem><tns:sCepDestino>90540140</tns:sCepDestino><tns:nVlPeso>0.0</tns:nVlPeso><tns:nCdFormato>1</tns:nCdFormato><tns:nVlComprimento>16</tns:nVlComprimento><tns:nVlAltura>6</tns:nVlAltura><tns:nVlLargura>11</tns:nVlLargura><tns:nVlDiametro>0</tns:nVlDiametro><tns:sCdMaoPropria>N</tns:sCdMaoPropria><tns:sCdAvisoRecebimento>N</tns:sCdAvisoRecebimento><tns:nVlValorDeclarado>17.0</tns:nVlValorDeclarado></tns:CalcPrecoPrazo></env:Body></env:Envelope>",
         headers: { "Content-Type" => "text/xml;charset=UTF-8", "Soapaction"=>"\"http://tempuri.org/CalcPrecoPrazo\"" }).
       to_timeout
 
@@ -94,66 +94,69 @@ RSpec.describe Correios do
   end
 
   it "#deadline_business_day for sedex" do
-    Timecop.freeze(2017, 4, 04, 17, 54, 55) do
+    Timecop.freeze(2017, 4, 4, 17, 54, 55) do
       shop = create_shop
+      shipping_method = shop.methods.where(name: "Expressa").first
 
       correios = Correios.new(shop, Rails.logger)
 
-      assert_equal 1, correios.deadline_business_day(40000, 1)
-      assert_equal 2, correios.deadline_business_day(40000, 2)
-      assert_equal 3, correios.deadline_business_day(40000, 3)
-      assert_equal 4, correios.deadline_business_day(40000, 4)
+      expect(correios.deadline_business_day(shipping_method, 1)).to eq(1)
+      expect(correios.deadline_business_day(shipping_method, 2)).to eq(2)
+      expect(correios.deadline_business_day(shipping_method, 3)).to eq(3)
+      expect(correios.deadline_business_day(shipping_method, 4)).to eq(4)
 
-      assert_equal 6, correios.deadline_business_day(40000, 5)
-      assert_equal 7, correios.deadline_business_day(40000, 6)
-      assert_equal 8, correios.deadline_business_day(40000, 7)
-      assert_equal 9, correios.deadline_business_day(40000, 8)
-      assert_equal 10, correios.deadline_business_day(40000, 9)
-      assert_equal 11, correios.deadline_business_day(40000, 10)
+      expect(correios.deadline_business_day(shipping_method, 5)).to eq(6)
+      expect(correios.deadline_business_day(shipping_method, 6)).to eq(7)
+      expect(correios.deadline_business_day(shipping_method, 7)).to eq(8)
+      expect(correios.deadline_business_day(shipping_method, 8)).to eq(9)
+      expect(correios.deadline_business_day(shipping_method, 9)).to eq(10)
+      expect(correios.deadline_business_day(shipping_method, 10)).to eq(11)
 
-      assert_equal 13, correios.deadline_business_day(40000, 11)
-      assert_equal 14, correios.deadline_business_day(40000, 12)
-      assert_equal 15, correios.deadline_business_day(40000, 13)
-      assert_equal 16, correios.deadline_business_day(40000, 14)
-      assert_equal 17, correios.deadline_business_day(40000, 15)
-      assert_equal 18, correios.deadline_business_day(40000, 16)
+      expect(correios.deadline_business_day(shipping_method, 11)).to eq(13)
+      expect(correios.deadline_business_day(shipping_method, 12)).to eq(14)
+      expect(correios.deadline_business_day(shipping_method, 13)).to eq(15)
+      expect(correios.deadline_business_day(shipping_method, 14)).to eq(16)
+      expect(correios.deadline_business_day(shipping_method, 15)).to eq(17)
+      expect(correios.deadline_business_day(shipping_method, 16)).to eq(18)
 
-      assert_equal 20, correios.deadline_business_day(40000, 17)
-      assert_equal 21, correios.deadline_business_day(40000, 18)
-      assert_equal 22, correios.deadline_business_day(40000, 19)
-      assert_equal 23, correios.deadline_business_day(40000, 20)
+      expect(correios.deadline_business_day(shipping_method, 17)).to eq(20)
+      expect(correios.deadline_business_day(shipping_method, 18)).to eq(21)
+      expect(correios.deadline_business_day(shipping_method, 19)).to eq(22)
+      expect(correios.deadline_business_day(shipping_method, 20)).to eq(23)
     end
   end
 
   it "#deadline_business_day for pac" do
-    Timecop.freeze(2017, 4, 04, 17, 54, 55) do
+    Timecop.freeze(2017, 4, 4, 17, 54, 55) do
       shop = create_shop
+      shipping_method = shop.methods.where(name: "Normal").first
+
       correios = Correios.new(shop, Rails.logger)
 
-      assert_equal 1, correios.deadline_business_day(41000, 1)
-      assert_equal 2, correios.deadline_business_day(41000, 2)
-      assert_equal 3, correios.deadline_business_day(41000, 3)
+      expect(correios.deadline_business_day(shipping_method, 1)).to eq(1)
+      expect(correios.deadline_business_day(shipping_method, 2)).to eq(2)
+      expect(correios.deadline_business_day(shipping_method, 3)).to eq(3)
 
-      assert_equal 6, correios.deadline_business_day(41000, 4)
-      assert_equal 7, correios.deadline_business_day(41000, 5)
-      assert_equal 8, correios.deadline_business_day(41000, 6)
-      assert_equal 9, correios.deadline_business_day(41000, 7)
-      assert_equal 10, correios.deadline_business_day(41000, 8)
+      expect(correios.deadline_business_day(shipping_method, 4)).to eq(6)
+      expect(correios.deadline_business_day(shipping_method, 5)).to eq(7)
+      expect(correios.deadline_business_day(shipping_method, 6)).to eq(8)
+      expect(correios.deadline_business_day(shipping_method, 7)).to eq(9)
+      expect(correios.deadline_business_day(shipping_method, 8)).to eq(10)
 
-      assert_equal 13, correios.deadline_business_day(41000, 9)
-      assert_equal 14, correios.deadline_business_day(41000, 10)
-      assert_equal 15, correios.deadline_business_day(41000, 11)
-      assert_equal 16, correios.deadline_business_day(41000, 12)
-      assert_equal 17, correios.deadline_business_day(41000, 13)
+      expect(correios.deadline_business_day(shipping_method, 9)).to eq(13)
+      expect(correios.deadline_business_day(shipping_method, 10)).to eq(14)
+      expect(correios.deadline_business_day(shipping_method, 11)).to eq(15)
+      expect(correios.deadline_business_day(shipping_method, 12)).to eq(16)
+      expect(correios.deadline_business_day(shipping_method, 13)).to eq(17)
 
-      assert_equal 20, correios.deadline_business_day(41000, 14)
-      assert_equal 21, correios.deadline_business_day(41000, 15)
-      assert_equal 22, correios.deadline_business_day(41000, 16)
-      assert_equal 23, correios.deadline_business_day(41000, 17)
-      assert_equal 24, correios.deadline_business_day(41000, 18)
+      expect(correios.deadline_business_day(shipping_method, 14)).to eq(20)
+      expect(correios.deadline_business_day(shipping_method, 15)).to eq(21)
+      expect(correios.deadline_business_day(shipping_method, 16)).to eq(22)
+      expect(correios.deadline_business_day(shipping_method, 17)).to eq(23)
+      expect(correios.deadline_business_day(shipping_method, 18)).to eq(24)
 
-      assert_equal 27, correios.deadline_business_day(41000, 19)
-      assert_equal 28, correios.deadline_business_day(41000, 20)
+      expect(correios.deadline_business_day(shipping_method, 19)).to eq(27)
+      expect(correios.deadline_business_day(shipping_method, 20)).to eq(28)
     end
   end
 
