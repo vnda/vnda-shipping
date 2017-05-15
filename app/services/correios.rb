@@ -126,8 +126,8 @@ class Correios
     log("Response: #{response.to_xml}")
 
     QuoteHistory.register(@shop.id, cart_id, {
-      :external_request => request_xml,
-      :external_response => response.to_xml
+      external_request: request_xml,
+      external_response: response.to_xml
     })
 
     response
