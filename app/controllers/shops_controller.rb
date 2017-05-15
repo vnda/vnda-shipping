@@ -5,7 +5,7 @@ class ShopsController < ApplicationController
     @shops = Shop.
       joins("LEFT JOIN shops marketplaces ON (marketplaces.id = shops.marketplace_id)").
       where("marketplaces.id IS NULL").
-      order("(SELECT 1 FROM shops sellers WHERE sellers.marketplace_id = shops.id LIMIT 1)")
+      order("(SELECT 1 FROM shops sellers WHERE sellers.marketplace_id = shops.id LIMIT 1), name")
   end
 
   def new
