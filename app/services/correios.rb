@@ -161,7 +161,7 @@ class Correios
   def fallback_quote(params)
     shop = Shop.where(name: FALLBACK_SHOP_NAME).first unless @shop.name == FALLBACK_SHOP_NAME
     return [] unless shop
-    Quotations.new(shop, params, @logger).to_a
+    Quotations.new(shop, params.merge(original_shop_id: @shop.id), @logger).to_a
   end
 
   def log(message, level = :info)

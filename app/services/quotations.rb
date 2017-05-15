@@ -123,6 +123,7 @@ class Quotations
     shipping_methods.map do |shipping_method|
       quotation = Quotation.find_or_initialize_by(
         shop_id: @shop.id,
+        original_shop_id: @params[:original_shop_id].presence,
         cart_id: @params[:cart_id],
         package: @params[:package].presence,
         delivery_type: shipping_method.delivery_type.name

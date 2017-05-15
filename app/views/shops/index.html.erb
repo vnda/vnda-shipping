@@ -9,6 +9,7 @@
     <tr>
       <th>Nome</th>
       <th>Sellers</th>
+      <th>Fallback</th>
       <th>Token da API</th>
       <th></th>
     </tr>
@@ -21,6 +22,7 @@
     <%= content_tag_for :tr, @shops do |shop| %>
       <td><%= link_to(shop.name, shop_shipping_methods_path(shop)) %></td>
       <td><%= link_to(shop.shops.size, shop_sellers_path(shop)) if shop.shops.size > 0 %></td>
+      <td><%= shop.fallback_count %></td>
       <td><%= shop.token %></td>
       <td class="text-right">
         <%= link_to content_tag(:span, nil, class: 'glyphicon glyphicon-pencil'), edit_shop_path(shop) %>

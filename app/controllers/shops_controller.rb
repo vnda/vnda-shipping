@@ -3,9 +3,13 @@ class ShopsController < ApplicationController
 
   def index
     @shops = Shop.
+      select("shops.*, count(quotations.id) as fallback_count").
       joins("LEFT JOIN shops marketplaces ON (marketplaces.id = shops.marketplace_id)").
+      joins("LEFT JOIN quotations ON (quotations.original_shop_id = shops.id)").
       where("marketplaces.id IS NULL").
-      order("(SELECT 1 FROM shops sellers WHERE sellers.marketplace_id = shops.id LIMIT 1), name")
+      where("quotations.updated_at > '#{1.hour.ago}' OR quotations.updated_at IS NULL").
+      group("shops.id").
+      order("(SELECT 1 FROM shops sellers WHERE sellers.marketplace_id = shops.id LIMIT 1), shops.name")
   end
 
   def new
