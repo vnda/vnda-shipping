@@ -2,7 +2,9 @@ class Quotations
   BadParams = Class.new(StandardError)
 
   def initialize(shop, params, logger)
-    raise BadParams unless params[:shipping_zip] && params[:products]
+    unless params[:shipping_zip] && params[:products]
+      raise BadParams, "shipping_zip and products are mandatory"
+    end
 
     @shop = shop
     @params = params.dup
