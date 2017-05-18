@@ -80,7 +80,6 @@ RSpec.describe ShippingMethod do
 
       expect(subject).to_not be_valid
       expect(subject.errors[:slug]).to eq(["não pode ficar em branco"])
-      # end.to raise_error(ActiveRecord::RecordInvalid, "A validação falhou: Slug não pode ficar em branco")
     end
   end
 
