@@ -10,12 +10,12 @@ class ShippingMethod < ActiveRecord::Base
   accepts_nested_attributes_for :map_rules, allow_destroy: true, reject_if: :all_blank
   accepts_nested_attributes_for :block_rules, allow_destroy: true, reject_if: :all_blank
 
-  validates :name, :delivery_type_id, :description, presence: true
+  validates_presence_of :name, :delivery_type_id, :description, :slug
   validates_numericality_of :min_weigth, less_than_or_equal_to: :max_weigth, allow_blank: true
   validates_numericality_of :max_weigth, less_than_or_equal_to: 1000, greater_than_or_equal_to: :min_weigth, allow_blank: true
 
+  before_validation :generate_slug, if: :description_changed?
   before_save :set_weight
-  before_save :generate_slug, if: :description_changed?
 
   scope :for_weigth, -> weigth { where('shipping_methods.weigth_range @> ?', weigth.to_f) }
   scope :for_gmaps_origin, -> zip { where(data_origin: 'google_maps').merge(MapRule.for_zip(zip)).joins(:map_rules) }
@@ -38,7 +38,7 @@ class ShippingMethod < ActiveRecord::Base
   end
 
   def generate_slug
-    self.slug = description.to_s.split("CSV").first.to_s.strip.parameterize
+    self.slug = description.split("CSV").first.to_s.strip.parameterize if description?
   end
 
   def duplicate(shop_id = self.shop.id)
