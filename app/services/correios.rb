@@ -97,7 +97,7 @@ class Correios
   def declared_value(request)
     return 0 unless @shop.declare_value
 
-    value = request[:products].sum { |product| product[:price].to_f }
+    value = request[:products].sum { |product| product[:price].to_f * product[:quantity].to_i }
     return 17.0 if value < 17.0
     return 9999.99 if value > 9999.99
     value

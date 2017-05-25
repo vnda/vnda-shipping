@@ -45,6 +45,26 @@ RSpec.describe Correios do
     assert_nil quotations[0].notice
   end
 
+  it "#declared_value" do
+    shop = create_shop(declare_value: true)
+
+    value = Correios.new(shop, Rails.logger).declared_value(
+      cart_id: 1,
+      package: "foo",
+      shipping_zip: "90540140",
+      products: [{
+        width: 7.0,
+        height: 2.0,
+        length: 14.0,
+        quantity: 2,
+        sku: "A1",
+        price: 100
+      }]
+    )
+
+    assert_equal 200.0, value
+  end
+
   it "fallback_quote" do
     create_fallback_shop
 
