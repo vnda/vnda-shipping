@@ -36,7 +36,7 @@ RSpec.describe Correios do
     assert_instance_of Quotation, quotations[0]
     assert_equal "Expressa", quotations[0].name
     assert_equal 26.8, quotations[0].price
-    assert_equal 1, quotations[0].deadline
+    assert_equal 2, quotations[0].deadline
     assert_equal "sedex", quotations[0].slug
     assert_equal "Expressa", quotations[0].delivery_type
     assert_equal "Correios", quotations[0].deliver_company
