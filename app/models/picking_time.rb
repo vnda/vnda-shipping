@@ -19,11 +19,7 @@ class PickingTime < ActiveRecord::Base
   def +(number)
     delivery_date = time
     delivery_date += 1.day unless Time.now < time
-    number.times do
-      delivery_date += 1.day
-      delivery_date += 2.days if delivery_date.sunday?
-      delivery_date += 2.days if delivery_date.saturday?
-    end
+    delivery_date += number.day
     (delivery_date.end_of_day - Time.now).round / 60 / 60 / 24
   end
 
