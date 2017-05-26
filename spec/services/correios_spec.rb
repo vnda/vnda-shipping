@@ -62,7 +62,13 @@ RSpec.describe Correios do
       }]
     )
 
-    assert_equal 200.0, value
+    expect(value).to eq(200.0)
+  end
+
+  it "#receive_alert" do
+    shop = create_shop(correios_receive_alert: true)
+
+    expect( Correios.new(shop, Rails.logger).receive_alert ).to eq("S")
   end
 
   it "fallback_quote" do

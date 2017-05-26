@@ -26,20 +26,20 @@ class Correios
 
     begin
       response = send_message(:calc_preco_prazo, {
-        'nCdEmpresa' => @shop.correios_code,
-        'sDsSenha' => @shop.correios_password,
-        'nCdServico' => @shop.enabled_correios_service(request["package"]).join(?,),
-        'sCepOrigem' => @shop.zip.presence || request[:origin_zip],
-        'sCepDestino' => request[:shipping_zip],
-        'nVlPeso' => weight,
-        'nCdFormato' => 1,
-        'nVlComprimento' => box[:length],
-        'nVlAltura' => box[:height],
-        'nVlLargura' => box[:width],
-        'nVlDiametro' => 0,
-        'sCdMaoPropria' => 'N',
-        'sCdAvisoRecebimento' => 'N',
-        'nVlValorDeclarado' => declared_value(request)
+        "nCdEmpresa" => @shop.correios_code,
+        "sDsSenha" => @shop.correios_password,
+        "nCdServico" => @shop.enabled_correios_service(request["package"]).join(?,),
+        "sCepOrigem" => @shop.zip.presence || request[:origin_zip],
+        "sCepDestino" => request[:shipping_zip],
+        "nVlPeso" => weight,
+        "nCdFormato" => 1,
+        "nVlComprimento" => box[:length],
+        "nVlAltura" => box[:height],
+        "nVlLargura" => box[:width],
+        "nVlDiametro" => 0,
+        "sCdMaoPropria" => "N",
+        "sCdAvisoRecebimento" => receive_alert,
+        "nVlValorDeclarado" => declared_value(request)
       }, request[:cart_id])
     rescue Wasabi::Resolver::HTTPError, Excon::Errors::Error => e
       Rollbar.error(e)
@@ -114,6 +114,10 @@ class Correios
     end
 
     (deadline_date - Date.today).to_i
+  end
+
+  def receive_alert
+    @shop.correios_receive_alert ? "S" : "N"
   end
 
   private

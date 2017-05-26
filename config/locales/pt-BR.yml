@@ -215,7 +215,6 @@ pt-BR:
         marketplace_id: 'Marketplace'
         name: 'Nome'
         zip: 'CEP'
-        declare_value: Declarar Valor (Correios)
         forward_to_axado: 'Encaminhar consulta ao Axado'
         forward_to_intelipost: 'Encaminhar consulta ao Intelipost'
         axado_token: 'Token do Axado'
@@ -223,6 +222,8 @@ pt-BR:
         forward_to_correios: 'Encaminhar consulta ao Correios'
         correios_code: 'Código da Empresa no Correios'
         correios_password: 'Senha no Correios'
+        correios_receive_alert: Aviso de recebimento
+        declare_value: Declarar Valor
         express_shipping_name: 'Nome para entrega expressa'
         normal_shipping_name: 'Nome para entrega normal'
         backup_method_id: Forma de entrega de backup

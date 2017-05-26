@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170515224829) do
+ActiveRecord::Schema.define(version: 20170526222920) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -187,6 +187,7 @@ ActiveRecord::Schema.define(version: 20170515224829) do
     t.string  "tnt_cnpj"
     t.string  "tnt_ie"
     t.integer "tnt_service_id"
+    t.boolean "correios_receive_alert",               default: false
   end
 
   add_index "shops", ["marketplace_id"], name: "index_shops_on_marketplace_id", using: :btree

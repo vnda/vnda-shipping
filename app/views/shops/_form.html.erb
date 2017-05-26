@@ -48,6 +48,10 @@
         <%= f.select(:declare_value, [["Não", false], ["Sim", true]], {include_blank: false}, {class: 'form-control'}) %>
       </div>
       <div class="form-group">
+        <%= f.label :correios_receive_alert %>
+        <%= f.select(:correios_receive_alert, [["Não", false], ["Sim", true]], {include_blank: false}, {class: 'form-control'}) %>
+      </div>
+      <div class="form-group">
         <%= f.label :correios_code %>
         <%= f.text_field :correios_code, class: 'form-control' %>
       </div>
