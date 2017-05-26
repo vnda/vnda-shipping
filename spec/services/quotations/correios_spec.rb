@@ -22,7 +22,7 @@ RSpec.describe Quotations, "correios" do
     expect(quotations[0].package).to eq(nil)
     assert_equal "Normal", quotations[0].name
     assert_equal 18.3, quotations[0].price
-    assert_equal 7, quotations[0].deadline
+    assert_equal 6, quotations[0].deadline
     assert_equal "pac", quotations[0].slug
     assert_equal "Normal", quotations[0].delivery_type
     assert_equal "Correios", quotations[0].deliver_company
@@ -37,7 +37,7 @@ RSpec.describe Quotations, "correios" do
     expect(quotations[1].package).to eq(nil)
     assert_equal "Expressa", quotations[1].name
     assert_equal 26, quotations[1].price
-    assert_equal 1, quotations[1].deadline
+    assert_equal 3, quotations[1].deadline
     assert_equal "sedex", quotations[1].slug
     assert_equal "Expressa", quotations[1].delivery_type
     assert_equal "Correios", quotations[1].deliver_company
@@ -58,7 +58,7 @@ RSpec.describe Quotations, "correios" do
     expect(quotations.size).to eq(2)
 
     expect(quotations[0].deadline).to eq(17)
-    expect(quotations[1].deadline).to eq(11)
+    expect(quotations[1].deadline).to eq(12)
   end
 
   def create_shop(attributes = {})
