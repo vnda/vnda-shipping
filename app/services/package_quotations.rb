@@ -11,10 +11,12 @@ class PackageQuotations
   end
 
   def to_h
-    results = if @marketplace.axado_token == "multithead on"
-      multi_thread_quotation
-    else
-      single_thread_quotation
+    results = @params[:products].inject({}) do |memo, (package, products)|
+      params = @params.merge(package: package, shipping_zip: @zip, products: products)
+      quotations = Quotations.new(find_shop(package), params, @logger)
+
+      memo[package] = sum(quotations.to_a)
+      memo
     end
 
     log(results)
@@ -24,28 +26,6 @@ class PackageQuotations
   end
 
   protected
-
-  def single_thread_quotation
-    @params[:products].inject({}) do |memo, (package, products)|
-      params = @params.merge(package: package, shipping_zip: @zip, products: products)
-      quotations = Quotations.new(find_shop(package), params, @logger)
-
-      memo[package] = sum(quotations.to_a)
-      memo
-    end
-  end
-
-  def multi_thread_quotation
-    results = {}
-    packages = @params[:products].keys
-    results2 = Parallel.map(packages, in_threads: packages.count) do |package|
-      params = @params.merge(package: package, shipping_zip: @zip, products: @params[:products][package])
-      quotations = Quotations.new(find_shop(package), params, @logger)
-      results[package] = sum(quotations.to_a)
-      results[package]
-    end
-    results
-  end
 
   def validate_params!(*names)
     mandatory_params = names.inject({}) { |memo, name| memo[name] = @params[name]; memo }
