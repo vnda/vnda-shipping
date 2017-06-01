@@ -11,13 +11,21 @@ class PackageQuotations
   end
 
   def to_h
-    results = @params[:products].inject({}) do |memo, (package, products)|
-      params = @params.merge(package: package, shipping_zip: @zip, products: products)
-      quotations = Quotations.new(find_shop(package), params, @logger)
+    semaphore = Concurrent::Semaphore.new(5)
+    threads = []
+    results = {}
+    @params[:products].each do |package, products|
+      threads << Thread.new do
+        semaphore.acquire
 
-      memo[package] = sum(quotations.to_a)
-      memo
+        params = @params.merge(package: package, shipping_zip: @zip, products: products)
+        quotations = Quotations.new(find_shop(package), params, @logger)
+        results[package] = sum(quotations.to_a)
+
+        semaphore.release
+      end
     end
+    threads.each(&:join)
 
     log(results)
     results[:total_packages] = results.keys.size

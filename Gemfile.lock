@@ -240,6 +240,7 @@ DEPENDENCIES
   awesome_print (= 1.7.0)
   bullet (= 5.4.0)
   byebug (= 9.0.6)
+  concurrent-ruby (= 1.0.5)
   dotenv-rails (= 2.1.1)
   excon (= 0.54.0)
   httparty (= 0.13.5)
