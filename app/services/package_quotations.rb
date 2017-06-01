@@ -22,6 +22,7 @@ class PackageQuotations
         quotations = Quotations.new(find_shop(package), params, @logger)
         results[package] = sum(quotations.to_a)
 
+        ActiveRecord::Base.connection.close
         semaphore.release
       end
     end
