@@ -42,7 +42,7 @@ class Correios
         "nVlValorDeclarado" => declared_value(request)
       }, request[:cart_id])
     rescue Wasabi::Resolver::HTTPError, Excon::Errors::Error => e
-      Rollbar.error(e)
+      Honeybadger.notify(e)
       return fallback_quote(request)
     end
 

@@ -152,8 +152,6 @@ class APIController < ActionController::Base
       name = (env["HTTP_X_STORE"] || "unknown-host").split(':').first
       @shop = Shop.find_by!(name: name) if name.present?
     end
-
-    Appsignal.tag_request(shop_id: @shop.id)
   rescue ActiveRecord::RecordNotFound
     head :unauthorized
   end
