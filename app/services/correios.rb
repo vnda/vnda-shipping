@@ -123,7 +123,18 @@ class Correios
   private
 
   def send_message(method_id, message, cart_id)
-    client = Savon.client(wsdl: URL, convert_request_keys_to: :none, open_timeout: 5, read_timeout: 5)
+    options = {
+      wsdl: URL,
+      convert_request_keys_to: :none,
+      open_timeout: 10,
+      read_timeout: 10,
+      log: true,
+      logger: Rails.logger
+    }
+
+    options[:proxy] = ENV["SAVON_PROXY"] if ENV["SAVON_PROXY"].present?
+
+    client = Savon.client(options)
     request_xml = client.operation(method_id).build(message: message).to_s
     log("Request: #{request_xml}")
     response = client.call(method_id, message: message)
