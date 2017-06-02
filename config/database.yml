@@ -13,5 +13,5 @@ test:
 
 production:
   encoding: utf8
-  pool: 15
+  pool: <%= ENV["DB_POOL"] || ENV['RAILS_MAX_THREADS'] || 5 %>
   url: <%= ENV['DATABASE_URL'].sub(/^postgres/, "postgis") if ENV['DATABASE_URL'] %>
