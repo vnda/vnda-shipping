@@ -37,11 +37,11 @@ class ShippingMethodsController < ApplicationController
     service_name = DeliveryType.find(params[:delivery_type_id]).name
     min_weigth = (args[3] == 0 ? 0 : args[3].to_i / 1000.0).round(3).to_s
     max_weigth = (args[4] == 0 ? 0 : args[4].to_i / 1000.0).round(3).to_s
-    description = "#{params[:service_name]} CSV #{min_weigth} até #{max_weigth}"
+    description = "#{params[:service_id]} CSV #{min_weigth} até #{max_weigth}"
 
     if args[4].to_i > 0 && args[5].to_f > 0
       unless method = @shop.methods.find_by(name: service_name, description: description)
-        method = @shop.methods.create(
+        method = @shop.methods.create!(
           name: service_name,
           description: description,
           min_weigth: min_weigth,

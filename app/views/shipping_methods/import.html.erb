@@ -63,7 +63,6 @@
       total_lines = arrayOfLines.length;
       current_step = 1;
       var service_id = $("#service").val();
-      var service_name = $("#service option:selected").html();
       var delivery_type_id = $("#delivery_type").val();
 
       $.each(arrayOfLines, function(index, line){
@@ -74,7 +73,6 @@
             {
               line: line,
               service_id: service_id,
-              service_name: service_name,
               delivery_type_id: delivery_type_id
             }
           ).always(function(){
