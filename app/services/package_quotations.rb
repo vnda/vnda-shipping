@@ -13,17 +13,19 @@ class PackageQuotations
   def to_h
     semaphore = Concurrent::Semaphore.new(5)
     threads = []
-    results = {}
+    results = Concurrent::Hash.new({})
+
     @params[:products].each do |package, products|
       threads << Thread.new do
-        semaphore.acquire
+        ActiveRecord::Base.connection.pool.with_connection do
+          semaphore.acquire
 
-        params = @params.merge(package: package, shipping_zip: @zip, products: products)
-        quotations = Quotations.new(find_shop(package), params, @logger)
-        results[package] = sum(quotations.to_a)
+          params = @params.merge(package: package, shipping_zip: @zip, products: products)
+          quotations = Quotations.new(find_shop(package), params, @logger)
+          results[package] = sum(quotations.to_a)
 
-        ActiveRecord::Base.connection.close
-        semaphore.release
+          semaphore.release
+        end
       end
     end
     threads.each(&:join)

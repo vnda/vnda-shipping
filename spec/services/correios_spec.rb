@@ -4,6 +4,8 @@ RSpec.describe Correios do
   before { Timecop.travel(2017, 4, 28, 22, 23, 24) }
   after { Timecop.return }
 
+  let(:logger) { double("logger").as_null_object }
+
   it "use only enabled services" do
     stub_request(:get, "http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx?WSDL").
       to_return(status: 200,
@@ -17,7 +19,7 @@ RSpec.describe Correios do
     shop = create_shop
     shop.methods.where(slug: "pac").first.toggle!(:enabled)
 
-    quotations = Correios.new(shop, Rails.logger).quote(
+    quotations = Correios.new(shop, logger).quote(
       cart_id: 1,
       package: "foo",
       shipping_zip: "90540140",
@@ -31,24 +33,25 @@ RSpec.describe Correios do
       }]
     )
 
-    assert_equal 1, quotations.size
+    expect(quotations.size).to eq(1)
 
-    assert_instance_of Quotation, quotations[0]
-    assert_equal "Expressa", quotations[0].name
-    assert_equal 26.8, quotations[0].price
-    assert_equal 2, quotations[0].deadline
-    assert_equal "sedex", quotations[0].slug
-    assert_equal "Expressa", quotations[0].delivery_type
-    assert_equal "Correios", quotations[0].deliver_company
-    assert_nil quotations[0].quotation_id
-    assert_equal "expressa", quotations[0].delivery_type_slug
-    assert_nil quotations[0].notice
+    expect(quotations[0]).to be_instance_of(Quotation)
+
+    expect(quotations[0].name).to eq("Expressa")
+    expect(quotations[0].price).to eq(26.8)
+    expect(quotations[0].deadline).to eq(1)
+    expect(quotations[0].slug).to eq("sedex")
+    expect(quotations[0].delivery_type).to eq("Expressa")
+    expect(quotations[0].deliver_company).to eq("Correios")
+    expect(quotations[0].quotation_id).to eq(nil)
+    expect(quotations[0].delivery_type_slug).to eq("expressa")
+    expect(quotations[0].notice).to eq(nil)
   end
 
   it "#declared_value" do
     shop = create_shop(declare_value: true)
 
-    value = Correios.new(shop, Rails.logger).declared_value(
+    value = Correios.new(shop, logger).declared_value(
       cart_id: 1,
       package: "foo",
       shipping_zip: "90540140",
@@ -68,7 +71,7 @@ RSpec.describe Correios do
   it "#receive_alert" do
     shop = create_shop(correios_receive_alert: true)
 
-    expect( Correios.new(shop, Rails.logger).receive_alert ).to eq("S")
+    expect(Correios.new(shop, logger).receive_alert).to eq("S")
   end
 
   it "fallback_quote" do
@@ -85,7 +88,7 @@ RSpec.describe Correios do
       to_timeout
 
     shop = create_shop
-    quotations = Correios.new(shop, Rails.logger).quote(
+    quotations = Correios.new(shop, logger).quote(
       cart_id: 1,
       package: "A1B2C3",
       shipping_zip: "90540140",
@@ -119,70 +122,72 @@ RSpec.describe Correios do
     assert_nil quotations[1].notice
   end
 
-  it "#deadline_business_day for sedex" do
-    Timecop.freeze(2017, 4, 4, 17, 54, 55) do
-      shop = create_shop
-      shipping_method = shop.methods.where(name: "Expressa").first
+  describe "#deadline_business_day" do
+    it "for sedex" do
+      Timecop.freeze(2017, 4, 4, 17, 54, 55) do
+        shop = create_shop
+        shipping_method = shop.methods.where(name: "Expressa").first
 
-      correios = Correios.new(shop, Rails.logger)
+        correios = Correios.new(shop, logger)
 
-      expect(correios.deadline_business_day(shipping_method, 1)).to eq(1)
-      expect(correios.deadline_business_day(shipping_method, 2)).to eq(2)
-      expect(correios.deadline_business_day(shipping_method, 3)).to eq(3)
-      expect(correios.deadline_business_day(shipping_method, 4)).to eq(4)
+        expect(correios.deadline_business_day(shipping_method, 1)).to eq(1)
+        expect(correios.deadline_business_day(shipping_method, 2)).to eq(2)
+        expect(correios.deadline_business_day(shipping_method, 3)).to eq(3)
+        expect(correios.deadline_business_day(shipping_method, 4)).to eq(4)
 
-      expect(correios.deadline_business_day(shipping_method, 5)).to eq(6)
-      expect(correios.deadline_business_day(shipping_method, 6)).to eq(7)
-      expect(correios.deadline_business_day(shipping_method, 7)).to eq(8)
-      expect(correios.deadline_business_day(shipping_method, 8)).to eq(9)
-      expect(correios.deadline_business_day(shipping_method, 9)).to eq(10)
-      expect(correios.deadline_business_day(shipping_method, 10)).to eq(11)
+        expect(correios.deadline_business_day(shipping_method, 5)).to eq(6)
+        expect(correios.deadline_business_day(shipping_method, 6)).to eq(7)
+        expect(correios.deadline_business_day(shipping_method, 7)).to eq(8)
+        expect(correios.deadline_business_day(shipping_method, 8)).to eq(9)
+        expect(correios.deadline_business_day(shipping_method, 9)).to eq(10)
+        expect(correios.deadline_business_day(shipping_method, 10)).to eq(11)
 
-      expect(correios.deadline_business_day(shipping_method, 11)).to eq(13)
-      expect(correios.deadline_business_day(shipping_method, 12)).to eq(14)
-      expect(correios.deadline_business_day(shipping_method, 13)).to eq(15)
-      expect(correios.deadline_business_day(shipping_method, 14)).to eq(16)
-      expect(correios.deadline_business_day(shipping_method, 15)).to eq(17)
-      expect(correios.deadline_business_day(shipping_method, 16)).to eq(18)
+        expect(correios.deadline_business_day(shipping_method, 11)).to eq(13)
+        expect(correios.deadline_business_day(shipping_method, 12)).to eq(14)
+        expect(correios.deadline_business_day(shipping_method, 13)).to eq(15)
+        expect(correios.deadline_business_day(shipping_method, 14)).to eq(16)
+        expect(correios.deadline_business_day(shipping_method, 15)).to eq(17)
+        expect(correios.deadline_business_day(shipping_method, 16)).to eq(18)
 
-      expect(correios.deadline_business_day(shipping_method, 17)).to eq(20)
-      expect(correios.deadline_business_day(shipping_method, 18)).to eq(21)
-      expect(correios.deadline_business_day(shipping_method, 19)).to eq(22)
-      expect(correios.deadline_business_day(shipping_method, 20)).to eq(23)
+        expect(correios.deadline_business_day(shipping_method, 17)).to eq(20)
+        expect(correios.deadline_business_day(shipping_method, 18)).to eq(21)
+        expect(correios.deadline_business_day(shipping_method, 19)).to eq(22)
+        expect(correios.deadline_business_day(shipping_method, 20)).to eq(23)
+      end
     end
-  end
 
-  it "#deadline_business_day for pac" do
-    Timecop.freeze(2017, 4, 4, 17, 54, 55) do
-      shop = create_shop
-      shipping_method = shop.methods.where(name: "Normal").first
+    it "for pac" do
+      Timecop.freeze(2017, 4, 4, 17, 54, 55) do
+        shop = create_shop
+        shipping_method = shop.methods.where(name: "Normal").first
 
-      correios = Correios.new(shop, Rails.logger)
+        correios = Correios.new(shop, logger)
 
-      expect(correios.deadline_business_day(shipping_method, 1)).to eq(1)
-      expect(correios.deadline_business_day(shipping_method, 2)).to eq(2)
-      expect(correios.deadline_business_day(shipping_method, 3)).to eq(3)
+        expect(correios.deadline_business_day(shipping_method, 1)).to eq(1)
+        expect(correios.deadline_business_day(shipping_method, 2)).to eq(2)
+        expect(correios.deadline_business_day(shipping_method, 3)).to eq(3)
 
-      expect(correios.deadline_business_day(shipping_method, 4)).to eq(6)
-      expect(correios.deadline_business_day(shipping_method, 5)).to eq(7)
-      expect(correios.deadline_business_day(shipping_method, 6)).to eq(8)
-      expect(correios.deadline_business_day(shipping_method, 7)).to eq(9)
-      expect(correios.deadline_business_day(shipping_method, 8)).to eq(10)
+        expect(correios.deadline_business_day(shipping_method, 4)).to eq(6)
+        expect(correios.deadline_business_day(shipping_method, 5)).to eq(7)
+        expect(correios.deadline_business_day(shipping_method, 6)).to eq(8)
+        expect(correios.deadline_business_day(shipping_method, 7)).to eq(9)
+        expect(correios.deadline_business_day(shipping_method, 8)).to eq(10)
 
-      expect(correios.deadline_business_day(shipping_method, 9)).to eq(13)
-      expect(correios.deadline_business_day(shipping_method, 10)).to eq(14)
-      expect(correios.deadline_business_day(shipping_method, 11)).to eq(15)
-      expect(correios.deadline_business_day(shipping_method, 12)).to eq(16)
-      expect(correios.deadline_business_day(shipping_method, 13)).to eq(17)
+        expect(correios.deadline_business_day(shipping_method, 9)).to eq(13)
+        expect(correios.deadline_business_day(shipping_method, 10)).to eq(14)
+        expect(correios.deadline_business_day(shipping_method, 11)).to eq(15)
+        expect(correios.deadline_business_day(shipping_method, 12)).to eq(16)
+        expect(correios.deadline_business_day(shipping_method, 13)).to eq(17)
 
-      expect(correios.deadline_business_day(shipping_method, 14)).to eq(20)
-      expect(correios.deadline_business_day(shipping_method, 15)).to eq(21)
-      expect(correios.deadline_business_day(shipping_method, 16)).to eq(22)
-      expect(correios.deadline_business_day(shipping_method, 17)).to eq(23)
-      expect(correios.deadline_business_day(shipping_method, 18)).to eq(24)
+        expect(correios.deadline_business_day(shipping_method, 14)).to eq(20)
+        expect(correios.deadline_business_day(shipping_method, 15)).to eq(21)
+        expect(correios.deadline_business_day(shipping_method, 16)).to eq(22)
+        expect(correios.deadline_business_day(shipping_method, 17)).to eq(23)
+        expect(correios.deadline_business_day(shipping_method, 18)).to eq(24)
 
-      expect(correios.deadline_business_day(shipping_method, 19)).to eq(27)
-      expect(correios.deadline_business_day(shipping_method, 20)).to eq(28)
+        expect(correios.deadline_business_day(shipping_method, 19)).to eq(27)
+        expect(correios.deadline_business_day(shipping_method, 20)).to eq(28)
+      end
     end
   end
 

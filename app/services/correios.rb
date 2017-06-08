@@ -13,10 +13,8 @@ class Correios
 
   def quote(request)
     weight = request[:products].sum { |i| i[:weight].to_f * i[:quantity].to_i }
-    if weight > 30
-      log("package too heavy (#{weight})", :warn)
-      return fallback_quote(request)
-    end
+    shipping_methods = @shop.shipping_methods_correios.for_weigth(weight)
+    return [] if shipping_methods.none?
 
     box = package_dimensions(request[:products])
     cubic_weight = (box[:length].to_f * box[:height].to_f * box[:width].to_f) / 6000.0
@@ -28,7 +26,7 @@ class Correios
       response = send_message(:calc_preco_prazo, {
         "nCdEmpresa" => @shop.correios_code,
         "sDsSenha" => @shop.correios_password,
-        "nCdServico" => @shop.enabled_correios_service(request["package"]).join(?,),
+        "nCdServico" => enabled_services(shipping_methods, request["package"]).join(","),
         "sCepOrigem" => @shop.zip.presence || request[:origin_zip],
         "sCepDestino" => request[:shipping_zip],
         "nVlPeso" => weight,
@@ -146,6 +144,18 @@ class Correios
     })
 
     response
+  end
+
+  def enabled_services(shipping_methods, package)
+    if @shop.name.include?("taglivros")
+      shipping_methods = if package.to_s.starts_with?("kit-") || package.to_s.starts_with?("livro")
+        shipping_methods.where(service: "20010")
+      else
+        shipping_methods.where.not(service: "20010")
+      end
+    end
+
+    shipping_methods.pluck(:service)
   end
 
   def package_dimensions(items)

@@ -49,6 +49,8 @@ RSpec.describe PackageQuotations do
     quotations_child_1 = double("quotations_child_1", to_a: child_1_quotations)
     quotations_child_2 = double("quotations_child_2", to_a: child_2_quotations)
 
+    expect(Thread).to receive(:new).exactly(3).times.and_yield.and_return(double("thread").as_null_object)
+
     expect(Quotations).to receive(:new).once.
       with(marketplace, { products: products[""], package: "", shipping_zip: "80035120" }, Rails.logger).
       and_return(quotations_marketplace)

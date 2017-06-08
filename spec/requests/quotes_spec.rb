@@ -62,6 +62,8 @@ RSpec.describe "Quotes" do
       zip: "03320000"
     )
 
+    expect(Thread).to receive(:new).and_yield.and_return(double("thread").as_null_object)
+
     post_params = { token: shop.token, cart_id: 1, shipping_zip: "80035120",
       products: { "" => [{ width: 7.0, height: 2.0, length: 14.0, quantity: 1, sku: "A1" }] } }
     post "/quote", post_params.to_json, { "Content-Type" => "application/json" }
@@ -123,6 +125,8 @@ RSpec.describe "Quotes" do
       zip: "03320000"
     )
 
+    expect(Thread).to receive(:new).exactly(3).times.and_yield.and_return(double("thread").as_null_object)
+
     products = {
       "" => [
         { width: 7.0, height: 2.0, length: 14.0, quantity: 1, sku: "A2" }
@@ -171,6 +175,8 @@ RSpec.describe "Quotes" do
       correios_password: "correiosp@ss",
       zip: "03320000"
     )
+
+    expect(Thread).to receive(:new).and_yield.and_return(double("thread").as_null_object)
 
     post_params = { token: shop.token, cart_id: 1, shipping_zip: "80035120",
       products: { "" => [{ width: 7.0, height: 2.0, length: 14.0, quantity: 1, sku: "A1",
