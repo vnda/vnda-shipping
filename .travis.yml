@@ -1,0 +1,9 @@
+language: ruby
+rvm:
+  - 2.3.0
+  - 2.4.1
+env:
+  - DATABASE_URL=postgres://travis@localhost:5432/mydb_test?encoding=utf8
+script:
+  - bin/rake db:create db:migrate RAILS_ENV=test
+  - bin/rspec
