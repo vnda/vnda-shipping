@@ -1,6 +1,8 @@
 language: ruby
 rvm:
   - 2.4.1
+addons:
+  postgresql: "9.4"
 env:
   - DATABASE_URL=postgis://travis@localhost:5432/shipping_test?encoding=utf8
 before_script:
