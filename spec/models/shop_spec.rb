@@ -127,32 +127,6 @@ describe Shop do
 
       expect(subject.enabled_correios_service).to eq(["04669", "04162"])
     end
-
-    context "when taglivros" do # custom cases, we shouldn't have this kind of stuff here
-      it "returns an empty array of service codes if 20010 is not enabled for correios" do
-        subject.name = "taglivros"
-        subject.forward_to_correios = true
-        subject.correios_code = "code"
-        subject.correios_password = "pass"
-        subject.save!
-
-        expect(subject.enabled_correios_service("kit-1")).to eq([])
-        expect(subject.enabled_correios_service("livro-1")).to eq([])
-      end
-
-      it "returns an array of with only 20010 if it's enabled for correios is enabled for correios" do
-        subject.name = "taglivros"
-        subject.forward_to_correios = true
-        subject.correios_code = "code"
-        subject.correios_password = "pass"
-        subject.save!
-
-        subject.methods.where(slug: "pac").update_all(service: "20010")
-
-        expect(subject.enabled_correios_service("kit-1")).to eq(["20010"])
-        expect(subject.enabled_correios_service("livro-1")).to eq(["20010"])
-      end
-    end
   end
 end
 

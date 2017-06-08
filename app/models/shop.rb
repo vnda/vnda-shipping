@@ -114,17 +114,7 @@ class Shop < ActiveRecord::Base
   end
 
   def enabled_correios_service(package = nil)
-    services = shipping_methods_correios
-
-    if name.include?("taglivros")
-      services = if package.to_s.starts_with?("kit-") || package.to_s.starts_with?("livro")
-        services.where(service: "20010")
-      else
-        services.where.not(service: "20010")
-      end
-    end
-
-    services.pluck(:service)
+    shipping_methods_correios.pluck(:service)
   end
 
   def delivery_day_status(date, zip, period_name)

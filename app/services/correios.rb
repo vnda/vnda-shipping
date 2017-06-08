@@ -147,14 +147,6 @@ class Correios
   end
 
   def enabled_services(shipping_methods, package)
-    if @shop.name.include?("taglivros")
-      shipping_methods = if package.to_s.starts_with?("kit-") || package.to_s.starts_with?("livro")
-        shipping_methods.where(service: "20010")
-      else
-        shipping_methods.where.not(service: "20010")
-      end
-    end
-
     shipping_methods.pluck(:service)
   end
 
