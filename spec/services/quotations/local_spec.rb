@@ -26,6 +26,38 @@ RSpec.describe Quotations, "local" do
     expect(quotations[0].deadline).to eq(11)
   end
 
+  it "filter shiping methods by package" do
+    shop = create_shop
+
+    shop.methods.create!(
+      name: "Transportadora 1",
+      description: "Transportadora 1",
+      express: false,
+      enabled: true,
+      min_weigth: 0,
+      max_weigth: 1000,
+      delivery_type_id: shop.delivery_types.first.id,
+      data_origin: "local",
+      package_pattern: "^abc"
+    ).zip_rules.create!(range: (80000000...81000000), price: 4, deadline: 1)
+
+    shop.methods.create!(
+      name: "Transportadora 2",
+      description: "Transportadora 2",
+      express: false,
+      enabled: true,
+      min_weigth: 0,
+      max_weigth: 1000,
+      delivery_type_id: shop.delivery_types.first.id,
+      data_origin: "local",
+      package_pattern: "^A1"
+    ).zip_rules.create!(range: (80000000...81000000), price: 5, deadline: 1)
+
+    quotations = new_local_quotations(shop, products: [new_product(handling_days: 10)])
+    expect(quotations.size).to eq(1)
+    expect(quotations[0].price).to eq(5)
+  end
+
   def create_shop(attributes = {})
     Shop.create!(attributes.merge(name: 'Loja', token: "a1b2c3", zip: "03320000"))
   end

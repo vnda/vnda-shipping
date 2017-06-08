@@ -35,6 +35,11 @@ class Quotations
       quotation_for(data_origin_methods.for_weigth(weight))
     end
 
+    quotations = quotations.select do |quotation|
+      method = quotation.shipping_method
+      method.package_pattern.blank? || Regexp.new(method.package_pattern) =~ @params[:package]
+    end
+
     if @shop.forward_to_correios? && (quotations.empty? || !correios_completed?(@shop, quotations))
       quotations += Correios.new(@shop, @logger).quote(@params.merge(shipping_zip: @zip))
     end

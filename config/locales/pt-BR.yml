@@ -239,6 +239,7 @@ pt-BR:
         notice: 'Mensagem de aviso'
         service: "Código do serviço"
         days_off: "Dias sem entrega"
+        package_pattern: "Padrão de pacotes aceitos (regex)"
       period:
         name: 'Nome'
         limit_time: 'Horário Limite'

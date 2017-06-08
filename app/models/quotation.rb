@@ -1,5 +1,6 @@
 class Quotation < ActiveRecord::Base
   belongs_to :shop
+  belongs_to :shipping_method
 
   validates_presence_of :shop_id, :cart_id, :name, :slug, :skus
 

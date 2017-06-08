@@ -20,6 +20,10 @@
           <%= f.label :notice %>
           <%= f.text_area :notice, class: 'form-control' %>
         </div>
+        <div class="form-group">
+          <%= f.label :package_pattern %>
+          <%= f.text_field :package_pattern, class: 'form-control' %>
+        </div>
       </div>
       <div class="col-md-4">
         <div class="form-group">
@@ -132,8 +136,6 @@
   .zip-codes-container .panel .period {
     width: 290px;
   }
-
-
 </style>
 
 <% if @method.persisted? %>
@@ -272,8 +274,8 @@
     });
   </script>
 <% end %>
-<script>
 
+<script>
   (function () {
 
     var maskInputs = function (ctx) {
@@ -324,27 +326,33 @@
       });
     });
 
-    function changeDataOrigin(){
-      $('.items-container').hide(); // hide everything
+    function packagePattern(state){
+      if(state == "show") {
+        $("#shipping_method_package_pattern").attr("disabled", false).parent().show();
+      }
+      else
+        $("#shipping_method_package_pattern").attr("disabled", true).parent().hide();
+    }
 
-      if( $("#shipping_method_data_origin").val() == "local" ) {
+    function changeDataOrigin(){
+      var selected = $("#shipping_method_data_origin").val();
+
+      $('.items-container').hide(); // hide everything
+      packagePattern("hide");
+
+      if( selected == "local" ) {
+        packagePattern("show");
         $('#zip-rules-form').show();
-        if (typeof $service !== 'undefined'){
-          $service.getZipRules();
-        }
-      } else if ($("#shipping_method_data_origin").val() == "google_maps") {
+        if (typeof $service !== 'undefined') $service.getZipRules();
+      } else if (selected == "google_maps") {
         $('#map-rules-form').show();
-        if (typeof $service !== 'undefined'){
-          $service.getMapRules();
-        }
-      } else if ($("#shipping_method_data_origin").val() == "correios") {
+        if (typeof $service !== 'undefined') $service.getMapRules();
+      } else if (selected == "correios") {
         $(".correios-services").show();
         $("table.block-rules").show();
-      } else if ($("#shipping_method_data_origin").val() == "places") {
+      } else if (selected == "places") {
         $('#places-form').show();
-        if (typeof $service !== 'undefined'){
-          $service.getPlaces();
-        }
+        if (typeof $service !== 'undefined') $service.getPlaces();
       } else {
         $("table.block-rules").show();
       }
