@@ -1,3 +1,5 @@
+require "webmock/rspec"
+
 module WebmockHelpers
   def request_fixture
     webmock_fixture("request")
