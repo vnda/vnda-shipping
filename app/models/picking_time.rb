@@ -18,19 +18,19 @@ class PickingTime < ActiveRecord::Base
 
   def +(number)
     delivery_date = time
-    delivery_date += 1.day unless Time.now < time
+    delivery_date += 1.day unless Time.current < time
     delivery_date += number.day
-    (delivery_date.end_of_day - Time.now).round / 60 / 60 / 24
+    (delivery_date.end_of_day - Time.current).round / 60 / 60 / 24
   end
 
   def self.next_time(shop_id, now = nil)
-    now ||= Time.now
+    now ||= Time.current
     weekday = now.strftime("%A").downcase
     picking = where(shop_id: shop_id, enabled: true, weekday: weekday).first
 
     if picking
       hour, minute = picking.hour.split(":").map(&:to_i)
-      return picking if Time.now < now.change(hour: hour, minute: minute)
+      return picking if Time.current < now.change(hour: hour, minute: minute)
     end
 
     next_time(shop_id, now + 1.day)

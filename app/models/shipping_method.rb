@@ -91,7 +91,7 @@ class ShippingMethod < ActiveRecord::Base
   end
 
   def next_delivery_date(now = nil)
-    now ||= Time.now
+    now ||= Time.current
     return now if days_off.compact.blank? || days_off.size == 7
     return now unless days_off.include?(now.wday)
     next_delivery_date(now + 1.day)

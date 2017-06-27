@@ -113,7 +113,7 @@ class Quotations
       if quote.shipping_method_id.present?
         shipping_method = ShippingMethod.find(quote.shipping_method_id)
         delivery_date = shipping_method.next_delivery_date(quote.deadline.days.from_now)
-        quote.deadline = (delivery_date.end_of_day - Time.now).round / 60 / 60 / 24
+        quote.deadline = (delivery_date.end_of_day - Time.current).round / 60 / 60 / 24
       end
     end
   end

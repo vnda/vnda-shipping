@@ -103,7 +103,7 @@ class Correios
 
   def deadline_business_day(shipping_method, deadline)
     days_off = shipping_method.days_off
-    deadline_date = Date.today
+    deadline_date = Date.current
     while deadline > 0
       deadline_date = deadline_date + 1
       deadline_date = deadline_date + 1 while days_off.include?(deadline_date.wday)
@@ -111,7 +111,7 @@ class Correios
       deadline = deadline - 1
     end
 
-    (deadline_date - Date.today).to_i
+    (deadline_date - Date.current).to_i
   end
 
   def receive_alert

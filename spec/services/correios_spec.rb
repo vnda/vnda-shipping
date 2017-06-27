@@ -7,9 +7,6 @@ RSpec.describe Correios do
   let(:logger) { double("logger").as_null_object }
 
   it "use only enabled services" do
-    ap Time.current
-    ap Time.now
-
     stub_request(:get, "http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx?WSDL").
       to_return(status: 200,
         body: Rails.root.join("spec/fixtures/calc_preco_prazo.wsdl").read,
