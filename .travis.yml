@@ -10,4 +10,4 @@ before_script:
   - psql -c 'CREATE EXTENSION postgis' -U postgres -d shipping_test
 script:
   - bin/rake db:create db:migrate RAILS_ENV=test
-  - bin/rspec
+  - bin/rspec --no-fail-fast -f doc

@@ -34,7 +34,7 @@ group :test do
   gem 'minitest', '5.10.1'
   gem 'minitest-spec-rails', '5.4.0'
   gem 'webmock', '2.3.2'
-  gem 'timecop', '0.8.1'
+  gem 'timecop', '0.9.0'
 
   gem 'simplecov', '0.12.0', require: false
 end
