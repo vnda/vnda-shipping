@@ -1,4 +1,5 @@
 class APIController < ActionController::Base
+  before_action :instrument_requests
   before_action :set_shop, only: [:quotation_details, :quote, :delivery_date,
     :delivery_types, :delivery_periods, :local, :places, :shipping_methods,
     :sellers, :update_seller, :quotation]
@@ -172,5 +173,9 @@ class APIController < ActionController::Base
   def find_local(collection)
     zip = collection.class.to_s.include?("ZipRule") ? params[:zip].gsub(/\D+/, '').to_i : params[:zip].gsub(/\D+/, '')
     collection.joins(:shipping_method).where(shipping_methods: { enabled: true }).for_zip(zip).select('shipping_methods.slug')
+  end
+
+  def instrument_requests
+    I.increment("requests")
   end
 end
