@@ -150,8 +150,10 @@ class APIController < ActionController::Base
       @shop = Shop.includes(:marketplace).find_by!(token: params[:token])
     else
       name = (env["HTTP_X_STORE"] || "unknown-host").split(':').first
-      @shop = Shop.find_by!(name: name) if name.present?
+      @shop = Shop.find_by!(name: name)
     end
+
+    Honeybadger.context(shop_id: @shop.id)
   rescue ActiveRecord::RecordNotFound
     head :unauthorized
   end
