@@ -79,6 +79,7 @@ GEM
       rack
       socksify
     i18n (0.8.4)
+    instrumental_agent (1.0.1)
     jb (0.4.1)
       multi_json
     json (2.1.0)
@@ -239,6 +240,7 @@ DEPENDENCIES
   excon (= 0.57.0)
   honeybadger (= 3.1.2)
   httparty (= 0.15.5)
+  instrumental_agent (= 1.0.1)
   jb (= 0.4.1)
   kaminari (= 0.17.0)
   minitest (= 5.10.1)

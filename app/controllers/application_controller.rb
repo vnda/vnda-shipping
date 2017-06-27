@@ -1,8 +1,6 @@
 class ApplicationController < ActionController::Base
-  # Prevent CSRF attacks by raising an exception.
-  # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
-  before_action :require_authentication, except: :status
+  before_action :instrument_requests, :require_authentication, except: :status
 
   def status
     render text: 'OK'
@@ -15,6 +13,10 @@ class ApplicationController < ActionController::Base
     key = "#{params[:controller]}.#{params[:action]}"
     notice = I18n.t(key, scope: [:notices])
     redirect_to(*args, opts.reverse_merge(notice: notice))
+  end
+
+  def instrument_requests
+    I.increment("requests")
   end
 
   def require_authentication

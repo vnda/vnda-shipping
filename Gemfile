@@ -19,6 +19,7 @@ gem 'will_paginate', '3.1.6'
 gem 'will_paginate-bootstrap', '1.0.1'
 gem 'nickel', '0.1.6'
 gem 'concurrent-ruby', '1.0.5', require: 'concurrent'
+gem 'instrumental_agent', '1.0.1'
 
 gem 'sinatra', '1.4.7', require: false
 gem 'thor', '0.19.1', require: false
