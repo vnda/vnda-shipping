@@ -21,25 +21,25 @@ RSpec.describe "Quotes" do
     shop = create_shop
 
     package_quotations = double("package_quotations")
-    expect(package_quotations).to receive(:to_h).and_return(total_quotations: 0)
+    expect(package_quotations).to receive(:to_h).and_return("" => [])
 
     expect(PackageQuotations).to receive(:new).and_return(package_quotations)
 
     post "/quote?token=#{shop.token}", shipping_zip: "12946636", products: [{ quantity: 1 }]
 
     expect(response.status).to eq(400)
-    expect(response.body).to eq({ error: "Não existem opções de entrega para este endereço." }.to_json)
+    expect(response.body).to eq({ error: "Não existem opções de entrega para este endereço" }.to_json)
 
     expect(shop.reload.shipping_errors.size).to eq(1)
-    expect(shop.reload.shipping_errors[0].message).to eq("Não existem opções de entrega para este endereço.")
+    expect(shop.reload.shipping_errors[0].message).to eq("Não existem opções de entrega para este endereço")
   end
 
   it "returns a friendly error message when no quotations" do
     shop = create_shop
-    shop.shipping_friendly_errors.create!(rule: "Não existem opções de entrega para este endereço.", message: "Atualmente não temos opções de entregar para o seu endereço, tente novamente mais tarde")
+    shop.shipping_friendly_errors.create!(rule: "Não existem opções de entrega para este endereço", message: "Atualmente não temos opções de entregar para o seu endereço, tente novamente mais tarde")
 
     package_quotations = double("package_quotations")
-    expect(package_quotations).to receive(:to_h).and_return(total_quotations: 0)
+    expect(package_quotations).to receive(:to_h).and_return("" => [])
 
     expect(PackageQuotations).to receive(:new).and_return(package_quotations)
 
@@ -49,7 +49,7 @@ RSpec.describe "Quotes" do
     expect(response.body).to eq({ error: "Atualmente não temos opções de entregar para o seu endereço, tente novamente mais tarde" }.to_json)
 
     expect(shop.reload.shipping_errors.size).to eq(1)
-    expect(shop.reload.shipping_errors[0].message).to eq("Não existem opções de entrega para este endereço.")
+    expect(shop.reload.shipping_errors[0].message).to eq("Não existem opções de entrega para este endereço")
   end
 
   it "returns all available quotations for a single package" do

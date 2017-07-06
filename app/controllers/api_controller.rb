@@ -52,7 +52,7 @@ class APIController < ActionController::Base
     end
 
     if periods.nil? or periods.empty?
-      render json: {error: @shop.friendly_message_for("Não existem opções de entrega para este endereço.")}, status: 400
+      render json: {error: @shop.friendly_message_for("Não existem opções de entrega para este endereço")}, status: 400
     else
       render json: periods, status: 200
     end
@@ -62,8 +62,8 @@ class APIController < ActionController::Base
     @quotations = PackageQuotations.new(@shop, allowed_params, logger).to_h
 
     logger.info(@quotations.to_json)
-    unless @quotations[:total_quotations] > 0
-      message = @shop.add_shipping_error("Não existem opções de entrega para este endereço.")
+    unless @quotations.values.any? { |quotations| quotations.any? }
+      message = @shop.add_shipping_error("Não existem opções de entrega para este endereço")
       render json: { error: @shop.friendly_message_for(message) }, status: 400
     end
   end

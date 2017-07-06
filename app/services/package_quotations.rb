@@ -31,8 +31,6 @@ class PackageQuotations
     threads.each(&:join)
 
     log(results)
-    results[:total_packages] = results.keys.size
-    results[:total_quotations] = results.sum { |_, quotations| quotations.size }
     results
   end
 

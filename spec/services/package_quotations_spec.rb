@@ -67,7 +67,7 @@ RSpec.describe PackageQuotations do
       new(marketplace, { shipping_zip: "80035120", products: products }, Rails.logger).
       to_h
 
-    expect(quotations.keys).to eq(["", "child-1", "child-2", :total_packages, :total_quotations])
+    expect(quotations.keys).to eq(["", "child-1", "child-2"])
 
     expect(quotations[""].size).to eq(2)
 
