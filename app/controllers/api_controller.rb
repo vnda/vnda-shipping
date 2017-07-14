@@ -2,7 +2,7 @@ class APIController < ActionController::Base
   before_action :instrument_requests
   before_action :set_shop, only: [:quotation_details, :quote, :delivery_date,
     :delivery_types, :delivery_periods, :local, :places, :shipping_methods,
-    :sellers, :update_seller, :quotation]
+    :sellers, :update_seller, :quotation, :update_place_name]
 
   rescue_from InvalidZip do
     render json: { error: "invalid zip" }, status: 400
