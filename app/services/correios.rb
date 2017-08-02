@@ -39,7 +39,7 @@ class Correios
         "sCdAvisoRecebimento" => receive_alert,
         "nVlValorDeclarado" => declared_value(request)
       }, request[:cart_id])
-    rescue Wasabi::Resolver::HTTPError, Excon::Errors::Error => e
+    rescue Wasabi::Resolver::HTTPError, Excon::Errors::Timeout, Excon::Error::Socket => e
       Honeybadger.notify(e)
       return fallback_quote(request)
     end
